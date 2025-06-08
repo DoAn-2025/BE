@@ -1,7 +1,7 @@
 package com.doan2025.webtoeic.constants.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
+import lombok.Getter;
+@Getter
 public enum ERole {
     MANAGER(1, "MANAGER"),
     CONSULTANT(2, "CONSULTANT"),
@@ -9,6 +9,7 @@ public enum ERole {
     STUDENT(4, "STUDENT");
 
     private final Integer value;
+
     private final String code;
 
     ERole(Integer value, String code) {
@@ -16,11 +17,7 @@ public enum ERole {
         this.code = code;
     }
 
-    @JsonValue
     public int getValue() {return value;}
-
-    @JsonValue
-    public String getCode() {return code;}
 
     public static ERole fromValue(Integer value) {
         for (ERole role : ERole.values()) {
