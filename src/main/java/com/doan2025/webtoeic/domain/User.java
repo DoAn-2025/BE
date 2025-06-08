@@ -49,6 +49,12 @@ public class User {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @Column(name = "is_delete")
+    private Boolean isDelete;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private ERole role;
