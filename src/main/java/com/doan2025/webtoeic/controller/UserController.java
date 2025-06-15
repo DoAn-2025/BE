@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping()
     public ApiResponse<UserResponse> getUserCurrent(HttpServletRequest request) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, userService.getUserCurrent(request));
     }
