@@ -7,35 +7,39 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ResponseCode {
 
-    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),
-    EMAIL_INVALID(1002, "Email must be at least {min} characters", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD(1003, "{entity} is not true", HttpStatus.BAD_REQUEST),
-    UNAUTHENTICATED(1004, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1005, "You do not have permission", HttpStatus.FORBIDDEN),
-    TOKEN_EXPIRED(1006, "{entity} is expired", HttpStatus.UNAUTHORIZED),
-    TOKEN_INVALIDATED(1007, "{entity} is invalid", HttpStatus.UNAUTHORIZED),
+    UNCATEGORIZED_EXCEPTION(404, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_KEY(404, "Invalid key", HttpStatus.BAD_REQUEST),
+    EMAIL_INVALID(404, "Email must be at least {min} characters", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(404, "{entity} is not true", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(404, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(404, "You do not have permission", HttpStatus.FORBIDDEN),
+    TOKEN_EXPIRED(404, "{entity} is expired", HttpStatus.UNAUTHORIZED),
+    TOKEN_INVALIDATED(404, "{entity} is invalid", HttpStatus.UNAUTHORIZED),
 
-    INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
-    INVALID_ROLE(1009, "{entity} is invalid", HttpStatus.BAD_REQUEST),
-    INVALID_TOKEN(1010, "{entity} is invalid", HttpStatus.UNAUTHORIZED),
+    INVALID_DOB(404, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
+    INVALID(404, "{entity} is invalid", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN(404, "{entity} is invalid", HttpStatus.UNAUTHORIZED),
 
-    EXISTED(1011, "{entity} already exists", HttpStatus.BAD_REQUEST),
-    NOT_EXISTED(1012, "{entity} not existed", HttpStatus.NOT_FOUND),
-    IS_NULL(1013, "{entity} is null", HttpStatus.BAD_REQUEST),
+    EXISTED(404, "{entity} already exists", HttpStatus.BAD_REQUEST),
+    NOT_EXISTED(404, "{entity} not existed", HttpStatus.NOT_FOUND),
+    IS_NULL(404, "{entity} is null", HttpStatus.BAD_REQUEST),
+    UNSUPPORTED(404, "Unsupported: {entity}", HttpStatus.BAD_REQUEST),
 
     SUCCESS (200, "{entity} is successfully", HttpStatus.OK),
-    CREATE_SUCCESS(201, "{entity} has been created ", HttpStatus.CREATED),
-    UPDATE_SUCCESS(201, "{entity} has been updated ", HttpStatus.OK),
-    DELETE_SUCCESS(201, "{entity} has been deleted ", HttpStatus.OK),
-    GET_SUCCESS(202, "Get {entity} is successfully", HttpStatus.OK),
+    CREATE_SUCCESS(200, "{entity} has been created ", HttpStatus.CREATED),
+    UPDATE_SUCCESS(200, "{entity} has been updated ", HttpStatus.OK),
+    DELETE_SUCCESS(200, "{entity} has been deleted ", HttpStatus.OK),
+    GET_SUCCESS(200, "Get {entity} is successfully", HttpStatus.OK),
+    UPLOAD_SUCCESS(200, "Upload {entity} is successfully", HttpStatus.OK),
 
     CANNOT_GET(404, "Cannot get {entity}", HttpStatus.NOT_FOUND),
     CANNOT_DELETE(404, "Cannot delete {entity}", HttpStatus.BAD_REQUEST),
     CANNOT_UPDATE(404, "Cannot update {entity}", HttpStatus.BAD_REQUEST),
     CANNOT_CREATE(404, "Cannot create {entity}", HttpStatus.BAD_REQUEST),
+    CANNOT_UPLOAD(404, "Cannot upload {entity}", HttpStatus.BAD_REQUEST),
 
     NOT_MATCHED(404, "Not matched {entity}", HttpStatus.BAD_REQUEST),
+    NOT_PERMISSION(404, "{entity} not permission ", HttpStatus.BAD_REQUEST),
     ;
 
 

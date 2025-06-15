@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ResponseObject {
     ROLE, USER, PASSWORD,TOKEN,
 
-    USERNAME, EMAIL, IDENTITY_NUMBER, CODE, ID,
+    USERNAME, EMAIL, IDENTITY_NUMBER, CODE, ID, FILE, URL,
 
     REGISTER, LOGIN, LOGOUT, REFRESH_TOKEN,
     ;
