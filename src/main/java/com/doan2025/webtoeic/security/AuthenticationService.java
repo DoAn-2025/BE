@@ -4,17 +4,21 @@ import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.*;
-import com.doan2025.webtoeic.dto.request.*;
+import com.doan2025.webtoeic.dto.request.AuthenticationRequest;
+import com.doan2025.webtoeic.dto.request.IntrospectRequest;
+import com.doan2025.webtoeic.dto.request.RegisterRequest;
 import com.doan2025.webtoeic.dto.response.AuthenticationResponse;
 import com.doan2025.webtoeic.dto.response.IntrospectResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.*;
 import com.doan2025.webtoeic.utils.JwtUtil;
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +29,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +50,7 @@ public class AuthenticationService {
     private final ConsultantRepository consultantRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final JwtUtil jwtUtil;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -94,7 +101,7 @@ public class AuthenticationService {
 
     public void logout(HttpServletRequest request) throws ParseException, JOSEException {
         try {
-            var signToken = verifyToken(JwtUtil.getJwtFromRequest(request), true);
+            var signToken = verifyToken(jwtUtil.getJwtFromRequest(request), true);
 
             String jit = signToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
@@ -110,7 +117,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse refreshToken(HttpServletRequest request) throws ParseException, JOSEException {
         // Parse và kiểm tra chữ ký
-        var signedJWT = verifyToken(JwtUtil.getJwtFromRequest(request), true);
+        var signedJWT = verifyToken(jwtUtil.getJwtFromRequest(request), true);
 
         var jit = signedJWT.getJWTClaimsSet().getJWTID();
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
@@ -141,7 +148,7 @@ public class AuthenticationService {
                 role = ERole.fromValue(request.getRole());
             }
         } catch (IllegalArgumentException e) {
-            throw new WebToeicException(ResponseCode.INVALID_ROLE, ResponseObject.ROLE);
+            throw new WebToeicException(ResponseCode.INVALID, ResponseObject.ROLE);
         }
         User user = new User(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
@@ -173,29 +180,16 @@ public class AuthenticationService {
     }
 
     private String generateToken(User user) {
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-
-        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getEmail())
-                .issuer(ISSUER)
-                .issueTime(new Date())
-                .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
-                .jwtID(UUID.randomUUID().toString())
+        SecretKey key = Keys.hmacShaKeyFor(SIGNER_KEY.getBytes());
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuer(ISSUER)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .setId(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
-                .build();
-
-        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
-        JWSObject jwsObject = new JWSObject(header, payload);
-
-        try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-            return jwsObject.serialize();
-        } catch (JOSEException e) {
-            log.error("Cannot create token", e);
-            throw new WebToeicException(ResponseCode.CANNOT_CREATE, ResponseObject.TOKEN);
-        }
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {

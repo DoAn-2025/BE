@@ -1,0 +1,128 @@
+package com.doan2025.webtoeic.service.impl;
+
+import com.doan2025.webtoeic.constants.enums.ERole;
+import com.doan2025.webtoeic.constants.enums.ResponseCode;
+import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.domain.User;
+import com.doan2025.webtoeic.dto.request.UserRequest;
+import com.doan2025.webtoeic.dto.response.StudentResponse;
+import com.doan2025.webtoeic.dto.response.UserResponse;
+import com.doan2025.webtoeic.exception.WebToeicException;
+import com.doan2025.webtoeic.repository.UserRepository;
+import com.doan2025.webtoeic.service.UserService;
+import com.doan2025.webtoeic.utils.CommonUtil;
+import com.doan2025.webtoeic.utils.FieldUpdateUtil;
+import com.doan2025.webtoeic.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    @Override
+    public UserResponse getUserCurrent(HttpServletRequest request) {
+        String email = jwtUtil.getEmailFromToken(request);
+        if(email == null) {
+            throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
+        }
+        return userRepository.findUser(email).orElseThrow(
+                () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
+        );
+    }
+
+    @Override
+    public UserResponse getUserDetails(UserRequest request) {
+        if (request.getId() == null) {
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.ID);
+        }
+        return userRepository.findUserById(request).orElseThrow(
+                () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
+        );
+    }
+
+    @Override
+    public UserResponse updateUserDetails(HttpServletRequest httpServletRequest, UserRequest request) {
+        if (request.getId() == null) {
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.ID);
+        }
+
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(
+                        () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
+                );
+
+        String email = jwtUtil.getEmailFromToken(httpServletRequest);
+
+        // check permission manager/consultant
+        if(userRepository.findByEmail(email)
+                .stream().anyMatch(u -> u.getRole().equals(ERole.MANAGER)
+                                    || u.getRole().equals(ERole.CONSULTANT))) {
+            // function: disable user
+            if(request.getIsActive() != null) {
+                user.setIsActive(request.getIsActive());
+            }
+            // function: delete user
+            if(request.getIsDelete() != null) {
+                user.setIsDelete(request.getIsDelete());
+            }
+        }else {
+            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        }
+
+        // check own permission owner
+        if(!email.equals(user.getEmail())) {
+            throw new WebToeicException(ResponseCode.UNAUTHORIZED, ResponseObject.USER);
+        }else {
+            // function: change password
+            if(request.getPassword() != null && request.getOldPassword() != null) {
+                if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+                    throw new WebToeicException(ResponseCode.NOT_MATCHED, ResponseObject.PASSWORD);
+                }
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+            // function: update info
+            List.of(
+                    new FieldUpdateUtil<>(user::getFirstName, user::setFirstName, request.getFirstName()),
+                    new FieldUpdateUtil<>(user::getLastName, user::setLastName, request.getLastName()),
+                    new FieldUpdateUtil<>(user::getPhone, user::setPhone, request.getPhone()),
+                    new FieldUpdateUtil<>(user::getAddress, user::setAddress, request.getAddress()),
+                    new FieldUpdateUtil<>(user::getDob, user::setDob, CommonUtil.parseDate(request.getDob())),
+                    new FieldUpdateUtil<>(user::getGender, user::setGender, CommonUtil.convertIntegerToEGender(request.getGender())),
+                    new FieldUpdateUtil<>(user::getAvatarUrl, user::setAvatarUrl, request.getAvatarUrl())
+            ).forEach(FieldUpdateUtil::updateIfNeeded);
+
+            if(user.getRole().equals(ERole.MANAGER)){
+
+            }else if(user.getRole().equals(ERole.CONSULTANT)){
+
+            }else if(user.getRole().equals(ERole.TEACHER)){
+
+            }else {
+                List.of(
+                        new FieldUpdateUtil<>(user.getStudent()::getEducation, user.getStudent()::setEducation, request.getEducation()),
+                        new FieldUpdateUtil<>(user.getStudent()::getMajor, user.getStudent()::setMajor, request.getMajor())
+                ).forEach(FieldUpdateUtil::updateIfNeeded);
+            }
+        }
+
+        User savedUser = userRepository.save(user);
+        UserResponse savedUserResponse = modelMapper.map(savedUser, UserResponse.class);
+        StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);
+        savedUserResponse.setStudent(studentResponse);
+        return savedUserResponse;
+    }
+
+}
