@@ -66,47 +66,58 @@ public class UserServiceImpl implements UserService {
 
         String email = jwtUtil.getEmailFromToken(httpServletRequest);
 
-        // check permission
+        // check permission manager/consultant
+        if(userRepository.findByEmail(email)
+                .stream().anyMatch(u -> u.getRole().equals(ERole.MANAGER)
+                                    || u.getRole().equals(ERole.CONSULTANT))) {
+            // function: disable user
+            if(request.getIsActive() != null) {
+                user.setIsActive(request.getIsActive());
+            }
+            // function: delete user
+            if(request.getIsDelete() != null) {
+                user.setIsDelete(request.getIsDelete());
+            }
+        }else {
+            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        }
+
+        // check own permission owner
         if(!email.equals(user.getEmail())) {
             throw new WebToeicException(ResponseCode.UNAUTHORIZED, ResponseObject.USER);
-        }
-        // function: disable user
-        if(request.getIsActive() != null) {
-            user.setIsActive(request.getIsActive());
-        }
-        // function: delete user
-        if(request.getIsDelete() != null) {
-            user.setIsDelete(request.getIsDelete());
-        }
-        // function: change password
-        if(request.getPassword() != null && request.getOldPassword() != null) {
-            if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
-                throw new WebToeicException(ResponseCode.NOT_MATCHED, ResponseObject.PASSWORD);
-            }
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-        // function: update info
-        List.of(
-                new FieldUpdateUtil<>(user::getFirstName, user::setFirstName, request.getFirstName()),
-                new FieldUpdateUtil<>(user::getLastName, user::setLastName, request.getLastName()),
-                new FieldUpdateUtil<>(user::getPhone, user::setPhone, request.getPhone()),
-                new FieldUpdateUtil<>(user::getAddress, user::setAddress, request.getAddress()),
-                new FieldUpdateUtil<>(user::getDob, user::setDob, CommonUtil.parseDate(request.getDob())),
-                new FieldUpdateUtil<>(user::getGender, user::setGender, CommonUtil.convertIntegerToEGender(request.getGender())),
-                new FieldUpdateUtil<>(user::getAvatarUrl, user::setAvatarUrl, request.getAvatarUrl())
-        ).forEach(FieldUpdateUtil::updateIfNeeded);
-        if(user.getRole().equals(ERole.MANAGER)){
-
-        }else if(user.getRole().equals(ERole.CONSULTANT)){
-
-        }else if(user.getRole().equals(ERole.TEACHER)){
-
         }else {
+            // function: change password
+            if(request.getPassword() != null && request.getOldPassword() != null) {
+                if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+                    throw new WebToeicException(ResponseCode.NOT_MATCHED, ResponseObject.PASSWORD);
+                }
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+            // function: update info
             List.of(
-                    new FieldUpdateUtil<>(user.getStudent()::getEducation, user.getStudent()::setEducation, request.getEducation()),
-                    new FieldUpdateUtil<>(user.getStudent()::getMajor, user.getStudent()::setMajor, request.getMajor())
+                    new FieldUpdateUtil<>(user::getFirstName, user::setFirstName, request.getFirstName()),
+                    new FieldUpdateUtil<>(user::getLastName, user::setLastName, request.getLastName()),
+                    new FieldUpdateUtil<>(user::getPhone, user::setPhone, request.getPhone()),
+                    new FieldUpdateUtil<>(user::getAddress, user::setAddress, request.getAddress()),
+                    new FieldUpdateUtil<>(user::getDob, user::setDob, CommonUtil.parseDate(request.getDob())),
+                    new FieldUpdateUtil<>(user::getGender, user::setGender, CommonUtil.convertIntegerToEGender(request.getGender())),
+                    new FieldUpdateUtil<>(user::getAvatarUrl, user::setAvatarUrl, request.getAvatarUrl())
             ).forEach(FieldUpdateUtil::updateIfNeeded);
+
+            if(user.getRole().equals(ERole.MANAGER)){
+
+            }else if(user.getRole().equals(ERole.CONSULTANT)){
+
+            }else if(user.getRole().equals(ERole.TEACHER)){
+
+            }else {
+                List.of(
+                        new FieldUpdateUtil<>(user.getStudent()::getEducation, user.getStudent()::setEducation, request.getEducation()),
+                        new FieldUpdateUtil<>(user.getStudent()::getMajor, user.getStudent()::setMajor, request.getMajor())
+                ).forEach(FieldUpdateUtil::updateIfNeeded);
+            }
         }
+
         User savedUser = userRepository.save(user);
         UserResponse savedUserResponse = modelMapper.map(savedUser, UserResponse.class);
         StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);

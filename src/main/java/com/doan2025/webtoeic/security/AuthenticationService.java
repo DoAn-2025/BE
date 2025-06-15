@@ -148,7 +148,7 @@ public class AuthenticationService {
                 role = ERole.fromValue(request.getRole());
             }
         } catch (IllegalArgumentException e) {
-            throw new WebToeicException(ResponseCode.INVALID_ROLE, ResponseObject.ROLE);
+            throw new WebToeicException(ResponseCode.INVALID, ResponseObject.ROLE);
         }
         User user = new User(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
