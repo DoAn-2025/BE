@@ -19,8 +19,8 @@ services:
       - key: JWT_SIGNER_KEY
         sync: false  # Nhập thủ công trên dashboard
       - key: CLOUD_NAME
-        sync:
+        sync: false
       - key: API_KEY
-        sync:
+        sync: false
       - key: API_SECRET
-        sync:
+        sync: false
