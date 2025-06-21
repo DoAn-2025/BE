@@ -8,4 +8,6 @@ public interface UserService {
     UserResponse getUserCurrent(HttpServletRequest request);
     UserResponse getUserDetails(UserRequest request);
     UserResponse updateUserDetails(HttpServletRequest request,UserRequest userRequest);
+    UserResponse deleteOrDisableUser(UserRequest request);
+    void resetPassword(UserRequest request);
 }

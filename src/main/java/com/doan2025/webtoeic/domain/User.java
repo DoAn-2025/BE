@@ -2,6 +2,7 @@ package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.EGender;
 import com.doan2025.webtoeic.constants.enums.ERole;
+import com.doan2025.webtoeic.utils.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -55,6 +56,12 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private ERole role;
@@ -78,6 +85,23 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private Student student;
+
+    @OneToOne(mappedBy = "user")
+    private ForgotPassword forgotPassword;
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
 
     public User(String email, String password, String firstName, String lastName, ERole role) {
         this.email = email;

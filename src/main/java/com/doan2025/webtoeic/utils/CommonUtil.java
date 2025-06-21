@@ -1,12 +1,26 @@
 package com.doan2025.webtoeic.utils;
 
+import com.doan2025.webtoeic.constants.Constants;
 import com.doan2025.webtoeic.constants.enums.EGender;
+import com.doan2025.webtoeic.domain.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 public class CommonUtil {
+
+    public static String replaceValueResetPassword(User user, Integer otp) {
+        return Constants.BODY_REST_PASSWORD
+                .replace(Constants.USERNAME, user.getFirstName() + " " + user.getLastName())
+                .replace(Constants.OTP_CODE, String.valueOf(otp));
+    }
+
+    public static Integer otpGenerator() {
+        Random r = new Random();
+        return r.nextInt(100_000, 999_999);
+    }
 
     // Hàm parse dob từ String sang Date
     public static Date parseDate(String date) {

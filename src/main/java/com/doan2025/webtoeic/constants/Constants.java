@@ -5,6 +5,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Constants {
+    public static final String USERNAME = "username";
+    public static final String OTP_CODE = "OTP_Code";
+    public static final String SUBJECT_RESET_PASSWORD = "[Hệ thống TOEIC] Mã xác thực đặt lại mật khẩu của bạn";
+    public static final String BODY_REST_PASSWORD = "Xin chào username,\n" +
+            "\n" +
+            "Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình. Vui lòng sử dụng mã OTP bên dưới để hoàn tất quá trình đặt lại mật khẩu.\n" +
+            "\n" +
+            "\uD83D\uDD12 Mã OTP của bạn là: OTP_Code\n" +
+            "⏰ Mã có hiệu lực trong vòng 5 phút kể từ thời điểm gửi.\n" +
+            "\n" +
+            "Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc liên hệ với chúng tôi để được hỗ trợ.\n" +
+            "\n" +
+            "Trân trọng,\n" +
+            "Hệ thống luyện thi TOEIC";
+
     public static final String REGEX_FILE_TYPE = "/v[0-9]+/";
     public static final String REGEX_FILE = "\\.[a-zA-Z]{3,4}$";
     public static final String QUALITY = "quality";
@@ -73,5 +88,6 @@ public class Constants {
         EXTENSION_TO_TYPE.put(PPT, DOCUMENT);
         EXTENSION_TO_TYPE.put(PPTX, DOCUMENT);
     }
+
 
 }

@@ -26,7 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             LEFT JOIN u.consultant c 
             LEFT JOIN u.teacher t
             LEFT JOIN u.manager m 
-            WHERE u.email = :email
+            WHERE u.email = :email 
+                AND u.isActive = true AND u.isDelete = false
 
 """)
     Optional<UserResponse> findUser(String email);
@@ -41,7 +42,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             LEFT JOIN u.consultant c 
             LEFT JOIN u.teacher t
             LEFT JOIN u.manager m 
-            WHERE u.id = :#{#request.id}
+            WHERE u.id = :#{#request.id} 
+                AND u.isActive = true AND u.isDelete = false
 
 """)
     Optional<UserResponse>  findUserById(UserRequest request);

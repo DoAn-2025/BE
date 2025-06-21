@@ -22,8 +22,11 @@ public class UserRequest {
     private String dob;
     private Integer gender;
     private String avatarUrl;
-    private Boolean isActive;
-    private Boolean isDelete;
     private String education;
     private String major;
+
+    private Boolean isActive; // for manager role
+    private Boolean isDelete; // for manager role
+
+    private String token; // for reset password
 }

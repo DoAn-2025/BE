@@ -43,6 +43,20 @@ public class JwtUtil {
         }
     }
 
+    public String getEmailFromTokenString(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(SIGNER_KEY.getBytes());
+            Jws<Claims> jws = Jwts.parser()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return jws.getBody().getSubject();
+        } catch (JwtException e) {
+            // Xử lý lỗi nếu token không hợp lệ
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
+
     public SecretKey getSigningKey() {
         if (SIGNER_KEY == null) {
             throw new IllegalStateException("signerKey is null. Please check the configuration for jwt.signerKey");

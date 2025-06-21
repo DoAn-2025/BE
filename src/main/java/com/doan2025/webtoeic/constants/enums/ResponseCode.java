@@ -24,6 +24,7 @@ public enum ResponseCode {
     NOT_EXISTED(404, "{entity} not existed", HttpStatus.NOT_FOUND),
     IS_NULL(404, "{entity} is null", HttpStatus.BAD_REQUEST),
     UNSUPPORTED(404, "Unsupported: {entity}", HttpStatus.BAD_REQUEST),
+    NOT_AVAILABLE(404, "{entity} not available", HttpStatus.BAD_REQUEST),
 
     SUCCESS (200, "{entity} is successfully", HttpStatus.OK),
     CREATE_SUCCESS(200, "{entity} has been created ", HttpStatus.CREATED),

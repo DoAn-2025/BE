@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUserDetails(HttpServletRequest httpServletRequest, UserRequest request) {
+
         if (request.getId() == null) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.ID);
         }
@@ -64,23 +65,11 @@ public class UserServiceImpl implements UserService {
                         () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
                 );
 
-        String email = jwtUtil.getEmailFromToken(httpServletRequest);
-
-        // check permission manager/consultant
-        if(userRepository.findByEmail(email)
-                .stream().anyMatch(u -> u.getRole().equals(ERole.MANAGER)
-                                    || u.getRole().equals(ERole.CONSULTANT))) {
-            // function: disable user
-            if(request.getIsActive() != null) {
-                user.setIsActive(request.getIsActive());
-            }
-            // function: delete user
-            if(request.getIsDelete() != null) {
-                user.setIsDelete(request.getIsDelete());
-            }
-        }else {
-            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        if(!user.getIsActive() && user.getIsDelete()) {
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
         }
+
+        String email = jwtUtil.getEmailFromToken(httpServletRequest);
 
         // check own permission owner
         if(!email.equals(user.getEmail())) {
@@ -92,7 +81,9 @@ public class UserServiceImpl implements UserService {
                     throw new WebToeicException(ResponseCode.NOT_MATCHED, ResponseObject.PASSWORD);
                 }
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
+                return modelMapper.map(userRepository.save(user), UserResponse.class) ;
             }
+
             // function: update info
             List.of(
                     new FieldUpdateUtil<>(user::getFirstName, user::setFirstName, request.getFirstName()),
@@ -123,6 +114,46 @@ public class UserServiceImpl implements UserService {
         StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);
         savedUserResponse.setStudent(studentResponse);
         return savedUserResponse;
+    }
+
+    // function: delete or disable user
+    @Override
+    public UserResponse deleteOrDisableUser(UserRequest request) {
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(
+                        () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
+                );
+        // function: disable user
+        if(request.getIsActive() != null && !request.getIsActive().equals(user.getIsActive())) {
+            user.setIsActive(request.getIsActive());
+        }
+        // function: delete user
+        if(request.getIsDelete() != null && !request.getIsDelete().equals(user.getIsDelete())) {
+            user.setIsDelete(request.getIsDelete());
+        }
+        return modelMapper.map(userRepository.save(user), UserResponse.class) ;
+    }
+
+    // function: reset password
+    @Override
+    public void resetPassword(UserRequest request){
+        // check token not null
+        if(request.getToken() == null) {
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.TOKEN);
+        }
+        // check mail not null
+        String email = jwtUtil.getEmailFromTokenString(request.getToken());
+        if(email == null) {
+            throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
+        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+
+        if(!user.getIsActive() && user.getIsDelete()) {
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
+        }
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user) ;
     }
 
 }
