@@ -24,3 +24,5 @@ services:
         sync: false
       - key: API_SECRET
         sync: false
+      - key: PASSWORD_KEY_EMAIL
+        sync: false
