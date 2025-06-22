@@ -26,7 +26,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS_POST = {
             "/user",
-            "/api/v1/auth/*",
+            "/api/v1/auth/**",
     };
     private final String[] PUBLIC_ENDPOINTS_GET = {
             "/swagger-ui.html",
