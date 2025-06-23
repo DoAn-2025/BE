@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ResponseObject {
-    ROLE, USER, PASSWORD,TOKEN,
+    ROLE, USER, PASSWORD,TOKEN, POST,
 
     USERNAME, EMAIL, IDENTITY_NUMBER, CODE, ID, FILE, URL,
 

@@ -31,11 +31,14 @@ public class SecurityConfig {
             "/api/v1/auth/verify-email",
             "/api/v1/auth/verify-otp",
             "/api/v1/auth/reset-password"
+
     };
     private final String[] PUBLIC_ENDPOINTS_GET = {
             "/swagger-ui.html",
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/api/v1/post",
+            "/api/v1/post/{id}"
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

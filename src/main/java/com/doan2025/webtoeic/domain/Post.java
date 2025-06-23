@@ -1,0 +1,78 @@
+package com.doan2025.webtoeic.domain;
+
+import com.doan2025.webtoeic.constants.enums.ECategoryPost;
+import com.doan2025.webtoeic.utils.TimeUtil;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@Entity
+@Table(name = "post")
+@AllArgsConstructor
+@NoArgsConstructor
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "theme_url")
+    private String themeUrl;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column (name = "is_delete")
+    private Boolean isDelete;
+
+    @ManyToOne
+    @JoinColumn(name = "author")
+    private User author;
+
+    @Column(name = "category_post")
+    @Enumerated(EnumType.STRING)
+    private ECategoryPost categoryPost;
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", themeUrl='" + themeUrl + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", isActive=" + isActive +
+                ", isDelete=" + isDelete +
+                '}';
+    }
+}

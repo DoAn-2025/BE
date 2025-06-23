@@ -1,0 +1,67 @@
+package com.doan2025.webtoeic.controller;
+
+import com.doan2025.webtoeic.constants.enums.ResponseCode;
+import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.dto.SearchBaseDto;
+import com.doan2025.webtoeic.dto.request.PostRequest;
+import com.doan2025.webtoeic.dto.response.ApiResponse;
+import com.doan2025.webtoeic.dto.response.PostResponse;
+import com.doan2025.webtoeic.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/post")
+public class PostController {
+    private final PostService postService;
+
+    @GetMapping()
+    @PreAuthorize("hasRole('STUDENT')")
+    public ApiResponse<List<PostResponse>> getPosts(HttpServletRequest request,
+                                                    @RequestBody SearchBaseDto dto,
+                                                    Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getPosts(dto, pageable));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('STUDENT') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
+    public ApiResponse<PostResponse> getPostDetail(HttpServletRequest request, @PathVariable("id") Long id) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getPostDetail(request, id));
+    }
+
+    @GetMapping("/consultant")
+    @PreAuthorize("hasRole('CONSULTANT')")
+    public ApiResponse<List<PostResponse>> getOwnPosts(HttpServletRequest request,
+                                                       @RequestBody SearchBaseDto dto,
+                                                       Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getOwnPosts(request, dto, pageable));
+    }
+
+    @GetMapping("/manager")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<List<PostResponse>> getAllPosts(HttpServletRequest request,
+                                                       @RequestBody SearchBaseDto dto,
+                                                       Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getAllPosts(dto, pageable));
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('CONSULTANT')")
+    public ApiResponse<PostResponse> createPost(HttpServletRequest request, @RequestBody PostRequest postRequest) {
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.POST, postService.createPost(postRequest));
+    }
+
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
+    public ApiResponse<PostResponse> updatePost(HttpServletRequest request, @RequestBody PostRequest postRequest) {
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.POST, postService.updatePost(request,postRequest));
+    }
+
+
+}
