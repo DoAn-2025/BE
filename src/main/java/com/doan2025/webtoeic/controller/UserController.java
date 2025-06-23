@@ -2,14 +2,18 @@ package com.doan2025.webtoeic.controller;
 
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.UserRequest;
 import com.doan2025.webtoeic.dto.response.ApiResponse;
 import com.doan2025.webtoeic.dto.response.UserResponse;
 import com.doan2025.webtoeic.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +25,14 @@ public class UserController {
     @PreAuthorize("hasRole('STUDENT') OR hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<UserResponse> getUserCurrent(HttpServletRequest request) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, userService.getUserCurrent(request));
+    }
+
+    @PostMapping("/filter")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
+    public ApiResponse<List<UserResponse>> getListUserFilter(HttpServletRequest request,
+                                                             @RequestBody SearchBaseDto dto,
+                                                             Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, userService.getListUserFilter(request,dto, pageable));
     }
 
     @PostMapping()

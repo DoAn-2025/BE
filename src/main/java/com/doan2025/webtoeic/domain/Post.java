@@ -50,7 +50,7 @@ public class Post {
 
     @PrePersist
     protected void onCreate() {
-        this.isActive = true;
+        this.isActive = false;
         this.isDelete = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;

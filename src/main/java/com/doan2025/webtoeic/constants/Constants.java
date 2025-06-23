@@ -1,10 +1,20 @@
 package com.doan2025.webtoeic.constants;
 
+import com.doan2025.webtoeic.constants.enums.ERole;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Constants {
+    public static final List<ERole> ROLE_BELOW_MANAGER = List.of(ERole.CONSULTANT, ERole.TEACHER, ERole.STUDENT);
+    public static final List<ERole> ROLE_BELOW_CONSULTANT = List.of(ERole.TEACHER, ERole.STUDENT);
+
+    public static final String PRE_CODE_STUDENT = "STU";
+    public static final String PRE_CODE_TEACHER = "TEA";
+    public static final String PRE_CODE_CONSULTANT = "CON";
+    public static final String PRE_CODE_MANAGER = "MAN";
+
     public static final String USERNAME = "username";
     public static final String OTP_CODE = "OTP_Code";
     public static final String SUBJECT_RESET_PASSWORD = "[Hệ thống TOEIC] Mã xác thực đặt lại mật khẩu của bạn";

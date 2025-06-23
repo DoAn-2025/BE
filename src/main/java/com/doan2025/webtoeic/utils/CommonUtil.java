@@ -2,6 +2,7 @@ package com.doan2025.webtoeic.utils;
 
 import com.doan2025.webtoeic.constants.Constants;
 import com.doan2025.webtoeic.constants.enums.EGender;
+import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.domain.User;
 
 import java.text.ParseException;
@@ -10,6 +11,15 @@ import java.util.Date;
 import java.util.Random;
 
 public class CommonUtil {
+
+    public static String generatedUserCode(ERole role) {
+        return switch (role) {
+            case TEACHER -> Constants.PRE_CODE_TEACHER + new Random().nextLong(100_000_000, 999_999_999);
+            case CONSULTANT -> Constants.PRE_CODE_CONSULTANT + new Random().nextLong(100_000_000, 999_999_999);
+            case MANAGER -> Constants.PRE_CODE_MANAGER + new Random().nextLong(100_000_000, 999_999_999);
+            default -> Constants.PRE_CODE_STUDENT + new Random().nextLong(100_000_000, 999_999_999);
+        };
+    }
 
     public static String replaceValueResetPassword(User user, Integer otp) {
         return Constants.BODY_REST_PASSWORD

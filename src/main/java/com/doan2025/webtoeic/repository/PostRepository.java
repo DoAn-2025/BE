@@ -20,7 +20,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
              p.updatedAt, p.isActive, p.isDelete)
         FROM Post p
         WHERE (COALESCE(:#{#dto.title}, null ) is null or p.title LIKE CONCAT('%',:#{#dto.title},'%'))
-            AND p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate}
+            AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null) 
+                    OR p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
             AND (COALESCE(:#{dto.categoryPost}, null) is null or p.categoryPost in (:#{dto.categoryPost}) )
             
 """)

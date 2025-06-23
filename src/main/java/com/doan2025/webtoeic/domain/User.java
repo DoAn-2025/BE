@@ -2,6 +2,7 @@ package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.EGender;
 import com.doan2025.webtoeic.constants.enums.ERole;
+import com.doan2025.webtoeic.utils.CommonUtil;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,6 +28,9 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "code", unique = true, nullable = false)
+    private String code;
 
     @Column(name = "first_name")
     private String firstName;
@@ -95,6 +99,7 @@ public class User {
         this.isDelete = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;
+        this.code  = CommonUtil.generatedUserCode(this.role);
 
     }
 
