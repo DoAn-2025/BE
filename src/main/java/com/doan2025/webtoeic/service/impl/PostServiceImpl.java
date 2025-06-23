@@ -1,16 +1,22 @@
 package com.doan2025.webtoeic.service.impl;
 
+import com.doan2025.webtoeic.constants.enums.ECategoryPost;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.domain.Post;
+import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.PostRequest;
 import com.doan2025.webtoeic.dto.response.PostResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.PostRepository;
+import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.PostService;
+import com.doan2025.webtoeic.service.UserService;
 import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +27,8 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final JwtUtil jwtUtil;
+    private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -53,8 +61,18 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostResponse createPost(PostRequest postRequest) {
-        return null;
+    public PostResponse createPost(HttpServletRequest request, PostRequest postRequest) {
+        Post post = modelMapper.map(postRequest, Post.class);
+        String email = jwtUtil.getEmailFromToken(request);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        post.setAuthor(user);
+
+        ECategoryPost categoryPost = ECategoryPost.fromValue(postRequest.getCategoryId());
+        post.setCategoryPost(categoryPost);
+
+        return modelMapper.map(postRepository.save(post), PostResponse.class);
     }
 
     @Override

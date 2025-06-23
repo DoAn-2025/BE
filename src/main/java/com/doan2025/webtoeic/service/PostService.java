@@ -14,7 +14,7 @@ public interface PostService {
     List<PostResponse> getOwnPosts(HttpServletRequest request, SearchBaseDto dto, Pageable pageable);
     List<PostResponse> getPosts(SearchBaseDto dto, Pageable pageable);
     PostResponse getPostDetail(HttpServletRequest request, Long id); // get detail
-    PostResponse createPost(PostRequest postRequest);
+    PostResponse createPost(HttpServletRequest request, PostRequest postRequest);
     PostResponse updatePost(HttpServletRequest request, PostRequest postRequest);
     PostResponse disableOrDeletePost(HttpServletRequest request, PostRequest postRequest);
 }

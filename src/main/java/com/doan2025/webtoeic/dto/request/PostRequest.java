@@ -14,5 +14,5 @@ public class PostRequest {
     private Date updatedAt;
     private Boolean isActive;
     private Boolean isDelete;
-    private Long categoryId;
+    private Integer categoryId;
 }

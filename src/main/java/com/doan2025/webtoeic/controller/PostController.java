@@ -35,7 +35,7 @@ public class PostController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getPostDetail(request, id));
     }
 
-    @GetMapping("/consultant")
+    @GetMapping("/own-posts")
     @PreAuthorize("hasRole('CONSULTANT')")
     public ApiResponse<List<PostResponse>> getOwnPosts(HttpServletRequest request,
                                                        @RequestBody SearchBaseDto dto,
@@ -43,7 +43,7 @@ public class PostController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getOwnPosts(request, dto, pageable));
     }
 
-    @GetMapping("/manager")
+    @GetMapping("/all-posts")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<List<PostResponse>> getAllPosts(HttpServletRequest request,
                                                        @RequestBody SearchBaseDto dto,
@@ -54,7 +54,7 @@ public class PostController {
     @PostMapping("/create")
     @PreAuthorize("hasRole('CONSULTANT')")
     public ApiResponse<PostResponse> createPost(HttpServletRequest request, @RequestBody PostRequest postRequest) {
-        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.POST, postService.createPost(postRequest));
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.POST, postService.createPost(request, postRequest));
     }
 
     @PostMapping("/update")
