@@ -99,8 +99,6 @@ public class User {
         this.isDelete = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;
-        this.code  = CommonUtil.generatedUserCode(this.role);
-
     }
 
     @PreUpdate

@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Random;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -170,6 +171,14 @@ public class AuthenticationService {
                 request.getFirstName(),
                 request.getLastName(),
                 role);
+        boolean check = false;
+        while(!check) {
+            String code = generatedUserCode(role);
+            if(!userRepository.existsByCode(code)){
+                user.setCode(code);
+                check = true;
+            }
+        }
         User savedUser = userRepository.save(user);
         if(savedUser.getRole().equals(ERole.MANAGER)){
             Manager manager = new Manager();
@@ -282,5 +291,14 @@ public class AuthenticationService {
             throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
         }
         return user;
+    }
+
+    private String generatedUserCode(ERole role) {
+        return switch (role) {
+            case TEACHER -> Constants.PRE_CODE_TEACHER + new Random().nextLong(100_000_000, 999_999_999);
+            case CONSULTANT -> Constants.PRE_CODE_CONSULTANT + new Random().nextLong(100_000_000, 999_999_999);
+            case MANAGER -> Constants.PRE_CODE_MANAGER + new Random().nextLong(100_000_000, 999_999_999);
+            default -> Constants.PRE_CODE_STUDENT + new Random().nextLong(100_000_000, 999_999_999);
+        };
     }
 }

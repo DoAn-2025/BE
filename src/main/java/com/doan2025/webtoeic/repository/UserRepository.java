@@ -80,4 +80,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<UserResponse>  findUserById(UserRequest request);
 
     Optional<User> findById(Long id);
+
+    boolean existsByCode(String code);
 }
