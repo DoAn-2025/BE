@@ -36,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
 
         if(!userRepository.existsByEmail(MANAGER_EMAIL)) {
             User user = new User();
@@ -46,7 +46,6 @@ public class DataInitializer implements CommandLineRunner {
             user.setLastName("Admin");
             user.setRole(ERole.MANAGER);
             userRepository.save(user);
-
         }
         if(!userRepository.existsByEmail(CONSULTANT_EMAIL)) {
             User user = new User();

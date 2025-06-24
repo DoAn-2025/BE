@@ -10,9 +10,10 @@ public class PostRequest {
     private String title;
     private String content;
     private String themeUrl;
+    private Integer categoryId;
     private Date createdAt;
     private Date updatedAt;
+    // for role manager
     private Boolean isActive;
     private Boolean isDelete;
-    private Integer categoryId;
 }

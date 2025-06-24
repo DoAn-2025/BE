@@ -44,7 +44,7 @@ public class Post {
     @JoinColumn(name = "author")
     private User author;
 
-    @Column(name = "category_post")
+    @Column(name = "category_post", nullable = false)
     @Enumerated(EnumType.STRING)
     private ECategoryPost categoryPost;
 

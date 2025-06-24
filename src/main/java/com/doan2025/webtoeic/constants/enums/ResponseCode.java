@@ -38,6 +38,7 @@ public enum ResponseCode {
     CANNOT_UPDATE(404, "Cannot update {entity}", HttpStatus.BAD_REQUEST),
     CANNOT_CREATE(404, "Cannot create {entity}", HttpStatus.BAD_REQUEST),
     CANNOT_UPLOAD(404, "Cannot upload {entity}", HttpStatus.BAD_REQUEST),
+    CANNOT_SEND(404, "Cannot send {entity}", HttpStatus.BAD_REQUEST),
 
     NOT_MATCHED(404, "Not matched {entity}", HttpStatus.BAD_REQUEST),
     NOT_PERMISSION(404, "{entity} not permission ", HttpStatus.BAD_REQUEST),

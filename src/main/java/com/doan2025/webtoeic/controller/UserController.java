@@ -9,6 +9,7 @@ import com.doan2025.webtoeic.dto.response.UserResponse;
 import com.doan2025.webtoeic.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class UserController {
 
     @PostMapping("/filter")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
-    public ApiResponse<List<UserResponse>> getListUserFilter(HttpServletRequest request,
+    public ApiResponse<Page<UserResponse>> getListUserFilter(HttpServletRequest request,
                                                              @RequestBody SearchBaseDto dto,
                                                              Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, userService.getListUserFilter(request,dto, pageable));

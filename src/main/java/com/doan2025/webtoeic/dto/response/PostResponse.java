@@ -1,5 +1,6 @@
 package com.doan2025.webtoeic.dto.response;
 
+import com.doan2025.webtoeic.constants.enums.ECategoryPost;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,10 +20,11 @@ public class PostResponse {
     private Date updatedAt;
     private Boolean isActive;
     private Boolean isDelete;
-    private Boolean isAuthor;
+    private Boolean isOwn;
+    private String category;
     private UserResponse author;
 
-    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, Boolean isAuthor) {
+    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category, Boolean isOwn) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -31,10 +33,11 @@ public class PostResponse {
         this.updatedAt = updatedAt;
         this.isActive = isActive;
         this.isDelete = isDelete;
-        this.isAuthor = isAuthor;
+        this.category = category == null ? null : category.name();
+        this.isOwn = isOwn;
     }
 
-    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete) {
+    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -43,13 +46,15 @@ public class PostResponse {
         this.updatedAt = updatedAt;
         this.isActive = isActive;
         this.isDelete = isDelete;
+        this.category = category == null ? null : category.name();
     }
 
-    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt) {
+    public PostResponse(Long id, String title, String content, String themeUrl, ECategoryPost category, Date createdAt) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.themeUrl = themeUrl;
         this.createdAt = createdAt;
+        this.category = category == null ? null : category.name();
     }
 }

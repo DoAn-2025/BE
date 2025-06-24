@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public List<UserResponse> getListUserFilter(HttpServletRequest request,SearchBaseDto dto, Pageable pageable) {
+    public Page<UserResponse> getListUserFilter(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
         String email = jwtUtil.getEmailFromToken(request);
         if(email == null) {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
@@ -52,8 +53,10 @@ public class UserServiceImpl implements UserService {
         } else {
             roles.addAll(Constants.ROLE_BELOW_CONSULTANT);
         }
-        return userRepository.findListUserFilter(dto, roles, pageable)
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        if(dto.getUserRoles() != null && !dto.getUserRoles().isEmpty()) {
+            dto.setUserRoles(null);
+        }
+        return userRepository.findListUserFilter(dto, roles, pageable);
     }
 
     @Override

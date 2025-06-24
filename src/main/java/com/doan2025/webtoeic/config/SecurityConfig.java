@@ -30,8 +30,9 @@ public class SecurityConfig {
             "/api/v1/auth/register",
             "/api/v1/auth/verify-email",
             "/api/v1/auth/verify-otp",
-            "/api/v1/auth/reset-password"
-
+            "/api/v1/auth/reset-password",
+            "/api/v1/cloud/upload",
+            "/api/v1/cloud/delete"
     };
     private final String[] PUBLIC_ENDPOINTS_GET = {
             "/swagger-ui.html",

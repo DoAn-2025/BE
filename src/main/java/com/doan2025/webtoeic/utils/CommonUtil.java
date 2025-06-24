@@ -2,7 +2,6 @@ package com.doan2025.webtoeic.utils;
 
 import com.doan2025.webtoeic.constants.Constants;
 import com.doan2025.webtoeic.constants.enums.EGender;
-import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.domain.User;
 
 import java.text.ParseException;
