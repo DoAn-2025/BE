@@ -39,7 +39,10 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/v1/post",
-            "/api/v1/post/{id}"
+            "/api/v1/post/{id}",
+            "/api/v1/category/post",
+            "/api/v1/category/role",
+            "/api/v1/category/gender"
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

@@ -251,6 +251,9 @@ public class AuthenticationService {
     public void verifyMail(VerifyRequest request) {
         User user = checkEmailUser(request);
         Integer otp = CommonUtil.otpGenerator();
+        if(forgotPasswordRepository.existsByUser(user)){
+            forgotPasswordRepository.deleteByUser(user);
+        }
         ForgotPassword fp = ForgotPassword.builder()
                 .otp(otp)
                 .expiryTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000))

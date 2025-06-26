@@ -1,0 +1,38 @@
+package com.doan2025.webtoeic.controller;
+
+import com.doan2025.webtoeic.constants.enums.ResponseCode;
+import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.dto.response.ApiResponse;
+import com.doan2025.webtoeic.dto.response.CategoryResponse;
+import com.doan2025.webtoeic.service.CategoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/category")
+@RequiredArgsConstructor
+public class CategoryController {
+
+    private final CategoryService categoryService;
+
+    @GetMapping("/post")
+    public ApiResponse<List<CategoryResponse>> getPosts() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryPost());
+    }
+
+    @GetMapping("/gender")
+    public ApiResponse<List<CategoryResponse>> getGenders() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryGender());
+    }
+
+    @GetMapping("/role")
+    public ApiResponse<List<CategoryResponse>> getRoles() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryRole());
+    }
+
+
+}

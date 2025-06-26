@@ -60,12 +60,4 @@ public class UserController {
         return ApiResponse.of(ResponseCode.SUCCESS, ResponseObject.USER, userService.deleteOrDisableUser(userRequest));
     }
 
-    @PostMapping(value = "/reset-password")
-    @PreAuthorize("hasRole('STUDENT') OR hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
-    public ApiResponse<UserResponse> resetPassword(HttpServletRequest request,@RequestBody UserRequest userRequest) {
-        return ApiResponse.of(ResponseCode.SUCCESS, ResponseObject.USER, userService.updateUserDetails(request,userRequest));
-    }
-
-
-
 }
