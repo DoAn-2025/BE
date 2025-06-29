@@ -1,0 +1,68 @@
+package com.doan2025.webtoeic.domain;
+
+import com.doan2025.webtoeic.constants.enums.EStatusOrder;
+import com.doan2025.webtoeic.utils.TimeUtil;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Entity
+@Data
+@Table(name = "order")
+@AllArgsConstructor
+@NoArgsConstructor
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "total_amount")
+    private Double totalAmount;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    @Column(name = "transaction_code")
+    private String transactionCode;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private EStatusOrder status;
+
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private User user;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", totalAmount=" + totalAmount +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", transactionCode='" + transactionCode + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", status=" + status +
+                '}';
+    }
+}
