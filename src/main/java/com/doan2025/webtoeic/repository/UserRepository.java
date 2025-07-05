@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = """
-        SELECT new com.doan2025.webtoeic.dto.response.UserResponse(
+        SELECT new com.doan2025.webtoeic.dto.response.UserResponse( u.id,
                             u.firstName, u.lastName, u.phone, u.address,
                             u.dob, u.gender, u.avatarUrl, u.isActive, u.isDelete,
                             s.education, s.major)
