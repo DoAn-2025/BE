@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         SELECT new com.doan2025.webtoeic.dto.response.UserResponse( u.id,
                             u.firstName, u.lastName, u.phone, u.address,
                             u.dob, u.gender, u.avatarUrl, u.isActive, u.isDelete,
-                            s.education, s.major)
+                            s.education, s.major, u.role)
         FROM User u
         LEFT JOIN u.student s
         LEFT JOIN u.consultant c

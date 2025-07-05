@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.dto.response;
 
 import com.doan2025.webtoeic.constants.enums.EGender;
+import com.doan2025.webtoeic.constants.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,9 +27,10 @@ public class UserResponse {
     private Boolean isDelete;
     private String education;
     private String major;
+    private String role;
     private StudentResponse student;
 
-    public UserResponse(Long id, String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major) {
+    public UserResponse(Long id, String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, ERole role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,6 +43,7 @@ public class UserResponse {
         this.isDelete = isDelete;
         this.education = education;
         this.major = major;
+        this.role = role != null ? role.name() : null;
     }
 
     public UserResponse(String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major) {
