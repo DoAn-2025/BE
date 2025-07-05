@@ -1,21 +1,23 @@
 package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.ECategoryCourse;
-import com.doan2025.webtoeic.constants.enums.EStatusCategory;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "course")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +31,6 @@ public class Course {
 
     @Column(name = "price")
     private BigDecimal price;
-
-    @Column(name = "promotional_price")
-    private BigDecimal promotionalPrice;
 
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
@@ -48,10 +47,6 @@ public class Course {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private EStatusCategory status;
-
     @Column(name = "category_course")
     @Enumerated(EnumType.STRING)
     private ECategoryCourse categoryCourse;
@@ -67,6 +62,12 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "updated_by")
     private User updatedBy;
+
+    @OneToMany(mappedBy = "course")
+    private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "course")
+    private List<Lesson> lessons;
 
     @PrePersist
     protected void onCreate() {
@@ -87,13 +88,11 @@ public class Course {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
-                ", promotionalPrice=" + promotionalPrice +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", isActive=" + isActive +
                 ", isDelete=" + isDelete +
-                ", status=" + status +
                 ", categoryCourse=" + categoryCourse +
                 '}';
     }

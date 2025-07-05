@@ -34,5 +34,10 @@ public class CategoryController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryRole());
     }
 
+    @GetMapping("/course")
+    public ApiResponse<List<CategoryResponse>> getCourses() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryCourse());
+    }
+
 
 }

@@ -1,0 +1,136 @@
+package com.doan2025.webtoeic.service.impl;
+
+import com.doan2025.webtoeic.constants.enums.ECategoryCourse;
+import com.doan2025.webtoeic.constants.enums.ERole;
+import com.doan2025.webtoeic.constants.enums.ResponseCode;
+import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.domain.Course;
+import com.doan2025.webtoeic.domain.Enrollment;
+import com.doan2025.webtoeic.domain.User;
+import com.doan2025.webtoeic.dto.request.CourseRequest;
+import com.doan2025.webtoeic.dto.response.CourseResponse;
+import com.doan2025.webtoeic.dto.response.PostResponse;
+import com.doan2025.webtoeic.exception.WebToeicException;
+import com.doan2025.webtoeic.repository.CourseRepository;
+import com.doan2025.webtoeic.repository.LessonRepository;
+import com.doan2025.webtoeic.repository.UserRepository;
+import com.doan2025.webtoeic.service.CourseService;
+import com.doan2025.webtoeic.utils.FieldUpdateUtil;
+import com.doan2025.webtoeic.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
+public class CourseServiceImpl implements CourseService {
+
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final LessonRepository lessonRepository;
+    private final JwtUtil jwtUtil;
+    private final ModelMapper modelMapper;
+
+
+    @Override
+    public CourseResponse createCourse(HttpServletRequest httpServletRequest, CourseRequest request) {
+        if(request.getCategoryId() == null){
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.CATEGORY);
+        }
+        if(request.getAuthorId() == null){
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.USER);
+        }
+        if (request.getTitle() == null || request.getTitle().isEmpty()) {
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.TITLE);
+        }
+        if(request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0){
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.PRICE);
+        }
+        User author = userRepository.findById(request.getAuthorId())
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        ECategoryCourse categoryCourse = ECategoryCourse.fromValue(request.getCategoryId());
+        User createdBy = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        Course course = Course.builder()
+                .author(author)
+                .categoryCourse(categoryCourse)
+                .price(request.getPrice())
+                .description(request.getDescription())
+                .title(request.getTitle())
+                .createdBy(createdBy)
+                .build();
+
+        return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+    }
+
+    @Override
+    public CourseResponse updateCourse(HttpServletRequest httpServletRequest, CourseRequest request) {
+        User updatedBy = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        Course course = courseRepository.findById(request.getId())
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
+        List.of(
+                new FieldUpdateUtil<>(course::getTitle, course::setTitle, request.getTitle()),
+                new FieldUpdateUtil<>(course::getDescription, course::setDescription, request.getDescription()),
+                new FieldUpdateUtil<>(course::getPrice, course::setPrice, request.getPrice()),
+                new FieldUpdateUtil<>(course::getAuthor, course::setAuthor,
+                        userRepository.findById(request.getAuthorId())
+                                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER))),
+                new FieldUpdateUtil<>(course::getThumbnailUrl, course::setThumbnailUrl, request.getThumbnailUrl()),
+                new FieldUpdateUtil<>(course::getCategoryCourse, course::setCategoryCourse, ECategoryCourse.fromValue(request.getCategoryId()))
+        ).forEach(FieldUpdateUtil::updateIfNeeded);
+        course.setUpdatedBy(updatedBy);
+        return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+    }
+
+    @Override
+    public CourseResponse disableOrDeleteCourse(HttpServletRequest httpServletRequest, CourseRequest request) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        Course course = courseRepository.findById(request.getId())
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
+        if(user.getRole().equals(ERole.MANAGER)){
+            // function: disable course
+            if(course.getIsActive() != null && !request.getIsActive().equals(course.getIsActive())) {
+                course.setIsActive(request.getIsActive());
+            }
+            // function: delete course
+            if (course.getIsDelete() != null && !course.getIsDelete().equals(request.getIsDelete())) {
+                course.setIsDelete(request.getIsDelete());
+            }
+            return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+        }
+        throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+    }
+
+    @Override
+    public CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
+        CourseResponse courseResponse = modelMapper.map(course, CourseResponse.class);
+        courseResponse.setIsBought(false);
+        for(Enrollment enrollment : course.getEnrollments()){
+            if (enrollment.getUser().equals(user)){
+                courseResponse.setIsBought(true);
+            }
+        }
+
+        return courseResponse;
+    }
+
+    @Override
+    public Page<CourseResponse> filterCourses(HttpServletRequest httpServletRequest, CourseRequest request, Pageable pageable) {
+        return null;
+    }
+}

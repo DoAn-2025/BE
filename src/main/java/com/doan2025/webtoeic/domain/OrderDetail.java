@@ -20,13 +20,13 @@ public class OrderDetail {
     @Column(name = "price_at_purchase")
     private BigDecimal priceAtPurchase;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course")
     private Course course;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order")
-    private Order order;
+    private Orders order;
 
     @Override
     public String toString() {

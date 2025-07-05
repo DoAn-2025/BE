@@ -11,10 +11,10 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "order")
+@Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +38,7 @@ public class Order {
     @Column(name = "status")
     private EStatusOrder status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
 

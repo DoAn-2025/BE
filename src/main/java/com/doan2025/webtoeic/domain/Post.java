@@ -40,7 +40,7 @@ public class Post {
     @Column (name = "is_delete")
     private Boolean isDelete;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author")
     private User author;
 

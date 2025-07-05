@@ -8,4 +8,5 @@ public interface CategoryService {
     List<CategoryResponse> getCategoryPost();
     List<CategoryResponse> getCategoryGender();
     List<CategoryResponse> getCategoryRole();
+    List<CategoryResponse> getCategoryCourse();
 }

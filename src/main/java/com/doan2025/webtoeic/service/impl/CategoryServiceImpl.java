@@ -1,5 +1,6 @@
 package com.doan2025.webtoeic.service.impl;
 
+import com.doan2025.webtoeic.constants.enums.ECategoryCourse;
 import com.doan2025.webtoeic.constants.enums.ECategoryPost;
 import com.doan2025.webtoeic.constants.enums.EGender;
 import com.doan2025.webtoeic.constants.enums.ERole;
@@ -44,6 +45,18 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryResponse categoryResponse = new CategoryResponse();
             categoryResponse.setId(e.getValue());
             categoryResponse.setName(e.getCode().toUpperCase());
+            responses.add(categoryResponse);
+        }
+        return responses;
+    }
+
+    @Override
+    public List<CategoryResponse> getCategoryCourse() {
+        List<CategoryResponse> responses = new ArrayList<>();
+        for(ECategoryCourse e : ECategoryCourse.values()) {
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setId(e.getValue());
+            categoryResponse.setName(e.getName().toUpperCase());
             responses.add(categoryResponse);
         }
         return responses;

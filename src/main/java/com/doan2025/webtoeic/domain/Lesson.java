@@ -27,8 +27,8 @@ public class Lesson {
     @Column(name = "video_url")
     private String videoUrl;
 
-    @Column(name = "duration_url")
-    private Integer durationUrl;
+    @Column(name = "duration")
+    private Integer duration;
 
     @Column(name = "order_index")
     private Integer orderIndex;
@@ -72,7 +72,7 @@ public class Lesson {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", videoUrl='" + videoUrl + '\'' +
-                ", durationUrl=" + durationUrl +
+                ", duration=" + duration +
                 ", orderIndex=" + orderIndex +
                 ", isPreviewable=" + isPreviewable +
                 '}';
