@@ -25,8 +25,8 @@ public class OrderDetail {
     private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order")
-    private Orders order;
+    @JoinColumn(name = "orders")
+    private Orders orders;
 
     @Override
     public String toString() {
