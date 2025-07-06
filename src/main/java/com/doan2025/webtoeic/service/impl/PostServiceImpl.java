@@ -22,6 +22,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -65,8 +66,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse getPostDetail(HttpServletRequest request, Long id) {
-        String email = jwtUtil.getEmailFromToken(request);
-
+        String email = "" ;
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            email = jwtUtil.getEmailFromToken(request);
+        }
         return postRepository.findPostDetail(id, email)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.POST) );
     }
@@ -133,7 +137,7 @@ public class PostServiceImpl implements PostService {
                 post.setIsActive(postRequest.getIsActive());
             }
             // function: delete post
-            if (post.getIsDelete() != null && !post.getIsDelete().equals(postRequest.getIsDelete())) {
+            if (postRequest.getIsDelete() != null && !post.getIsDelete().equals(postRequest.getIsDelete())) {
                 post.setIsDelete(postRequest.getIsDelete());
             }
             return modelMapper.map(postRepository.save(post), PostResponse.class);

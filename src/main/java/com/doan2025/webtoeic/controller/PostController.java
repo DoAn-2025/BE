@@ -14,16 +14,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
 
+
     @PostMapping("/get-posts")
-    @PreAuthorize("hasRole('STUDENT') OR hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<Page<PostResponse>> getPosts(HttpServletRequest request,
                                                     @RequestBody SearchBaseDto dto,
                                                     Pageable pageable) {
@@ -31,7 +29,6 @@ public class PostController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasRole('STUDENT') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<PostResponse> getPostDetail(HttpServletRequest request, @RequestParam("id") Long id) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.POST, postService.getPostDetail(request, id));
     }
