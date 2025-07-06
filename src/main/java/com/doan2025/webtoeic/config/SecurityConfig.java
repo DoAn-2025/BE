@@ -32,7 +32,9 @@ public class SecurityConfig {
             "/api/v1/auth/verify-otp",
             "/api/v1/auth/reset-password",
             "/api/v1/cloud/upload",
-            "/api/v1/cloud/delete"
+            "/api/v1/cloud/delete",
+            "/api/v1/post/get-posts",
+            "/api/v1/course/get-courses",
     };
     private final String[] PUBLIC_ENDPOINTS_GET = {
             "/swagger-ui.html",
@@ -42,7 +44,9 @@ public class SecurityConfig {
             "/api/v1/post/{id}",
             "/api/v1/category/post",
             "/api/v1/category/role",
-            "/api/v1/category/gender"
+            "/api/v1/category/gender",
+            "/api/v1/course",
+            "/api/v1/course/{id}",
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

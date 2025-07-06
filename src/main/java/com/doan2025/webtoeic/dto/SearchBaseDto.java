@@ -20,4 +20,5 @@ public class SearchBaseDto {
     private Date toDate;
     private String title;
     private List<String> categoryPost;
+    private List<String> categories;
 }

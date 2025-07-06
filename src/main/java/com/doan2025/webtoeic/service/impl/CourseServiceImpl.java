@@ -7,9 +7,11 @@ import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.Course;
 import com.doan2025.webtoeic.domain.Enrollment;
 import com.doan2025.webtoeic.domain.User;
+import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.CourseRequest;
 import com.doan2025.webtoeic.dto.response.CourseResponse;
 import com.doan2025.webtoeic.dto.response.PostResponse;
+import com.doan2025.webtoeic.dto.response.UserResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.CourseRepository;
 import com.doan2025.webtoeic.repository.LessonRepository;
@@ -24,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,6 +42,38 @@ public class CourseServiceImpl implements CourseService {
     private final JwtUtil jwtUtil;
     private final ModelMapper modelMapper;
 
+    @Override
+    public CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
+        return convertCourseToDto(httpServletRequest, course);
+    }
+
+    @Override
+    public List<CourseResponse> getCourses(SearchBaseDto dto, Pageable pageable) {
+        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+            dto.setCategories(null);
+        }
+        return courseRepository.findCourses(dto, pageable);
+    }
+
+    @Override
+    public List<CourseResponse> getAllCourses(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
+        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+            dto.setCategories(null);
+        }
+        return courseRepository.findAllCourses(dto, pageable);
+    }
+
+    @Override
+    public List<CourseResponse> getOwnCourses(HttpServletRequest request, SearchBaseDto dto,Pageable pageable) {
+        String email = jwtUtil.getEmailFromToken(request);
+        dto.setEmail(email);
+        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+            dto.setCategories(null);
+        }
+        return courseRepository.findOwnCourses(dto, email, pageable);
+    }
 
     @Override
     public CourseResponse createCourse(HttpServletRequest httpServletRequest, CourseRequest request) {
@@ -99,11 +134,11 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
         if(user.getRole().equals(ERole.MANAGER)){
             // function: disable course
-            if(course.getIsActive() != null && !request.getIsActive().equals(course.getIsActive())) {
+            if(request.getIsActive() != null && !request.getIsActive().equals(course.getIsActive())) {
                 course.setIsActive(request.getIsActive());
             }
             // function: delete course
-            if (course.getIsDelete() != null && !course.getIsDelete().equals(request.getIsDelete())) {
+            if (request.getIsDelete() != null && !course.getIsDelete().equals(request.getIsDelete())) {
                 course.setIsDelete(request.getIsDelete());
             }
             return modelMapper.map(courseRepository.save(course), CourseResponse.class);
@@ -111,26 +146,32 @@ public class CourseServiceImpl implements CourseService {
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
     }
 
-    @Override
-    public CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id) {
-        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-
-        Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
-        CourseResponse courseResponse = modelMapper.map(course, CourseResponse.class);
+    private CourseResponse convertCourseToDto(HttpServletRequest request, Course course){
+        CourseResponse courseResponse = new CourseResponse();
+        courseResponse.setId(course.getId());
+        courseResponse.setTitle(course.getTitle());
+        courseResponse.setDescription(course.getDescription());
+        courseResponse.setPrice(course.getPrice());
+        courseResponse.setIsActive(course.getIsActive());
+        courseResponse.setIsDelete(course.getIsDelete());
+        courseResponse.setCreatedAt(course.getCreatedAt());
+        courseResponse.setUpdatedAt(course.getUpdatedAt());
         courseResponse.setIsBought(false);
-        for(Enrollment enrollment : course.getEnrollments()){
-            if (enrollment.getUser().equals(user)){
-                courseResponse.setIsBought(true);
+        courseResponse.setAuthor(course.getAuthor() != null ? modelMapper.map(course.getAuthor(), UserResponse.class)  : null);
+        courseResponse.setCreatedBy(course.getCreatedBy() != null ? modelMapper.map(course.getCreatedBy(), UserResponse.class) : null);
+        courseResponse.setUpdatedBy(course.getUpdatedBy() != null ? modelMapper.map(course.getUpdatedBy(), UserResponse.class) : null);
+        String email = "" ;
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            email = jwtUtil.getEmailFromToken(request);
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+            for(Enrollment enrollment : course.getEnrollments()){
+                if (enrollment.getUser().equals(user)){
+                    courseResponse.setIsBought(true);
+                }
             }
         }
-
         return courseResponse;
-    }
-
-    @Override
-    public Page<CourseResponse> filterCourses(HttpServletRequest httpServletRequest, CourseRequest request, Pageable pageable) {
-        return null;
     }
 }
