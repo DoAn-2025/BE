@@ -29,8 +29,10 @@ public class UserResponse {
     private String major;
     private String role;
     private StudentResponse student;
+    private Date createdAt;
+    private Date updatedAt;
 
-    public UserResponse(Long id, String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, ERole role) {
+    public UserResponse(Long id, String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, ERole role, Date createdAt, Date updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -44,9 +46,11 @@ public class UserResponse {
         this.education = education;
         this.major = major;
         this.role = role != null ? role.name() : null;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public UserResponse(String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major) {
+    public UserResponse(String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, Date createdAt, Date updatedAt) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -58,5 +62,7 @@ public class UserResponse {
         this.isDelete = isDelete;
         this.education = education;
         this.major = major;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
