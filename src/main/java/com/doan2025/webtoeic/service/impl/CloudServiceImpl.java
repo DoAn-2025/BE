@@ -95,6 +95,19 @@ public class CloudServiceImpl implements CloudService {
         }
     }
 
+    public Double getVideoDuration(String url) {
+        try{
+            String publicId = extractPublicId(url);
+            publicId = publicId.substring(0, publicId.lastIndexOf("."));
+            Map res = cloudinary.api().resource(publicId, ObjectUtils.asMap(
+                    "resource_type", "video","media_metadata", true
+            ));
+            return (Double) res.get(Constants.DURATION);
+        }catch (Exception e){
+            throw new WebToeicException(ResponseCode.UNSUPPORTED, ResponseObject.FILE);
+        }
+    }
+
     /**
      * Trích xuất public_id từ URL của tệp trên Cloudinary
      * @param fileUrl URL của tệp

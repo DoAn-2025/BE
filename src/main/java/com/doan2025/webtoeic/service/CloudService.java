@@ -9,4 +9,5 @@ import java.util.Map;
 public interface CloudService {
     String uploadFile(MultipartFile file) throws IOException;
     Map deleteFile(FileRequest dto) throws IOException;
+    Double getVideoDuration(String url);
 }

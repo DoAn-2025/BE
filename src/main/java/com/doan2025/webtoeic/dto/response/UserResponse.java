@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
+    // TODO: tra ve them code -- done
     private Long id;
     private String firstName;
     private String lastName;
@@ -29,10 +30,16 @@ public class UserResponse {
     private String major;
     private String role;
     private StudentResponse student;
+    private ConsultantResponse consultant;
+    private TeacherResponse teacher;
+    private ManagerResponse manager;
     private Date createdAt;
     private Date updatedAt;
+    private String code;
 
-    public UserResponse(Long id, String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, ERole role, Date createdAt, Date updatedAt) {
+    public UserResponse(Long id, String firstName, String lastName, String phone, String address,
+                        Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete,
+                        String education, String major, ERole role, Date createdAt, Date updatedAt, String code) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -48,9 +55,12 @@ public class UserResponse {
         this.role = role != null ? role.name() : null;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.code = code;
     }
 
-    public UserResponse(String firstName, String lastName, String phone, String address, Date dob, EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete, String education, String major, Date createdAt, Date updatedAt) {
+    public UserResponse(String firstName, String lastName, String phone, String address, Date dob,
+                        EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete,
+                        String education, String major, Date createdAt, Date updatedAt,String code) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -64,5 +74,6 @@ public class UserResponse {
         this.major = major;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.code = code;
     }
 }

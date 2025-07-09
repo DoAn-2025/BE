@@ -28,7 +28,7 @@ public class Lesson {
     private String videoUrl;
 
     @Column(name = "duration")
-    private Integer duration;
+    private Double duration;
 
     @Column(name = "order_index")
     private Integer orderIndex;
@@ -51,6 +51,14 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "course")
     private Course course;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
 
     @PrePersist
     protected void onCreate() {

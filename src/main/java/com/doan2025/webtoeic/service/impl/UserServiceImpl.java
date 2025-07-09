@@ -7,8 +7,7 @@ import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.UserRequest;
-import com.doan2025.webtoeic.dto.response.StudentResponse;
-import com.doan2025.webtoeic.dto.response.UserResponse;
+import com.doan2025.webtoeic.dto.response.*;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.UserService;
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
         } else {
             roles.addAll(Constants.ROLE_BELOW_CONSULTANT);
         }
-        if(dto.getUserRoles() != null && !dto.getUserRoles().isEmpty()) {
+        if(dto.getUserRoles() == null || dto.getUserRoles().isEmpty()) {
             dto.setUserRoles(null);
         }
         return userRepository.findListUserFilter(dto, roles, pageable);
@@ -125,8 +124,22 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
         UserResponse savedUserResponse = modelMapper.map(savedUser, UserResponse.class);
-        StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);
-        savedUserResponse.setStudent(studentResponse);
+
+        if(user.getRole().equals(ERole.MANAGER)){
+            ManagerResponse managerResponse = modelMapper.map(savedUser.getManager(), ManagerResponse.class);
+            savedUserResponse.setManager(managerResponse);
+        }else if(user.getRole().equals(ERole.CONSULTANT)){
+            ConsultantResponse savedConsultant = modelMapper.map(savedUser.getConsultant(), ConsultantResponse.class);
+            savedUserResponse.setConsultant(savedConsultant);
+        }else if(user.getRole().equals(ERole.TEACHER)){
+            TeacherResponse savedTeacherResponse = modelMapper.map(savedUser.getTeacher(), TeacherResponse.class);
+            savedUserResponse.setTeacher(savedTeacherResponse);
+        }else {
+            StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);
+            // Todo: Set cho từng role
+            savedUserResponse.setStudent(studentResponse);
+        }
+
         return savedUserResponse;
     }
 

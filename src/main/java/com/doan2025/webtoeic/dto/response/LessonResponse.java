@@ -6,7 +6,10 @@ import lombok.Data;
 public class LessonResponse {
     private Long id;
     private String title;
+    private String content;
     private String videoUrl;
-    private Integer durationSeconds;
-    private boolean isPreviewable;
+    private Integer duration;
+    private Integer orderIndex;
+    private Boolean isPreviewable;
+    private CourseResponse courseId;
 }

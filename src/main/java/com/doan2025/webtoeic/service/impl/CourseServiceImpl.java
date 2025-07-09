@@ -10,11 +10,9 @@ import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.CourseRequest;
 import com.doan2025.webtoeic.dto.response.CourseResponse;
-import com.doan2025.webtoeic.dto.response.PostResponse;
 import com.doan2025.webtoeic.dto.response.UserResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.CourseRepository;
-import com.doan2025.webtoeic.repository.LessonRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.CourseService;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
@@ -23,7 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -38,7 +36,6 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
-    private final LessonRepository lessonRepository;
     private final JwtUtil jwtUtil;
     private final ModelMapper modelMapper;
 
@@ -102,8 +99,8 @@ public class CourseServiceImpl implements CourseService {
                 .title(request.getTitle())
                 .createdBy(createdBy)
                 .build();
-
-        return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+        Course savedCourse = courseRepository.save(course);
+        return convertCourseToDto(httpServletRequest, savedCourse);
     }
 
     @Override
@@ -166,9 +163,14 @@ public class CourseServiceImpl implements CourseService {
             email = jwtUtil.getEmailFromToken(request);
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-            for(Enrollment enrollment : course.getEnrollments()){
-                if (enrollment.getUser().equals(user)){
-                    courseResponse.setIsBought(true);
+            if(user.getRole().equals(ERole.MANAGER) || user.getRole().equals(ERole.CONSULTANT)){
+                courseResponse.setIsBought(true);
+            }
+            if(course.getEnrollments() != null && !course.getEnrollments().isEmpty()){
+                for(Enrollment enrollment : course.getEnrollments()){
+                    if (enrollment.getUser().equals(user)){
+                        courseResponse.setIsBought(true);
+                    }
                 }
             }
         }

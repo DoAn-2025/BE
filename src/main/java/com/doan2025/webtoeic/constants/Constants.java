@@ -3,8 +3,6 @@ package com.doan2025.webtoeic.constants;
 import com.doan2025.webtoeic.constants.enums.ERole;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Constants {
     public static final List<ERole> ROLE_BELOW_MANAGER = List.of(ERole.CONSULTANT, ERole.TEACHER, ERole.STUDENT);
@@ -36,11 +34,16 @@ public class Constants {
     public static final String FETCH_FORMAT = "fetch_format";
     public static final String AUTO = "auto";
     public static final String RESOURCE_TYPE = "resource_type";
+    public static final String DURATION = "duration";
 
     public static final String URL = "url";
     public static final String VIDEO = "video";
     public static final String IMAGE = "image";
     public static final String DOCUMENT = "document";
+
+    public static final String RESOURCE_VIDEO = "videos";
+    public static final String RESOURCE_IMAGE = "images";
+    public static final String RESOURCE_DOCUMENT = "documents";
 
     public static final String FOLDER = "folder";
 

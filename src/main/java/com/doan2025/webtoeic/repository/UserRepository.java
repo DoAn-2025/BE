@@ -17,11 +17,12 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    // TODO: check lai filter: role, search -- done
     @Query(value = """
         SELECT new com.doan2025.webtoeic.dto.response.UserResponse( u.id,
                             u.firstName, u.lastName, u.phone, u.address,
                             u.dob, u.gender, u.avatarUrl, u.isActive, u.isDelete,
-                            s.education, s.major, u.role, u.createdAt, u.updatedAt)
+                            s.education, s.major, u.role, u.createdAt, u.updatedAt, u.code)
         FROM User u
         LEFT JOIN u.student s
         LEFT JOIN u.consultant c
@@ -29,18 +30,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
         LEFT JOIN u.manager m
         WHERE
             ( COALESCE(:#{#dto.searchString}, null ) is null
-                OR concat('%', :#{#dto.searchString}, '%') like u.email
-                OR concat('%', :#{#dto.searchString}, '%') like u.phone
-                OR concat('%', :#{#dto.searchString}, '%') like concat(u.firstName, ' ', u.lastName)
+                OR lower(u.email) like lower(concat('%', :#{#dto.searchString}, '%'))
+                OR lower(u.phone)  like  lower(concat('%', :#{#dto.searchString}, '%'))
+                OR lower(concat(u.firstName, ' ', u.lastName))  like lower(concat('%', :#{#dto.searchString}, '%'))
             )
             AND (
               ( (COALESCE(:#{#dto.fromDate}, NULL) IS NULL) AND (COALESCE(:#{#dto.toDate}, NULL) IS NULL))
               OR u.createdAt BETWEEN :#{#dto.fromDate} AND :#{#dto.toDate}
             )
+            AND (COALESCE(:roles, null) is null or u.role IN (:roles) )
             AND (COALESCE(:#{#dto.isActive}, null ) is null or u.isActive = :#{#dto.isActive} )
             AND (COALESCE(:#{#dto.isDelete}, null ) is null or u.isDelete = :#{#dto.isDelete} )
             AND (COALESCE(:#{#dto.userRoles}, null ) is null or u.role IN (:#{#dto.userRoles}) )
-            AND (COALESCE(:roles, null) is null or u.role IN (:roles) )
 """)
     Page<UserResponse> findListUserFilter(SearchBaseDto dto, List<ERole> roles, Pageable pageable);
 
@@ -52,7 +53,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT new com.doan2025.webtoeic.dto.response.UserResponse(
                             u.firstName, u.lastName, u.phone, u.address,
                             u.dob, u.gender, u.avatarUrl, u.isActive, u.isDelete,
-                            s.education, s.major, u.createdAt, u.updatedAt)
+                            s.education, s.major, u.createdAt, u.updatedAt, u.code)
             FROM User u
             LEFT JOIN u.student s
             LEFT JOIN u.consultant c
@@ -68,7 +69,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT new com.doan2025.webtoeic.dto.response.UserResponse(
                             u.firstName, u.lastName, u.phone, u.address,
                             u.dob, u.gender, u.avatarUrl, u.isActive, u.isDelete,
-                            s.education, s.major, u.createdAt, u.updatedAt)
+                            s.education, s.major, u.createdAt, u.updatedAt, u.code)
             FROM User u
             LEFT JOIN u.student s
             LEFT JOIN u.consultant c
