@@ -81,9 +81,21 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.addAllowedOrigin("*");
+        // Danh sách IP được phép
+        // Hoàng
+        corsConfiguration.addAllowedOrigin("http://192.168.1.6");
+        corsConfiguration.addAllowedOrigin("http://172.17.36.156");
+        corsConfiguration.addAllowedOrigin("http://192.168.171.181");
+        // M.Anh
+
+        // Huấn
+        corsConfiguration.addAllowedOrigin("http://10.10.252.18");
+        corsConfiguration.addAllowedOrigin("http://192.168.52.180");
+        corsConfiguration.addAllowedOrigin("http://192.168.171.181");
+
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true); // Cho phép gửi cookie, nếu cần
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
