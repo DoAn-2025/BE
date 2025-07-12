@@ -69,6 +69,16 @@ public class Course {
     @OneToMany(mappedBy = "course")
     private List<Lesson> lessons;
 
+    public Course(String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse categoryCourse, User author, User createdBy) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.thumbnailUrl = thumbnailUrl;
+        this.categoryCourse = categoryCourse;
+        this.author = author;
+        this.createdBy = createdBy;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.isActive = false;

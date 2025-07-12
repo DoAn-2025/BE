@@ -37,7 +37,7 @@ public class Post {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @Column (name = "is_delete")
+    @Column(name = "is_delete")
     private Boolean isDelete;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +47,14 @@ public class Post {
     @Column(name = "category_post", nullable = false)
     @Enumerated(EnumType.STRING)
     private ECategoryPost categoryPost;
+
+    public Post(String title, String content, String themeUrl, User author, ECategoryPost categoryPost) {
+        this.title = title;
+        this.content = content;
+        this.themeUrl = themeUrl;
+        this.author = author;
+        this.categoryPost = categoryPost;
+    }
 
     @PrePersist
     protected void onCreate() {
