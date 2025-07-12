@@ -86,14 +86,23 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOrigin("http://192.168.1.6");
         corsConfiguration.addAllowedOrigin("http://172.17.36.156");
         corsConfiguration.addAllowedOrigin("http://192.168.171.181");
+        corsConfiguration.addAllowedOrigin("http://192.168.1.6:5173");
+        corsConfiguration.addAllowedOrigin("http://172.17.36.156:5173");
+        corsConfiguration.addAllowedOrigin("http://192.168.171.181:5173");
         // M.Anh
         corsConfiguration.addAllowedOrigin("http://192.168.101.69");
         corsConfiguration.addAllowedOrigin("http://192.168.1.2");
         corsConfiguration.addAllowedOrigin("http://192.168.54.104");
+        corsConfiguration.addAllowedOrigin("http://192.168.101.69:5173");
+        corsConfiguration.addAllowedOrigin("http://192.168.1.2:5173");
+        corsConfiguration.addAllowedOrigin("http://192.168.54.104:5173");
         // Huấn
         corsConfiguration.addAllowedOrigin("http://10.10.252.18");
         corsConfiguration.addAllowedOrigin("http://192.168.52.180");
         corsConfiguration.addAllowedOrigin("http://192.168.1.9");
+        corsConfiguration.addAllowedOrigin("http://10.10.252.18:5173");
+        corsConfiguration.addAllowedOrigin("http://192.168.52.180:5173");
+        corsConfiguration.addAllowedOrigin("http://192.168.1.9:5173");
 
         corsConfiguration.addAllowedOrigin("https://fe-q0rg.onrender.com");
 
