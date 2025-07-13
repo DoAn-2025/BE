@@ -28,7 +28,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
+@Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserResponse> getListUserFilter(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
         String email = jwtUtil.getEmailFromToken(request);
-        if(email == null) {
+        if (email == null) {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
         }
         User user = userRepository.findByEmail(email)
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         } else {
             roles.addAll(Constants.ROLE_BELOW_CONSULTANT);
         }
-        if(dto.getUserRoles() == null || dto.getUserRoles().isEmpty()) {
+        if (dto.getUserRoles() == null || dto.getUserRoles().isEmpty()) {
             dto.setUserRoles(null);
         }
         return userRepository.findListUserFilter(dto, roles, pageable);
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserCurrent(HttpServletRequest request) {
         String email = jwtUtil.getEmailFromToken(request);
-        if(email == null) {
+        if (email == null) {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
         }
         return userRepository.findUser(email).orElseThrow(
@@ -83,19 +83,19 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserDetails(HttpServletRequest httpServletRequest, UserRequest request) {
 
         String email = jwtUtil.getEmailFromToken(httpServletRequest);
-        if(email == null) {
+        if (email == null) {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER);
         }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
         // function: change password
-        if(request.getPassword() != null && request.getOldPassword() != null) {
-            if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+        if (request.getPassword() != null && request.getOldPassword() != null) {
+            if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
                 throw new WebToeicException(ResponseCode.NOT_MATCHED, ResponseObject.PASSWORD);
             }
             user.setPassword(passwordEncoder.encode(request.getPassword()));
-            return modelMapper.map(userRepository.save(user), UserResponse.class) ;
+            return modelMapper.map(userRepository.save(user), UserResponse.class);
         }
 
         // function: update info
@@ -109,13 +109,13 @@ public class UserServiceImpl implements UserService {
                 new FieldUpdateUtil<>(user::getAvatarUrl, user::setAvatarUrl, request.getAvatarUrl())
         ).forEach(FieldUpdateUtil::updateIfNeeded);
 
-        if(user.getRole().equals(ERole.MANAGER)){
+        if (user.getRole().equals(ERole.MANAGER)) {
 
-        }else if(user.getRole().equals(ERole.CONSULTANT)){
+        } else if (user.getRole().equals(ERole.CONSULTANT)) {
 
-        }else if(user.getRole().equals(ERole.TEACHER)){
+        } else if (user.getRole().equals(ERole.TEACHER)) {
 
-        }else {
+        } else {
             List.of(
                     new FieldUpdateUtil<>(user.getStudent()::getEducation, user.getStudent()::setEducation, request.getEducation()),
                     new FieldUpdateUtil<>(user.getStudent()::getMajor, user.getStudent()::setMajor, request.getMajor())
@@ -125,18 +125,17 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         UserResponse savedUserResponse = modelMapper.map(savedUser, UserResponse.class);
 
-        if(user.getRole().equals(ERole.MANAGER)){
+        if (user.getRole().equals(ERole.MANAGER)) {
             ManagerResponse managerResponse = modelMapper.map(savedUser.getManager(), ManagerResponse.class);
             savedUserResponse.setManager(managerResponse);
-        }else if(user.getRole().equals(ERole.CONSULTANT)){
+        } else if (user.getRole().equals(ERole.CONSULTANT)) {
             ConsultantResponse savedConsultant = modelMapper.map(savedUser.getConsultant(), ConsultantResponse.class);
             savedUserResponse.setConsultant(savedConsultant);
-        }else if(user.getRole().equals(ERole.TEACHER)){
+        } else if (user.getRole().equals(ERole.TEACHER)) {
             TeacherResponse savedTeacherResponse = modelMapper.map(savedUser.getTeacher(), TeacherResponse.class);
             savedUserResponse.setTeacher(savedTeacherResponse);
-        }else {
+        } else {
             StudentResponse studentResponse = modelMapper.map(savedUser.getStudent(), StudentResponse.class);
-            // Todo: Set cho từng role
             savedUserResponse.setStudent(studentResponse);
         }
 
@@ -151,36 +150,36 @@ public class UserServiceImpl implements UserService {
                         () -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER)
                 );
         // function: disable user
-        if(request.getIsActive() != null && !request.getIsActive().equals(user.getIsActive())) {
+        if (request.getIsActive() != null && !request.getIsActive().equals(user.getIsActive())) {
             user.setIsActive(request.getIsActive());
         }
         // function: delete user
-        if(request.getIsDelete() != null && !request.getIsDelete().equals(user.getIsDelete())) {
+        if (request.getIsDelete() != null && !request.getIsDelete().equals(user.getIsDelete())) {
             user.setIsDelete(request.getIsDelete());
         }
-        return modelMapper.map(userRepository.save(user), UserResponse.class) ;
+        return modelMapper.map(userRepository.save(user), UserResponse.class);
     }
 
     // function: reset password
     @Override
-    public void resetPassword(UserRequest request){
+    public void resetPassword(UserRequest request) {
         // check token not null
-        if(request.getToken() == null) {
+        if (request.getToken() == null) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.TOKEN);
         }
         // check mail not null
         String email = jwtUtil.getEmailFromTokenString(request.getToken());
-        if(email == null) {
+        if (email == null) {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL);
         }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        if(!user.getIsActive() && user.getIsDelete()) {
+        if (!user.getIsActive() && user.getIsDelete()) {
             throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
         }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user) ;
+        userRepository.save(user);
     }
 
 }

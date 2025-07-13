@@ -3,7 +3,10 @@ package com.doan2025.webtoeic.dto.response;
 import com.doan2025.webtoeic.constants.enums.EGender;
 import com.doan2025.webtoeic.constants.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
@@ -14,7 +17,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    // TODO: tra ve them code -- done
     private Long id;
     private String firstName;
     private String lastName;
@@ -60,7 +62,7 @@ public class UserResponse {
 
     public UserResponse(String firstName, String lastName, String phone, String address, Date dob,
                         EGender gender, String avatarUrl, Boolean isActive, Boolean isDelete,
-                        String education, String major, Date createdAt, Date updatedAt,String code) {
+                        String education, String major, Date createdAt, Date updatedAt, String code) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
