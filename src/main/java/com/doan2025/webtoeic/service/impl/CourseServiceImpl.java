@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,7 +31,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
+@Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
@@ -46,26 +47,31 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseResponse> getCourses(SearchBaseDto dto, Pageable pageable) {
-        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+    public Page<CourseResponse> getCourses(HttpServletRequest httpServletRequest, SearchBaseDto dto, Pageable pageable) {
+        String email = "";
+        String bearerToken = httpServletRequest.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            email = jwtUtil.getEmailFromToken(httpServletRequest);
+        }
+        if (dto.getCategories() == null || dto.getCategories().isEmpty()) {
             dto.setCategories(null);
         }
-        return courseRepository.findCourses(dto, pageable);
+        return courseRepository.findCourses(dto, email, pageable);
     }
 
     @Override
-    public List<CourseResponse> getAllCourses(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
-        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+    public Page<CourseResponse> getAllCourses(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
+        if (dto.getCategories() == null || dto.getCategories().isEmpty()) {
             dto.setCategories(null);
         }
         return courseRepository.findAllCourses(dto, pageable);
     }
 
     @Override
-    public List<CourseResponse> getOwnCourses(HttpServletRequest request, SearchBaseDto dto,Pageable pageable) {
+    public Page<CourseResponse> getOwnCourses(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
         String email = jwtUtil.getEmailFromToken(request);
         dto.setEmail(email);
-        if(dto.getCategories() == null || dto.getCategories().isEmpty()) {
+        if (dto.getCategories() == null || dto.getCategories().isEmpty()) {
             dto.setCategories(null);
         }
         return courseRepository.findOwnCourses(dto, email, pageable);
@@ -73,16 +79,16 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponse createCourse(HttpServletRequest httpServletRequest, CourseRequest request) {
-        if(request.getCategoryId() == null){
+        if (request.getCategoryId() == null) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.CATEGORY);
         }
-        if(request.getAuthorId() == null){
+        if (request.getAuthorId() == null) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.USER);
         }
         if (request.getTitle() == null || request.getTitle().isEmpty()) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.TITLE);
         }
-        if(request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0){
+        if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
             throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.PRICE);
         }
         User author = userRepository.findById(request.getAuthorId())
@@ -128,9 +134,9 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         Course course = courseRepository.findById(request.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
-        if(user.getRole().equals(ERole.MANAGER)){
+        if (user.getRole().equals(ERole.MANAGER)) {
             // function: disable course
-            if(request.getIsActive() != null && !request.getIsActive().equals(course.getIsActive())) {
+            if (request.getIsActive() != null && !request.getIsActive().equals(course.getIsActive())) {
                 course.setIsActive(request.getIsActive());
             }
             // function: delete course
@@ -142,7 +148,7 @@ public class CourseServiceImpl implements CourseService {
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
     }
 
-    private CourseResponse convertCourseToDto(HttpServletRequest request, Course course){
+    private CourseResponse convertCourseToDto(HttpServletRequest request, Course course) {
         CourseResponse courseResponse = new CourseResponse();
         courseResponse.setId(course.getId());
         courseResponse.setTitle(course.getTitle());
@@ -153,21 +159,21 @@ public class CourseServiceImpl implements CourseService {
         courseResponse.setCreatedAt(course.getCreatedAt());
         courseResponse.setUpdatedAt(course.getUpdatedAt());
         courseResponse.setIsBought(false);
-        courseResponse.setAuthor(course.getAuthor() != null ? modelMapper.map(course.getAuthor(), UserResponse.class)  : null);
+        courseResponse.setAuthor(course.getAuthor() != null ? modelMapper.map(course.getAuthor(), UserResponse.class) : null);
         courseResponse.setCreatedBy(course.getCreatedBy() != null ? modelMapper.map(course.getCreatedBy(), UserResponse.class) : null);
         courseResponse.setUpdatedBy(course.getUpdatedBy() != null ? modelMapper.map(course.getUpdatedBy(), UserResponse.class) : null);
-        String email = "" ;
+        String email = "";
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             email = jwtUtil.getEmailFromToken(request);
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-            if(user.getRole().equals(ERole.MANAGER) || user.getRole().equals(ERole.CONSULTANT)){
+            if (user.getRole().equals(ERole.MANAGER) || user.getRole().equals(ERole.CONSULTANT)) {
                 courseResponse.setIsBought(true);
             }
-            if(course.getEnrollments() != null && !course.getEnrollments().isEmpty()){
-                for(Enrollment enrollment : course.getEnrollments()){
-                    if (enrollment.getUser().equals(user)){
+            if (course.getEnrollments() != null && !course.getEnrollments().isEmpty()) {
+                for (Enrollment enrollment : course.getEnrollments()) {
+                    if (enrollment.getUser().equals(user)) {
                         courseResponse.setIsBought(true);
                     }
                 }

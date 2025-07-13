@@ -27,6 +27,11 @@ public class Student {
     @JoinColumn(name = "user")
     private User user;
 
+    public Student(String education, String major) {
+        this.education = education;
+        this.major = major;
+    }
+
     @Override
     public String toString() {
         return "Student{" +

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
 
 @Component
@@ -20,14 +21,17 @@ public class DataInitializer implements CommandLineRunner {
 
     private static final Random RANDOM = new Random();
     private static final String THEME = "https://res.cloudinary.com/dj1au6uyp/image/upload/v1751818849/images/torx1vzofcpdlaojbstt.jpg";
+    private static final String VIDEO = "http://res.cloudinary.com/dj1au6uyp/video/upload/v1751819722/videos/uhh7etr5bpx1g2jhhnti.mp4";
     private final CheckInitRepository checkInitRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ManagerRepository managerRepository;
     private final ConsultantRepository consultantRepository;
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
     private final PostRepository postRepository;
     private final CourseRepository courseRepository;
+    private final LessonRepository lessonRepository;
     @Value("${account.manager.email}")
     private String MANAGER_EMAIL;
     @Value("${account.manager.password}")
@@ -40,12 +44,17 @@ public class DataInitializer implements CommandLineRunner {
     private String TEACHER_EMAIL;
     @Value("${account.teacher.password}")
     private String TEACHER_PASSWORD;
+    @Value("${account.student.password}")
+    private String STUDENT_PASSWORD;
+    @Value("${account.student.email}")
+    private String STUDENT_EMAIL;
 
     @Override
     public void run(String... args) {
         generateDataUser();
         generateDataPost();
         generateDataCourse();
+        generateDataLesson();
     }
 
     private void generateDataUser() {
@@ -113,6 +122,27 @@ public class DataInitializer implements CommandLineRunner {
                 teacher.setUser(user);
                 teacherRepository.save(teacher);
             }
+            if (!userRepository.existsByEmail(STUDENT_EMAIL)) {
+                User user = new User();
+                user.setEmail(STUDENT_EMAIL);
+                user.setPassword(passwordEncoder.encode(STUDENT_PASSWORD));
+                user.setFirstName("User");
+                user.setLastName("Student");
+                user.setRole(ERole.STUDENT);
+                boolean check = false;
+                while (!check) {
+                    String code = generatedUserCode(ERole.STUDENT);
+                    if (!userRepository.existsByCode(code)) {
+                        user.setCode(code);
+                        check = true;
+                    }
+                }
+                Student student = studentRepository.save(new Student("Dai hoc 1", "Chuyen nganh 1"));
+                user.setStudent(student);
+                userRepository.save(user);
+                student.setUser(user);
+                studentRepository.save(student);
+            }
             checkInitRepository.save(new CheckInit(ResponseObject.USER.name()));
         }
 
@@ -145,6 +175,26 @@ public class DataInitializer implements CommandLineRunner {
             }
             checkInitRepository.save(new CheckInit(ResponseObject.COURSE.name()));
         }
+    }
+
+    private void generateDataLesson() {
+        if (!checkInitRepository.existsByCode(ResponseObject.LESSON.name())) {
+            List<Course> courses = courseRepository.findAll();
+            User createdBy = userRepository.findByEmail(CONSULTANT_EMAIL)
+                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+            for (Course course : courses) {
+                for (int i = 0; i < 10; i++) {
+                    Lesson lesson = new Lesson("Lesson title " + i, "Lesson content " + i, VIDEO,
+                            14.814308, i, course);
+                    lesson.setCreatedBy(createdBy);
+                    Lesson saveLesson = lessonRepository.save(lesson);
+                    course.getLessons().add(saveLesson);
+                    courseRepository.save(course);
+                }
+            }
+            checkInitRepository.save(new CheckInit(ResponseObject.LESSON.name()));
+        }
+
     }
 
     private String generatedUserCode(ERole role) {

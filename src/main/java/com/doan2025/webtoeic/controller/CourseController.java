@@ -26,37 +26,37 @@ public class CourseController {
 
     @PostMapping("/get-courses")
     public ApiResponse<?> getCourses(HttpServletRequest request, @RequestBody SearchBaseDto dto, Pageable pageable) {
-        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getCourses(dto,pageable));
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getCourses(request, dto, pageable));
     }
 
     @PostMapping("/all-courses")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<?> getAllCourses(HttpServletRequest request, @RequestBody SearchBaseDto dto, Pageable pageable) {
-        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getAllCourses(request,dto,pageable));
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getAllCourses(request, dto, pageable));
     }
 
     @PostMapping("/own-courses")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> getOwnCourses(HttpServletRequest request, @RequestBody SearchBaseDto dto, Pageable pageable) {
-        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getOwnCourses(request,dto,pageable));
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getOwnCourses(request, dto, pageable));
     }
 
     @PostMapping("/update-status")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> updateStatusCourse(HttpServletRequest request, @RequestBody CourseRequest course) {
-        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.COURSE, courseService.disableOrDeleteCourse(request,course));
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.COURSE, courseService.disableOrDeleteCourse(request, course));
     }
 
     @PostMapping("/update-info")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> updateInfoCourse(HttpServletRequest request, @RequestBody CourseRequest course) {
-        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.COURSE, courseService.updateCourse(request,course));
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.COURSE, courseService.updateCourse(request, course));
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> createCourse(HttpServletRequest request, @RequestBody CourseRequest course) {
-        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.COURSE, courseService.createCourse(request,course));
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.COURSE, courseService.createCourse(request, course));
     }
 
 }

@@ -63,10 +63,10 @@ public class Course {
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Enrollment> enrollments;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
     private List<Lesson> lessons;
 
     public Course(String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse categoryCourse, User author, User createdBy) {

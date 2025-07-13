@@ -33,8 +33,8 @@ public class Lesson {
     @Column(name = "order_index")
     private Integer orderIndex;
 
-    @Column(name = "is_previewable")
-    private Boolean isPreviewable;
+    @Column(name = "is_preview_able")
+    private Boolean isPreviewAble;
 
     @Column(name = "created_at")
     private Date createdAt;
@@ -60,10 +60,20 @@ public class Lesson {
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 
+    public Lesson(String title, String content, String videoUrl, Double duration, Integer orderIndex, Course course) {
+        this.title = title;
+        this.content = content;
+        this.videoUrl = videoUrl;
+        this.duration = duration;
+        this.orderIndex = orderIndex;
+        this.course = course;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.isActive = false;
         this.isDelete = false;
+        this.isPreviewAble = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;
     }
@@ -82,7 +92,7 @@ public class Lesson {
                 ", videoUrl='" + videoUrl + '\'' +
                 ", duration=" + duration +
                 ", orderIndex=" + orderIndex +
-                ", isPreviewable=" + isPreviewable +
+                ", isPreviewAble=" + isPreviewAble +
                 '}';
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+
 @Data
 public class SearchBaseDto {
     private String searchString;
@@ -21,4 +22,6 @@ public class SearchBaseDto {
     private String title;
     private List<String> categoryPost;
     private List<String> categories;
+
+    private Long id;
 }

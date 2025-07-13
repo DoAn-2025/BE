@@ -1,6 +1,5 @@
 package com.doan2025.webtoeic.dto.request;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +14,10 @@ public class LessonRequest {
     private String title;
     private String content;
     private String videoUrl;
-    private Integer duration;
+    private Integer duration; // truong auto fill
     private Integer orderIndex;
-    private Boolean isPreviewable;
+    private Boolean isPreviewAble;
     private Long courseId;
+    private Boolean isActive;
+    private Boolean isDelete;
 }

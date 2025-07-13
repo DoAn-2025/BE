@@ -30,7 +30,9 @@ public class CourseResponse {
     private UserResponse updatedBy;
     private List<LessonResponse> lessons;
 
-    public CourseResponse(Long id, String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse category, Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive, String authorName, String createdByName, String updatedByName) {
+    public CourseResponse(Long id, String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse category,
+                          Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive, String authorName, String createdByName,
+                          String updatedByName) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -44,5 +46,24 @@ public class CourseResponse {
         this.authorName = authorName;
         this.createdByName = createdByName;
         this.updatedByName = updatedByName;
+    }
+
+    public CourseResponse(Long id, String title, String description, BigDecimal price, String thumbnailUrl,
+                          ECategoryCourse category, Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive,
+                          String authorName, String createdByName, String updatedByName, Boolean isBought) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.thumbnailUrl = thumbnailUrl;
+        this.categoryName = category != null ? category.getName() : null;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+        this.isDelete = isDelete;
+        this.isActive = isActive;
+        this.authorName = authorName;
+        this.createdByName = createdByName;
+        this.updatedByName = updatedByName;
+        this.isBought = isBought;
     }
 }
