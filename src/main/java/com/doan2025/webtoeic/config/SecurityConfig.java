@@ -19,11 +19,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    // Thêm mảng PUBLIC_ENDPOINTS_OPTIONS
+    private final String[] PUBLIC_ENDPOINTS_OPTIONS = {
+            "/**" // Cho phép tất cả OPTIONS requests
+    };
     private final String[] PUBLIC_ENDPOINTS_POST = {
             "/user",
             "/api/v1/auth/login",
@@ -60,6 +67,7 @@ public class SecurityConfig {
         httpSecurity.cors(); // Thêm dòng này để bật CORS
         httpSecurity.authorizeHttpRequests(
                 request -> request
+                        .requestMatchers(HttpMethod.OPTIONS, PUBLIC_ENDPOINTS_OPTIONS).permitAll() // Thêm dòng này
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST)
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET)
@@ -82,18 +90,24 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         // Danh sách IP được phép
-        // Hoàng
-        corsConfiguration.addAllowedOrigin("http://192.168.*.*");
-        corsConfiguration.addAllowedOrigin("http://172.17.*.*");
-        corsConfiguration.addAllowedOrigin("http://10.10.*.*");
-        corsConfiguration.addAllowedHeader("http://116.111.108.209");
-        corsConfiguration.addAllowedHeader("http://localhost:5173");
+        // Sửa danh sách allowedOrigins
+        corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://fe-q0rg.onrender.com"
+        ));
 
-        corsConfiguration.addAllowedOrigin("https://fe-q0rg.onrender.com");
+        // Thêm pattern cho IP (nếu cần)
+        corsConfiguration.setAllowedOriginPatterns(Arrays.asList(
+                "http://192.168.*.*",
+                "http://10.10.*.*",
+                "http://172.17.*.*",
+                "http://116.111.*.*" // Sử dụng pattern thay vì fixed IP
+        ));
 
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.setAllowCredentials(true); // Cho phép gửi cookie, nếu cần
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setMaxAge(3600L); // Thêm max age
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
