@@ -87,6 +87,7 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOrigin("http://172.17.*.*");
         corsConfiguration.addAllowedOrigin("http://10.10.*.*");
         corsConfiguration.addAllowedHeader("http://116.111.*.*");
+        corsConfiguration.addAllowedHeader("http://localhost:3000");
 
         corsConfiguration.addAllowedOrigin("https://fe-q0rg.onrender.com");
 
