@@ -125,7 +125,7 @@ public class CourseServiceImpl implements CourseService {
                 new FieldUpdateUtil<>(course::getCategoryCourse, course::setCategoryCourse, ECategoryCourse.fromValue(request.getCategoryId()))
         ).forEach(FieldUpdateUtil::updateIfNeeded);
         course.setUpdatedBy(updatedBy);
-        return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+        return convertCourseToDto(httpServletRequest, courseRepository.save(course));
     }
 
     @Override
@@ -143,7 +143,7 @@ public class CourseServiceImpl implements CourseService {
             if (request.getIsDelete() != null && !course.getIsDelete().equals(request.getIsDelete())) {
                 course.setIsDelete(request.getIsDelete());
             }
-            return modelMapper.map(courseRepository.save(course), CourseResponse.class);
+            return convertCourseToDto(httpServletRequest, courseRepository.save(course));
         }
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
     }
