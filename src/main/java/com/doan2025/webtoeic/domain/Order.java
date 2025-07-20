@@ -20,7 +20,7 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user")
+    @JoinColumn(name = "user")
     private User user;
 
     @Column(name = "created_at")

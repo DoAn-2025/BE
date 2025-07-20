@@ -1,6 +1,8 @@
 package com.doan2025.webtoeic.service.impl;
 
 import com.doan2025.webtoeic.exception.WebToeicException;
+import com.doan2025.webtoeic.repository.OrderItemRepository;
+import com.doan2025.webtoeic.repository.OrderRepository;
 import com.doan2025.webtoeic.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,4 +12,8 @@ import org.springframework.stereotype.Service;
 @Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+
+
 }

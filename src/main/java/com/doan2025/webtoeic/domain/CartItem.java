@@ -18,11 +18,11 @@ public class CartItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user")
+    @JoinColumn(name = "user")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "course")
+    @JoinColumn(name = "course")
     private Course course;
 
     @Column(name = "created_at")
