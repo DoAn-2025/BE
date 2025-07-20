@@ -18,20 +18,20 @@ public class CartController {
     @GetMapping()
     @PreAuthorize("hasRole('STUDENT')")
     public ApiResponse<?> getCart(HttpServletRequest request) {
-        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, cartService.getInCart(request));
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CART_ITEM, cartService.getInCart(request));
     }
 
     @PostMapping("/add-to-cart")
     @PreAuthorize("hasRole('STUDENT')")
     public ApiResponse<Void> addToCart(HttpServletRequest request, @RequestParam("id") Long id) {
         cartService.addToCart(request, id);
-        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.USER, null);
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.CART_ITEM, null);
     }
 
     @DeleteMapping("/remove-from-cart")
     @PreAuthorize("hasRole('STUDENT')")
     public ApiResponse<Void> removeFromCart(HttpServletRequest request, @RequestParam("id") Long id) {
         cartService.removeFromCart(request, id);
-        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.USER, null);
+        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.CART_ITEM, null);
     }
 }
