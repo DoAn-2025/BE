@@ -37,7 +37,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<CourseResponse> findCourses(SearchBaseDto dto, String email, Pageable pageable);
 
     @Query("""
-            SELECT new com.doan2025.webtoeic.dto.response.CourseResponse(
+            SELECT DISTINCT new com.doan2025.webtoeic.dto.response.CourseResponse(
             c.id, c.title, c.description, c.price, c.thumbnailUrl, c.categoryCourse,
             c.updatedAt, c.createdAt, c.isDelete, c.isActive, CONCAT(a.firstName, ' ', a.lastName ) ,
             CONCAT(cb.firstName, ' ', cb.lastName ) , CONCAT(ub.firstName, ' ', ub.lastName ) )
