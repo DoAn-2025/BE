@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-public interface CartService {
+public interface CartItemService {
     void addToCart(HttpServletRequest httpServletRequest, Long idCourse);
 
     void removeFromCart(HttpServletRequest httpServletRequest, Long idCartItem);

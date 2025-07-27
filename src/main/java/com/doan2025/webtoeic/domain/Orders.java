@@ -1,9 +1,11 @@
 package com.doan2025.webtoeic.domain;
 
+import com.doan2025.webtoeic.constants.enums.EPaymentMethod;
 import com.doan2025.webtoeic.constants.enums.EStatusOrder;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +16,7 @@ import java.util.Date;
 @Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +25,9 @@ public class Orders {
     @Column(name = "total_amount")
     private Double totalAmount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
-    private String paymentMethod;
+    private EPaymentMethod paymentMethod;
 
     @Column(name = "transaction_code")
     private String transactionCode;

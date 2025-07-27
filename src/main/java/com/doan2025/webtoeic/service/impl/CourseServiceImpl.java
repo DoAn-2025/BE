@@ -5,22 +5,20 @@ import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.Course;
-import com.doan2025.webtoeic.domain.Enrollment;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.CourseRequest;
 import com.doan2025.webtoeic.dto.response.CourseResponse;
-import com.doan2025.webtoeic.dto.response.UserResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.CourseRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.CourseService;
+import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,13 +35,13 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final ModelMapper modelMapper;
+    private final ConvertUtil convertUtil;
 
     @Override
     public CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
-        return convertCourseToDto(httpServletRequest, course);
+        return convertUtil.convertCourseToDto(httpServletRequest, course);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class CourseServiceImpl implements CourseService {
                 .createdBy(createdBy)
                 .build();
         Course savedCourse = courseRepository.save(course);
-        return convertCourseToDto(httpServletRequest, savedCourse);
+        return convertUtil.convertCourseToDto(httpServletRequest, savedCourse);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class CourseServiceImpl implements CourseService {
                 new FieldUpdateUtil<>(course::getCategoryCourse, course::setCategoryCourse, ECategoryCourse.fromValue(request.getCategoryId()))
         ).forEach(FieldUpdateUtil::updateIfNeeded);
         course.setUpdatedBy(updatedBy);
-        return convertCourseToDto(httpServletRequest, courseRepository.save(course));
+        return convertUtil.convertCourseToDto(httpServletRequest, courseRepository.save(course));
     }
 
     @Override
@@ -143,42 +141,8 @@ public class CourseServiceImpl implements CourseService {
             if (request.getIsDelete() != null && !course.getIsDelete().equals(request.getIsDelete())) {
                 course.setIsDelete(request.getIsDelete());
             }
-            return convertCourseToDto(httpServletRequest, courseRepository.save(course));
+            return convertUtil.convertCourseToDto(httpServletRequest, courseRepository.save(course));
         }
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
-    }
-
-    private CourseResponse convertCourseToDto(HttpServletRequest request, Course course) {
-        CourseResponse courseResponse = new CourseResponse();
-        courseResponse.setId(course.getId());
-        courseResponse.setTitle(course.getTitle());
-        courseResponse.setDescription(course.getDescription());
-        courseResponse.setPrice(course.getPrice());
-        courseResponse.setIsActive(course.getIsActive());
-        courseResponse.setIsDelete(course.getIsDelete());
-        courseResponse.setCreatedAt(course.getCreatedAt());
-        courseResponse.setUpdatedAt(course.getUpdatedAt());
-        courseResponse.setIsBought(false);
-        courseResponse.setAuthor(course.getAuthor() != null ? modelMapper.map(course.getAuthor(), UserResponse.class) : null);
-        courseResponse.setCreatedBy(course.getCreatedBy() != null ? modelMapper.map(course.getCreatedBy(), UserResponse.class) : null);
-        courseResponse.setUpdatedBy(course.getUpdatedBy() != null ? modelMapper.map(course.getUpdatedBy(), UserResponse.class) : null);
-        String email = "";
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            email = jwtUtil.getEmailFromToken(request);
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-            if (user.getRole().equals(ERole.MANAGER) || user.getRole().equals(ERole.CONSULTANT)) {
-                courseResponse.setIsBought(true);
-            }
-            if (course.getEnrollments() != null && !course.getEnrollments().isEmpty()) {
-                for (Enrollment enrollment : course.getEnrollments()) {
-                    if (enrollment.getUser().equals(user)) {
-                        courseResponse.setIsBought(true);
-                    }
-                }
-            }
-        }
-        return courseResponse;
     }
 }
