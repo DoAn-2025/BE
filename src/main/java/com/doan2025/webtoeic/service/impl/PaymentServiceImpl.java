@@ -86,6 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone(Constants.DATE_FORMAT.TIME_ZONE));
         SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT.YYYY_MM_DD_HH_MM_SS);
+        formatter.setTimeZone(TimeZone.getTimeZone(Constants.DATE_FORMAT.TIME_ZONE));
         String vnp_CreateDate = formatter.format(cld.getTime());
 
         String vnp_TxnRef = vnp_CreateDate + "_" + order.getId();
