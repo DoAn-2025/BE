@@ -108,7 +108,7 @@ public class Constants {
     public static class DATE_FORMAT {
         public static String YYYY_MM_DD = "yyyy-MM-dd";
         public static String TIME_ZONE = "Etc/GMT+7";
-        public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+        public static String YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
         public DATE_FORMAT() {
         }

@@ -145,7 +145,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             return PaymentResponse.builder()
                     .status(Constants.SUCCESS)
-                    .message(ResponseCode.SUCCESS.getMessage()
+                    .message("Create " + ResponseCode.SUCCESS.getMessage()
                             .replace("{entity}", ResponseObject.PAYMENT.toString()))
                     .URL(paymentUrl)
                     .build();
