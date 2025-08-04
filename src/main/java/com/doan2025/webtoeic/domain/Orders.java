@@ -23,7 +23,7 @@ public class Orders {
     private Long id;
 
     @Column(name = "total_amount")
-    private Double totalAmount;
+    private Long totalAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")

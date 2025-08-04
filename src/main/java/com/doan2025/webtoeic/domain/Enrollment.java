@@ -43,11 +43,12 @@ public class Enrollment {
     @PrePersist
     protected void onCreate() {
         this.enrolledAt = TimeUtil.getCurrentTimestamp();
+        this.progress = BigDecimal.ZERO;
     }
 
     @PreUpdate
     protected void onComplete() {
-        if(progress.compareTo(BigDecimal.valueOf(100)) == 0){
+        if (progress.compareTo(BigDecimal.valueOf(100)) == 0) {
             this.completedAt = TimeUtil.getCurrentTimestamp();
         }
     }

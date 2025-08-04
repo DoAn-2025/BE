@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Entity
 @Data
 @Table(name = "order_detail")
@@ -20,7 +18,7 @@ public class OrderDetail {
     private Long id;
 
     @Column(name = "price_at_purchase")
-    private BigDecimal priceAtPurchase;
+    private Long priceAtPurchase;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course")

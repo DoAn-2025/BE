@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class OrderDetailResponse {
-    private Long id;
-    private Long priceAtPurchase;
-    private CourseResponse course;
+public class PaymentResponse {
+    private String status;
+    private String message;
+    private String URL;
 }

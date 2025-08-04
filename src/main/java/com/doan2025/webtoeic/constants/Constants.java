@@ -5,21 +5,8 @@ import com.doan2025.webtoeic.constants.enums.ERole;
 import java.util.*;
 
 public class Constants {
-
-    public static final String VNP_VERSION = "vnp_Version";
-    public static final String VNP_COMMAND = "vnp_Command";
-    public static final String VNP_TMN_CODE = "vnp_TmnCode";
-    public static final String VNP_AMOUNT = "vnp_Amount";
-    public static final String VNP_CURR_CODE = "vnp_CurrCode";
-    public static final String VNP_BANK_CODE = "vnp_BankCode";
-    public static final String VNP_TXN_REF = "vnp_TxnRef";
-    public static final String VNP_ORDER_INFO = "vnp_OrderInfo";
-    public static final String VNP_ORDER_TYPE = "vnp_OrderType";
-    public static final String VNP_LOCALE = "vnp_Locale";
-    public static final String VNP_RETURN_URL = "vnp_ReturnUrl";
-    public static final String VNP_IP_ADDR = "vnp_IpAddr";
-    public static final String VNP_CREATE_DATE = "vnp_CreateDate";
-    public static final String VNP_EXPIRE_DATE = "vnp_ExpireDate";
+    public static final String SUCCESS = "success";
+    public static final String FAIL = "fail";
 
     public static final List<ERole> ROLE_BELOW_MANAGER = List.of(ERole.CONSULTANT, ERole.TEACHER, ERole.STUDENT);
     public static final List<ERole> ROLE_BELOW_CONSULTANT = List.of(ERole.TEACHER, ERole.STUDENT);
@@ -31,7 +18,7 @@ public class Constants {
 
     public static final String USERNAME = "username";
     public static final String OTP_CODE = "OTP_Code";
-    public static final String SUBJECT_RESET_PASSWORD = "[Hệ thống TOEIC] Mã xác thực đặt lại mật khẩu của bạn";
+    public static final String SUBJECT_RESET_PASSWORD = "[Hệ thống LEARNEZ] Mã xác thực đặt lại mật khẩu của bạn";
     public static final String BODY_REST_PASSWORD = "Xin chào username,\n" +
             "\n" +
             "Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình. Vui lòng sử dụng mã OTP bên dưới để hoàn tất quá trình đặt lại mật khẩu.\n" +
@@ -118,5 +105,44 @@ public class Constants {
         EXTENSION_TO_TYPE.put(PPTX, DOCUMENT);
     }
 
+    public static class DATE_FORMAT {
+        public static String YYYY_MM_DD = "yyyy-MM-dd";
+        public static String TIME_ZONE = "Etc/GMT+7";
+        public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+
+        public DATE_FORMAT() {
+        }
+    }
+
+    public static class PAYMENT {
+        public static final String NCB = "NCB";
+        public static final String VN = "VN";
+        public static final String VND = "VND";
+        public static final String VNP_VERSION = "vnp_Version";
+        public static final String VNP_COMMAND = "vnp_Command";
+        public static final String VNP_TMN_CODE = "vnp_TmnCode";
+        public static final String VNP_AMOUNT = "vnp_Amount";
+        public static final String VNP_CURR_CODE = "vnp_CurrCode";
+        public static final String VNP_BANK_CODE = "vnp_BankCode";
+        public static final String VNP_TXN_REF = "vnp_TxnRef";
+        public static final String VNP_ORDER_INFO = "vnp_OrderInfo";
+        public static final String VNP_ORDER_TYPE = "vnp_OrderType";
+        public static final String VNP_LOCALE = "vnp_Locale";
+        public static final String VNP_RETURN_URL = "vnp_ReturnUrl";
+        public static final String VNP_IP_ADDR = "vnp_IpAddr";
+        public static final String VNP_CREATE_DATE = "vnp_CreateDate";
+        public static final String VNP_EXPIRE_DATE = "vnp_ExpireDate";
+        public static final String VPN_SECURE_HASH = "&vnp_SecureHash=";
+        public static final String VNP_RESPONSE_CODE = "vnp_ResponseCode";
+        public static final String TXN_REF = "&txnRef=";
+        public static final String TRANSACTION_NO = "&transactionNo=";
+        public static final String VNP_TRANSACTION_NO = "vnp_TransactionNo";
+        public static final String PAY_DATE = "&payDate=";
+        public static final String VPN_PAY_DATE = "vnp_PayDate";
+        public static final String AMOUNT = "&amount=";
+
+        public PAYMENT() {
+        }
+    }
 
 }

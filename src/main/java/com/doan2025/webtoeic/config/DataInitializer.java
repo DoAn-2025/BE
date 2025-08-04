@@ -11,7 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
@@ -168,9 +167,9 @@ public class DataInitializer implements CommandLineRunner {
         if (!checkInitRepository.existsByCode(ResponseObject.COURSE.name())) {
             for (int i = 0; i < 50; i++) {
                 int index = RANDOM.nextInt(1, 5);
-                double price = RANDOM.nextDouble(100, 999);
+                long price = RANDOM.nextLong(100, 999);
                 ECategoryCourse categoryCourse = ECategoryCourse.fromValue(index);
-                Course course = new Course("Course Title " + i, "Course Description " + i, BigDecimal.valueOf(price), THEME, categoryCourse, author, author);
+                Course course = new Course("Course Title " + i, "Course Description " + i, price, THEME, categoryCourse, author, author);
                 courseRepository.save(course);
             }
             checkInitRepository.save(new CheckInit(ResponseObject.COURSE.name()));

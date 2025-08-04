@@ -26,7 +26,7 @@ public enum ResponseCode {
     UNSUPPORTED(404, "Unsupported: {entity}", HttpStatus.BAD_REQUEST),
     NOT_AVAILABLE(404, "{entity} not available", HttpStatus.BAD_REQUEST),
 
-    SUCCESS (200, "{entity} is successfully", HttpStatus.OK),
+    SUCCESS(200, "{entity} is successfully", HttpStatus.OK),
     CREATE_SUCCESS(200, "{entity} has been created ", HttpStatus.CREATED),
     UPDATE_SUCCESS(200, "{entity} has been updated ", HttpStatus.OK),
     DELETE_SUCCESS(200, "{entity} has been deleted ", HttpStatus.OK),
@@ -42,18 +42,21 @@ public enum ResponseCode {
 
     NOT_MATCHED(404, "Not matched {entity}", HttpStatus.BAD_REQUEST),
     NOT_PERMISSION(404, "{entity} not permission ", HttpStatus.BAD_REQUEST),
+    NOT_SUCCESS(404, "{entity} not successfully ", HttpStatus.BAD_REQUEST),
+
+    HAS_PAID(200, "{entity} has been paid ", HttpStatus.OK),
     ;
 
+
+    private final int code;
+    private final HttpStatusCode statusCode;
+    private String message;
 
     ResponseCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
         this.message = message;
         this.statusCode = statusCode;
     }
-
-    private final int code;
-    private String message;
-    private final HttpStatusCode statusCode;
 
     public String getMessage(ResponseObject responseObject) {
         return message.replace("{entity}", responseObject.toString());

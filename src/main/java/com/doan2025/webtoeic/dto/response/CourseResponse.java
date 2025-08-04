@@ -4,7 +4,6 @@ import com.doan2025.webtoeic.constants.enums.ECategoryCourse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class CourseResponse {
     private Long id;
     private String title;
     private String description;
-    private BigDecimal price;
+    private Long price;
     private String thumbnailUrl;
     private String categoryName;
     private Date updatedAt;
@@ -30,7 +29,7 @@ public class CourseResponse {
     private UserResponse updatedBy;
     private List<LessonResponse> lessons;
 
-    public CourseResponse(Long id, String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse category,
+    public CourseResponse(Long id, String title, String description, Long price, String thumbnailUrl, ECategoryCourse category,
                           Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive, String authorName, String createdByName,
                           String updatedByName) {
         this.id = id;
@@ -48,7 +47,7 @@ public class CourseResponse {
         this.updatedByName = updatedByName;
     }
 
-    public CourseResponse(Long id, String title, String description, BigDecimal price, String thumbnailUrl,
+    public CourseResponse(Long id, String title, String description, Long price, String thumbnailUrl,
                           ECategoryCourse category, Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive,
                           String authorName, String createdByName, String updatedByName, Boolean isBought) {
         this.id = id;

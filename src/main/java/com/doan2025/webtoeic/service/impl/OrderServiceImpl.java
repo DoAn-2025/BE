@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentMethod(EPaymentMethod.VN_PAY)
                 .status(EStatusOrder.PENDING)
                 .user(user)
-                .totalAmount(cartItem.getCourse().getPrice().doubleValue())
+                .totalAmount(cartItem.getCourse().getPrice())
                 .build();
         Orders savedOrder = orderRepository.save(order);
 
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentMethod(EPaymentMethod.VN_PAY)
                 .status(EStatusOrder.PENDING)
                 .user(user)
-                .totalAmount(course.getPrice().doubleValue())
+                .totalAmount(course.getPrice())
                 .build();
         Orders savedOrder = orderRepository.save(order);
 

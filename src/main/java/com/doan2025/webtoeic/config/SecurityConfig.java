@@ -54,6 +54,8 @@ public class SecurityConfig {
             "/api/v1/category/gender",
             "/api/v1/course",
             "/api/v1/course/{id}",
+            "/api/v1/payment/return",
+            "/api/v1/payment/order-status"
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

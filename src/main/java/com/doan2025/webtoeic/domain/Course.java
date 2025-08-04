@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class Course {
     private String description;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private Long price;
 
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
@@ -69,7 +68,7 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
     private List<Lesson> lessons;
 
-    public Course(String title, String description, BigDecimal price, String thumbnailUrl, ECategoryCourse categoryCourse, User author, User createdBy) {
+    public Course(String title, String description, Long price, String thumbnailUrl, ECategoryCourse categoryCourse, User author, User createdBy) {
         this.title = title;
         this.description = description;
         this.price = price;

@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -86,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
         if (request.getTitle() == null || request.getTitle().isEmpty()) {
             throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.TITLE);
         }
-        if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getPrice() == null || request.getPrice() <= 0) {
             throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.PRICE);
         }
         User author = userRepository.findById(request.getAuthorId())
