@@ -54,9 +54,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(HttpServletRequest request, Long id) {
-        Orders order = orderRepository.findById(id)
-                .orElseThrow(() -> new WebToeicException(ResponseCode.CANNOT_GET, ResponseObject.ORDER));
+    public void cancelOrder(HttpServletRequest request, List<Long> ids) {
+
         String email = "";
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -64,11 +63,15 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-        if (!order.getUser().getEmail().equals(user.getEmail())) {
-            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        for (Long id : ids) {
+            Orders order = orderRepository.findById(id)
+                    .orElseThrow(() -> new WebToeicException(ResponseCode.CANNOT_GET, ResponseObject.ORDER));
+            if (!order.getUser().getEmail().equals(user.getEmail())) {
+                throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+            }
+            orderDetailRepository.deleteByOrders(order);
+            orderRepository.delete(order);
         }
-        orderDetailRepository.deleteByOrders(order);
-        orderRepository.delete(order);
     }
 
     @Override

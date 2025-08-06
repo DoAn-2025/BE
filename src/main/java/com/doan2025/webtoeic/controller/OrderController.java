@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/order")
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class OrderController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse<Void> deleteOrder(HttpServletRequest request, Long id) {
+    public ApiResponse<Void> deleteOrder(HttpServletRequest request, @RequestParam List<Long> id) {
         orderService.cancelOrder(request, id);
         return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.ORDER, null);
     }

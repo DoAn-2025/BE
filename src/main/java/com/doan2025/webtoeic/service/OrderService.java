@@ -9,7 +9,7 @@ public interface OrderService {
 
     List<OrderResponse> getOwnOrders(HttpServletRequest request);
 
-    void cancelOrder(HttpServletRequest request, Long id);
+    void cancelOrder(HttpServletRequest request, List<Long> id);
 
     OrderResponse createOrderByCartItem(HttpServletRequest request, Long id);
 
