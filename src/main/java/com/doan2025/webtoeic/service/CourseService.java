@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface CourseService {
 
+    Page<CourseResponse> findByCourseBought(HttpServletRequest httpServletRequest, Pageable pageable);
+
     CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id);
 
     Page<CourseResponse> getCourses(HttpServletRequest request, SearchBaseDto dto, Pageable pageable);

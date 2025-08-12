@@ -11,6 +11,7 @@ import com.doan2025.webtoeic.dto.request.CourseRequest;
 import com.doan2025.webtoeic.dto.response.CourseResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.CourseRepository;
+import com.doan2025.webtoeic.repository.EnrollmentRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.CourseService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
@@ -20,11 +21,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,18 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
+    private final EnrollmentRepository enrollmentRepository;
+
+    @Override
+    public Page<CourseResponse> findByCourseBought(HttpServletRequest httpServletRequest, Pageable pageable) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        Page<Course> courses = enrollmentRepository.findCourseByUser(user);
+        List<CourseResponse> courseResponses = courses.getContent().stream()
+                .map(item -> convertUtil.convertCourseToDto(httpServletRequest, item))
+                .collect(Collectors.toList());
+        return new PageImpl<>(courseResponses, pageable, courses.getTotalElements());
+    }
 
     @Override
     public CourseResponse getCourseDetail(HttpServletRequest httpServletRequest, Long id) {

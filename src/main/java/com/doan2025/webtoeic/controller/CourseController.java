@@ -9,6 +9,7 @@ import com.doan2025.webtoeic.dto.response.CourseResponse;
 import com.doan2025.webtoeic.service.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,11 @@ public class CourseController {
     @GetMapping
     public ApiResponse<CourseResponse> getCourse(HttpServletRequest request, @RequestParam("id") Long id) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getCourseDetail(request, id));
+    }
+
+    @GetMapping
+    public ApiResponse<Page<CourseResponse>> getBoughtCourse(HttpServletRequest request, Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.findByCourseBought(request, pageable));
     }
 
     @PostMapping("/get-courses")
