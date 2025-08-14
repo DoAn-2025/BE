@@ -25,7 +25,7 @@ public class CourseController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.getCourseDetail(request, id));
     }
 
-    @GetMapping
+    @GetMapping("/my-bought-course")
     public ApiResponse<Page<CourseResponse>> getBoughtCourse(HttpServletRequest request, Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.COURSE, courseService.findByCourseBought(request, pageable));
     }

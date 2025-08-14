@@ -44,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
     public Page<CourseResponse> findByCourseBought(HttpServletRequest httpServletRequest, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-        Page<Course> courses = enrollmentRepository.findCourseByUser(user);
+        Page<Course> courses = enrollmentRepository.findCourseByUser(user, pageable);
         List<CourseResponse> courseResponses = courses.getContent().stream()
                 .map(item -> convertUtil.convertCourseToDto(httpServletRequest, item))
                 .collect(Collectors.toList());
