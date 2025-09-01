@@ -18,7 +18,8 @@ public class CategoryCourse {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Lob
+    @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
     @Override

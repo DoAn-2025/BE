@@ -21,6 +21,7 @@ public class InvalidatedToken {
     @Column(name = "expiry_time")
     private Date expiryTime;
 
-    @Column(name = "token")
+    @Lob
+    @Column(name = "token", columnDefinition = "LONGTEXT")
     private String token;
 }

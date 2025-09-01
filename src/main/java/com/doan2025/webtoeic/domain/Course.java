@@ -22,16 +22,19 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Lob
+    @Column(name = "title", columnDefinition = "LONGTEXT")
     private String title;
 
-    @Column(name = "description")
+    @Lob
+    @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(name = "price")
     private Long price;
 
-    @Column(name = "thumbnail_url")
+    @Lob
+    @Column(name = "thumbnail_url", columnDefinition = "LONGTEXT")
     private String thumbnailUrl;
 
     @Column(name = "created_at")

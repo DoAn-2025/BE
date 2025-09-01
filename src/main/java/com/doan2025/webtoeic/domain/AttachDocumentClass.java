@@ -2,6 +2,7 @@ package com.doan2025.webtoeic.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,27 +10,18 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "class_schedule")
+@Table(name = "attach_document_class")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassSchedule {
+@Builder
+public class AttachDocumentClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "class")
-    private Class clazz;
-
     @Lob
-    @Column(name = "title", columnDefinition = "LONGTEXT")
-    private String title;
-
-    @Column(name = "start_at")
-    private Date startAt;
-
-    @Column(name = "end_at")
-    private Date endAt;
+    @Column(columnDefinition = "LONGTEXT", name = "link_url")
+    private String linkUrl;
 
     @Column(name = "is_active")
     private Boolean isActive;
@@ -42,7 +34,6 @@ public class ClassSchedule {
 
     @Column(name = "updated_at")
     private Date updatedAt;
-
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;

@@ -18,13 +18,16 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Lob
+    @Column(name = "title", columnDefinition = "LONGTEXT")
     private String title;
 
-    @Column(name = "content")
+    @Lob
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(name = "video_url")
+    @Lob
+    @Column(name = "video_url", columnDefinition = "LONGTEXT")
     private String videoUrl;
 
     @Column(name = "duration")

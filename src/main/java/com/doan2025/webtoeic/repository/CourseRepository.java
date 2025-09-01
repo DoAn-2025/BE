@@ -29,7 +29,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             left JOIN c.createdBy cb
             LEFT JOIN c.updatedBy ub
             WHERE c.isDelete = false AND c.isActive = TRUE
-                AND ( COALESCE(:#{#dto.title}, null) is null OR LOWER(c.title) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
+                AND ( COALESCE(:#{#dto.title}, null) is null OR LOWER(cast( c.title as string)) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
                 AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                         OR c.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                 AND (COALESCE(:#{#dto.categories}, null) is null OR c.categoryCourse IN (:#{#dto.categories}) )
@@ -46,7 +46,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             left JOIN c.lessons l
             left JOIN c.createdBy cb
             left JOIN c.updatedBy ub
-            WHERE ( COALESCE(:#{#dto.title}, null) is null OR LOWER(c.title) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
+            WHERE ( COALESCE(:#{#dto.title}, null) is null OR LOWER(cast( c.title as string)) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
                 AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                         OR c.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                 AND (COALESCE(:#{#dto.categories}, null) is null OR c.categoryCourse IN (:#{#dto.categories}) )
@@ -67,7 +67,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             left JOIN c.updatedBy ub
             WHERE c.isDelete = false
                 AND c.createdBy.email = :email
-                AND ( COALESCE(:#{#dto.title}, null) is null OR LOWER(c.title) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
+                AND ( COALESCE(:#{#dto.title}, null) is null OR LOWER(cast( c.title as string)) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
                 AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                         OR c.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                 AND (COALESCE(:#{#dto.categories}, null) is null OR c.categoryCourse IN (:#{#dto.categories}) )

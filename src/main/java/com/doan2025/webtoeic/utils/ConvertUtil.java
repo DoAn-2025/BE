@@ -3,6 +3,7 @@ package com.doan2025.webtoeic.utils;
 import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.*;
 import com.doan2025.webtoeic.dto.response.*;
 import com.doan2025.webtoeic.exception.WebToeicException;
@@ -20,6 +21,22 @@ public class ConvertUtil {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
+    public ClassResponse convertClassToDto(HttpServletRequest request, Class clazz) {
+        ClassResponse classResponse = ClassResponse.builder()
+                .id(clazz.getId())
+                .name(clazz.getName())
+                .description(clazz.getDescription())
+                .title(clazz.getTitle())
+                .createdAt(clazz.getCreatedAt())
+                .updatedAt(clazz.getUpdatedAt())
+                .createdByName(clazz.getCreatedBy().getFirstName() + " " + clazz.getCreatedBy().getLastName())
+                .updatedByName(clazz.getUpdatedBy() == null ? null : clazz.getUpdatedBy().getFirstName() + " " + clazz.getUpdatedBy().getLastName())
+                .teacher(modelMapper.map(clazz.getTeacher(), UserResponse.class))
+                .build();
+
+        return classResponse;
+    }
 
     public OrderResponse convertOrderToDto(HttpServletRequest request, Orders order, OrderDetail orderDetail) {
         OrderResponse orderResponse = new OrderResponse();

@@ -29,7 +29,8 @@ public class Orders {
     @Column(name = "payment_method")
     private EPaymentMethod paymentMethod;
 
-    @Column(name = "transaction_code")
+    @Lob
+    @Column(name = "transaction_code", columnDefinition = "LONGTEXT")
     private String transactionCode;
 
     @Column(name = "created_at")

@@ -19,13 +19,16 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Lob
+    @Column(name = "title", columnDefinition = "LONGTEXT")
     private String title;
 
-    @Column(name = "content")
+    @Lob
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(name = "theme_url")
+    @Lob
+    @Column(name = "theme_url", columnDefinition = "LONGTEXT")
     private String themeUrl;
 
     @Column(name = "created_at")

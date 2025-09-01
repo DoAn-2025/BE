@@ -15,10 +15,12 @@ public class CategoryPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Lob
+    @Column(name = "name", columnDefinition = "LONGTEXT")
     private String name;
 
-    @Column(name = "description")
+    @Lob
+    @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
 

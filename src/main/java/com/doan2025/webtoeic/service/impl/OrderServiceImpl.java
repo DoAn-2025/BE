@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,13 +54,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(HttpServletRequest request, List<Long> ids) {
-
-        String email = "";
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            email = jwtUtil.getEmailFromToken(request);
-        }
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         for (Long id : ids) {
             Orders order = orderRepository.findById(id)
@@ -78,14 +71,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrderByCartItem(HttpServletRequest request, Long id) {
         CartItem cartItem = cartItemRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.CANNOT_GET, ResponseObject.CART_ITEM));
-        String email = "";
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            email = jwtUtil.getEmailFromToken(request);
-        }
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-        if (orderDetailRepository.existsByUserAndCourse(email, cartItem.getCourse().getId())) {
+        if (orderDetailRepository.existsByUserAndCourse(user.getEmail(), cartItem.getCourse().getId())) {
             throw new WebToeicException(ResponseCode.EXISTED, ResponseObject.ORDER);
         }
         if (enrollmentRepository.existsByUserAndCourse(user, cartItem.getCourse())) {
@@ -114,16 +102,10 @@ public class OrderServiceImpl implements OrderService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.COURSE));
 
-        String email = "";
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            email = jwtUtil.getEmailFromToken(request);
-        }
-
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        if (orderDetailRepository.existsByUserAndCourse(email, course.getId())) {
+        if (orderDetailRepository.existsByUserAndCourse(user.getEmail(), course.getId())) {
             throw new WebToeicException(ResponseCode.EXISTED, ResponseObject.ORDER);
         }
         if (enrollmentRepository.existsByUserAndCourse(user, course)) {

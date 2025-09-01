@@ -16,10 +16,12 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "education")
+    @Lob
+    @Column(name = "education", columnDefinition = "LONGTEXT")
     private String education;
 
-    @Column(name = "major")
+    @Lob
+    @Column(name = "major", columnDefinition = "LONGTEXT")
     private String major;
 
     @JsonIgnoreProperties(allowSetters = true, allowGetters = true, value = {"user"})

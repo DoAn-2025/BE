@@ -1,6 +1,5 @@
 package com.doan2025.webtoeic.domain;
 
-import com.doan2025.webtoeic.constants.enums.EClassStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,47 +10,30 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "class")
+@Table(name = "class_notification")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Class {
+public class ClassNotification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
-    @Column(name = "name", columnDefinition = "LONGTEXT")
-    private String name;
-
-    @Column(name = "total_session")
-    private int totalSession;
-
-    @Lob
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
-    @Lob
-    @Column(name = "subject", columnDefinition = "LONGTEXT")
-    private String subject;
-    @Lob
-    @Column(name = "title", columnDefinition = "LONGTEXT")
-    private String title;
+    @Column(name = "is_active")
+    private Boolean isActive;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private EClassStatus status;
+    @Column(name = "is_delete")
+    private Boolean isDelete;
 
     @Column(name = "created_at")
     private Date createdAt;
 
     @Column(name = "updated_at")
     private Date updatedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "teacher")
-    private User teacher;
-
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;

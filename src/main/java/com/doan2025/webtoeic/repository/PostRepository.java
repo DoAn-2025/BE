@@ -21,7 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                          p.updatedAt, p.isActive, p.isDelete, p.categoryPost)
                     FROM Post p
                     LEFT JOIN p.author u
-                    WHERE (COALESCE(:#{#dto.title}, null ) is null or p.title LIKE CONCAT('%',:#{#dto.title},'%'))
+                    WHERE (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string))  LIKE CONCAT('%',:#{#dto.title},'%'))
                         AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                                 OR p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                         AND (COALESCE(:#{#dto.categoryPost}, null) is null or  p.categoryPost in (:#{#dto.categoryPost}) )
@@ -37,7 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     FROM Post p
                     WHERE p.isDelete = FALSE
                         AND p.author.email = :#{#dto.email}
-                        AND (COALESCE(:#{#dto.title}, null ) is null or p.title LIKE CONCAT('%',:#{#dto.title},'%'))
+                        AND (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string)) LIKE CONCAT('%',:#{#dto.title},'%'))
                          AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                                 OR p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                         AND (COALESCE(:#{#dto.categoryPost}, null) is null or p.categoryPost in (:#{#dto.categoryPost}))
@@ -48,7 +48,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                         SELECT new com.doan2025.webtoeic.dto.response.PostResponse(p.id, p.title, p.content, p.themeUrl, p.categoryPost, p.createdAt)
                         FROM Post p
                         WHERE p.isDelete = FALSE AND p.isActive = TRUE
-                            AND (COALESCE(:#{#dto.title}, null ) is null or p.title LIKE CONCAT('%',:#{#dto.title},'%'))
+                            AND (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string)) LIKE CONCAT('%',:#{#dto.title},'%'))
                              AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                                 OR p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                             AND (COALESCE(:#{#dto.categoryPost}, null) is null or p.categoryPost in (:#{#dto.categoryPost}) )

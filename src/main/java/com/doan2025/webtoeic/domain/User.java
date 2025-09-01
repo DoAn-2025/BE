@@ -2,7 +2,6 @@ package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.EGender;
 import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.utils.CommonUtil;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,25 +22,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Lob
+    @Column(name = "email", unique = true, nullable = false, columnDefinition = "LONGTEXT")
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Lob
+    @Column(name = "password", nullable = false, columnDefinition = "LONGTEXT")
     private String password;
 
-    @Column(name = "code", unique = true, nullable = false)
+    @Lob
+    @Column(name = "code", unique = true, nullable = false, columnDefinition = "LONGTEXT")
     private String code;
 
-    @Column(name = "first_name")
+    @Lob
+    @Column(name = "first_name", columnDefinition = "LONGTEXT")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Lob
+    @Column(name = "last_name", columnDefinition = "LONGTEXT")
     private String lastName;
 
-    @Column(name = "phone")
+    @Lob
+    @Column(name = "phone", columnDefinition = "LONGTEXT")
     private String phone;
 
-    @Column(name = "address")
+    @Lob
+    @Column(name = "address", columnDefinition = "LONGTEXT")
     private String address;
 
     @Column(name = "dob")
@@ -51,7 +57,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private EGender gender;
 
-    @Column(name = "avatar_url")
+    @Lob
+    @Column(name = "avatar_url", columnDefinition = "LONGTEXT")
     private String avatarUrl;
 
     @Column(name = "is_delete")
@@ -93,6 +100,14 @@ public class User {
     @OneToOne(mappedBy = "user")
     private ForgotPassword forgotPassword;
 
+    public User(String email, String password, String firstName, String lastName, ERole role) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.isActive = true;
@@ -104,14 +119,6 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = TimeUtil.getCurrentTimestamp();
-    }
-
-    public User(String email, String password, String firstName, String lastName, ERole role) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
     }
 
     @Override

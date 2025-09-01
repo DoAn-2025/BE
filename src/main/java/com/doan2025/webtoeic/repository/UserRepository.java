@@ -29,12 +29,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     LEFT JOIN u.manager m
                     WHERE
                         ( COALESCE(:#{#dto.searchString}, null ) is null
-                            OR lower(u.email) like lower(concat('%', :#{#dto.searchString}, '%'))
-                            OR lower(u.phone)  like  lower(concat('%', :#{#dto.searchString}, '%'))
-                            OR lower(concat(u.firstName, ' ', u.lastName))  like lower(concat('%', :#{#dto.searchString}, '%'))
+                            OR lower(cast(u.email as string)) like lower(concat('%', :#{#dto.searchString}, '%'))
+                            OR lower(cast( u.phone as string))  like  lower(concat('%', :#{#dto.searchString}, '%'))
+                            OR lower(cast(concat(u.firstName, ' ', u.lastName) as string) )  like lower(concat('%', :#{#dto.searchString}, '%'))
                         )
                         AND (
-                          ( (COALESCE(:#{#dto.fromDate}, NULL) IS NULL) AND (COALESCE(:#{#dto.toDate}, NULL) IS NULL))
+                          ( (COALESCE(:#{#dto.fromDate}, NULL) IS NULL) OR (COALESCE(:#{#dto.toDate}, NULL) IS NULL))
                           OR u.createdAt BETWEEN :#{#dto.fromDate} AND :#{#dto.toDate}
                         )
                         AND (COALESCE(:roles, null) is null or u.role IN (:roles) )

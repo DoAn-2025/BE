@@ -42,7 +42,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             LEFT JOIN l.createdBy cb
             LEFT JOIN l.updatedBy ub
             WHERE cb.email = :email AND l.isDelete = FALSE
-                  AND ( COALESCE(:#{#dto.title}, null) is null OR  LOWER(l.title ) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%')) )
+                  AND ( COALESCE(:#{#dto.title}, null) is null OR  LOWER(cast(l.title as string)) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%')) )
                   AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                         OR l.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
             """)
@@ -57,7 +57,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             FROM Lesson l
             LEFT JOIN l.createdBy cb
             LEFT JOIN l.updatedBy ub
-            WHERE ( COALESCE(:#{#dto.title}, null) is null OR  LOWER(l.title ) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%')) )
+            WHERE ( COALESCE(:#{#dto.title}, null) is null OR  LOWER(cast(l.title as string))  LIKE LOWER(CONCAT('%', :#{#dto.title}, '%')) )
                   AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                         OR l.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
                   AND (COALESCE(:#{#dto.isActive}, NULL) IS NULL OR l.isActive = :#{#dto.isActive} )
