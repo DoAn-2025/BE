@@ -8,7 +8,9 @@ import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.response.ClassResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
-import com.doan2025.webtoeic.repository.*;
+import com.doan2025.webtoeic.repository.ClassMemberRepository;
+import com.doan2025.webtoeic.repository.ClassRepository;
+import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.ClassService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
@@ -26,10 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 public class ClassServiceImpl implements ClassService {
-    private final ClassScheduleRepository classScheduleRepository;
     private final ClassRepository classRepository;
     private final ClassMemberRepository classMemberRepository;
-    private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;

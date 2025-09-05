@@ -18,7 +18,7 @@ public class ClassRequest {
     private String description;
     private String subject;
     private String title;
-    private List<Long> studentIds;
+    private List<Long> memberIds;
     private int status;
     private Long teacher;
     private Date createdAt;

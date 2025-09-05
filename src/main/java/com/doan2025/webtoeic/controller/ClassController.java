@@ -5,6 +5,7 @@ import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.response.ApiResponse;
+import com.doan2025.webtoeic.service.ClassMemberService;
 import com.doan2025.webtoeic.service.ClassService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,21 @@ import java.util.List;
 @RequestMapping("/api/v1/class")
 public class ClassController {
     private final ClassService classService;
+    private final ClassMemberService classMemberService;
+
+    @PostMapping("/remove-user-from-class")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
+    public ApiResponse<Void> removeUserFromClass(HttpServletRequest request, @RequestBody ClassRequest classRequest) {
+        classMemberService.removeUserFromClass(request, classRequest);
+        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.USER, null);
+    }
+
+    @PostMapping("/add-user-to-class")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
+    public ApiResponse<Void> addUserToClass(HttpServletRequest request, @RequestBody ClassRequest classRequest) {
+        classMemberService.addUserToClass(request, classRequest);
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.CLASS, null);
+    }
 
     @PostMapping("/filter")
     public ApiResponse<?> filterClass(@RequestBody SearchClassDto dto, HttpServletRequest httpServletRequest) {
