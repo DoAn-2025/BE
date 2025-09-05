@@ -22,16 +22,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Column(name = "email", unique = true, nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Lob
     @Column(name = "password", nullable = false, columnDefinition = "LONGTEXT")
     private String password;
 
-    @Lob
-    @Column(name = "code", unique = true, nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "code", unique = true, nullable = false)
     private String code;
 
     @Lob

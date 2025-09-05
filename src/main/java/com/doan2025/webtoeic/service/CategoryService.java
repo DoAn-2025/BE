@@ -5,8 +5,13 @@ import com.doan2025.webtoeic.dto.response.CategoryResponse;
 import java.util.List;
 
 public interface CategoryService {
+    List<CategoryResponse> getStatusClass();
+
     List<CategoryResponse> getCategoryPost();
+
     List<CategoryResponse> getCategoryGender();
+
     List<CategoryResponse> getCategoryRole();
+
     List<CategoryResponse> getCategoryCourse();
 }

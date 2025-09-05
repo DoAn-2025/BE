@@ -1,10 +1,8 @@
 package com.doan2025.webtoeic.service.impl;
 
-import com.doan2025.webtoeic.constants.enums.EClassStatus;
-import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.constants.enums.ResponseCode;
-import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.Class;
+import com.doan2025.webtoeic.domain.ClassMember;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
@@ -21,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,18 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public List<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto) {
-        return List.of();
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        List<Class> classes = List.of();
+        if (Objects.equals(user.getRole(), ERole.STUDENT) || Objects.equals(user.getRole(), ERole.TEACHER)) {
+            List<Long> ids = classMemberRepository.findClassOfMember(user.getEmail());
+            classes = classRepository.filterClass(dto, ids);
+        } else if (Objects.equals(user.getRole(), ERole.CONSULTANT) || Objects.equals(user.getRole(), ERole.MANAGER)) {
+            classes = classRepository.filterClass(dto, null);
+        }
+        return classes.stream()
+                .map(item -> convertUtil.convertClassToDto(httpServletRequest, item))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,6 +101,14 @@ public class ClassServiceImpl implements ClassService {
                 .status(EClassStatus.PLANNING)
                 .teacher(teacher)
                 .build();
-        return convertUtil.convertClassToDto(request, classRepository.save(createClass));
+        Class clazz = classRepository.save(createClass);
+        ClassMember classMember = ClassMember.builder()
+                .member(teacher)
+                .roleInClass(ERole.TEACHER)
+                .clazz(clazz)
+                .status(EJoinStatus.ACTIVE)
+                .build();
+        classMemberRepository.save(classMember);
+        return convertUtil.convertClassToDto(request, clazz);
     }
 }

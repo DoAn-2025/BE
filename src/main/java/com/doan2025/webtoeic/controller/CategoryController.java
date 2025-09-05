@@ -19,6 +19,11 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    @GetMapping("/status-class")
+    public ApiResponse<List<CategoryResponse>> getStatusClass() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getStatusClass());
+    }
+
     @GetMapping("/post")
     public ApiResponse<List<CategoryResponse>> getPosts() {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryPost());
