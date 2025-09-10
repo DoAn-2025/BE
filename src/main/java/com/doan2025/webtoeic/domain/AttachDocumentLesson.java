@@ -9,18 +9,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-/**
- * Entity đại diện cho bảng lưu trữ các tài liệu đính kèm trong thông tin của lớp học.
- * Được sử dụng để quản lý liên kết đến tài liệu (URL), trạng thái hoạt động, trạng thái xóa,
- * và thông tin về người tạo/cập nhật tài liệu.
- */
 @Entity
 @Data
-@Table(name = "attach_document_class")
+@Table(name = "attach_document_lesson")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttachDocumentClass {
+public class AttachDocumentLesson {
     /**
      * ID duy nhất của tài liệu đính kèm.
      */
@@ -74,8 +69,8 @@ public class AttachDocumentClass {
     private User updatedBy;
 
     @ManyToOne
-    @JoinColumn(name = "class_notification")
-    private ClassNotification classNotification;
+    @JoinColumn(name = "lesson")
+    private Lesson lesson;
 
     /**
      * Thiết lập các giá trị mặc định khi tạo mới tài liệu:
@@ -86,7 +81,7 @@ public class AttachDocumentClass {
      */
     @PrePersist
     protected void onCreate() {
-        this.isActive = false;
+        this.isActive = true;
         this.isDelete = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;

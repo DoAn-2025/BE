@@ -5,7 +5,9 @@ import com.doan2025.webtoeic.constants.enums.EStatusOrder;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.*;
+import com.doan2025.webtoeic.dto.SearchOrderDto;
 import com.doan2025.webtoeic.dto.response.OrderResponse;
+import com.doan2025.webtoeic.dto.response.StatisticOrderResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.*;
 import com.doan2025.webtoeic.service.OrderService;
@@ -14,6 +16,9 @@ import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,12 +39,24 @@ public class OrderServiceImpl implements OrderService {
     private final ConvertUtil convertUtil;
 
     @Override
-    public List<OrderResponse> getOwnOrders(HttpServletRequest request) {
+    public StatisticOrderResponse getStatisticOrder(HttpServletRequest request) {
+        String email = jwtUtil.getEmailFromToken(request);
+
+        return StatisticOrderResponse.builder()
+                .totalOrders(orderRepository.countOrders(null, email))
+                .cancelledOrders(orderRepository.countOrders(EStatusOrder.CANCELLED, email))
+                .completedOrders(orderRepository.countOrders(EStatusOrder.COMPLETED, email))
+                .pendingOrders(orderRepository.countOrders(EStatusOrder.PENDING, email))
+                .totalPurchases(orderRepository.totalPurchases(email))
+                .build();
+    }
+
+    @Override
+    public Page<OrderResponse> getOwnOrders(HttpServletRequest request, SearchOrderDto dto, Pageable pageable) {
 
         String email = jwtUtil.getEmailFromToken(request);
 
-        List<Orders> orders = orderRepository.findByEmail(email)
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.ORDER));
+        Page<Orders> orders = orderRepository.findOwnOrders(dto, email, pageable);
 
         List<OrderResponse> orderResponses = new ArrayList<>();
 
@@ -49,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
                             .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.ORDER)));
             orderResponses.add(orderResponse);
         }
-        return orderResponses;
+        return new PageImpl<>(orderResponses, pageable, orders.getTotalElements());
     }
 
     @Override
@@ -62,8 +79,8 @@ public class OrderServiceImpl implements OrderService {
             if (!order.getUser().getEmail().equals(user.getEmail())) {
                 throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
             }
-            orderDetailRepository.deleteByOrders(order);
-            orderRepository.delete(order);
+            order.setStatus(EStatusOrder.CANCELLED);
+            orderRepository.save(order);
         }
     }
 

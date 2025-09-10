@@ -41,7 +41,11 @@ public class ClassNotification {
     @Column(name = "type_notification")
     @Enumerated(EnumType.STRING)
     private ETypeNotification typeNotification;
-
+    /**
+     * Trạng thái hoạt động của thông báo co ghim lai hay khong (true: co, false: khong).
+     */
+    @Column(name = "is_pin")
+    private Boolean isPin;
     /**
      * Trạng thái hoạt động của thông báo (true: hoạt động, false: không hoạt động).
      */

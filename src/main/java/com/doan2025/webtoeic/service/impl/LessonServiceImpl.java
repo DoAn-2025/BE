@@ -3,6 +3,7 @@ package com.doan2025.webtoeic.service.impl;
 import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.domain.AttachDocumentLesson;
 import com.doan2025.webtoeic.domain.Course;
 import com.doan2025.webtoeic.domain.Lesson;
 import com.doan2025.webtoeic.domain.User;
@@ -10,6 +11,7 @@ import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.LessonRequest;
 import com.doan2025.webtoeic.dto.response.LessonResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
+import com.doan2025.webtoeic.repository.AttachDocumentLessonRepository;
 import com.doan2025.webtoeic.repository.CourseRepository;
 import com.doan2025.webtoeic.repository.LessonRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,7 @@ public class LessonServiceImpl implements LessonService {
     private final JwtUtil jwtUtil;
     private final ModelMapper modelMapper;
     private final CloudService cloudService;
+    private final AttachDocumentLessonRepository attachDocumentLessonRepository;
     private final ConvertUtil convertUtil;
 
 
@@ -118,6 +122,18 @@ public class LessonServiceImpl implements LessonService {
                     new FieldUpdateUtil<>(lesson::getIsPreviewAble, lesson::setIsPreviewAble, lessonRequest.getIsPreviewAble()),
                     new FieldUpdateUtil<>(lesson::getOrderIndex, lesson::setOrderIndex, lessonRequest.getOrderIndex())
             ).forEach(FieldUpdateUtil::updateIfNeeded);
+
+            if (Objects.nonNull(lessonRequest.getDocumentUrls())) {
+                attachDocumentLessonRepository.deleteAllByLessonId(lesson.getId());
+
+                for (String documentUrl : lessonRequest.getDocumentUrls()) {
+                    AttachDocumentLesson doc = AttachDocumentLesson.builder()
+                            .lesson(lesson)
+                            .linkUrl(documentUrl)
+                            .build();
+                    attachDocumentLessonRepository.save(doc);
+                }
+            }
             return convertUtil.convertLessonToDto(request, lessonRepository.save(lesson));
         }
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
@@ -146,7 +162,15 @@ public class LessonServiceImpl implements LessonService {
         saveLesson.setCreatedBy(createdBy);
         Double duration = cloudService.getVideoDuration(lesson.getVideoUrl());
         saveLesson.setDuration(duration);
-
+        if (Objects.nonNull(lesson.getDocumentUrls())) {
+            for (String documentUrl : lesson.getDocumentUrls()) {
+                AttachDocumentLesson document = AttachDocumentLesson.builder()
+                        .lesson(saveLesson)
+                        .linkUrl(documentUrl)
+                        .build();
+                attachDocumentLessonRepository.save(document);
+            }
+        }
         return convertUtil.convertLessonToDto(request, lessonRepository.save(saveLesson));
     }
 }

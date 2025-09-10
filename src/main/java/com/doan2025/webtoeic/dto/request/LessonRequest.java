@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,4 +22,5 @@ public class LessonRequest {
     private Long courseId;
     private Boolean isActive;
     private Boolean isDelete;
+    private List<String> documentUrls;
 }

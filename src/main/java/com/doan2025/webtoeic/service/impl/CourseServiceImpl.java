@@ -115,6 +115,7 @@ public class CourseServiceImpl implements CourseService {
                 .description(request.getDescription())
                 .title(request.getTitle())
                 .createdBy(createdBy)
+                .thumbnailUrl(request.getThumbnailUrl())
                 .build();
         Course savedCourse = courseRepository.save(course);
         return convertUtil.convertCourseToDto(httpServletRequest, savedCourse);
@@ -130,6 +131,7 @@ public class CourseServiceImpl implements CourseService {
                 new FieldUpdateUtil<>(course::getTitle, course::setTitle, request.getTitle()),
                 new FieldUpdateUtil<>(course::getDescription, course::setDescription, request.getDescription()),
                 new FieldUpdateUtil<>(course::getPrice, course::setPrice, request.getPrice()),
+                new FieldUpdateUtil<>(course::getThumbnailUrl, course::setThumbnailUrl, request.getThumbnailUrl()),
                 new FieldUpdateUtil<>(course::getAuthor, course::setAuthor,
                         userRepository.findById(request.getAuthorId())
                                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER))),
