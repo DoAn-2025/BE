@@ -59,7 +59,8 @@ public class ClassServiceImpl implements ClassService {
             Class clazz = classRepository.findById(id)
                     .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CLASS));
             if (clazz.getTeacher().getCode().equals(user.getCode()) || ERole.CONSULTANT.getCode().equals(user.getRole().getCode())) {
-                classRepository.delete(clazz);
+                clazz.setStatus(EClassStatus.CANCELLED);
+                classRepository.save(clazz);
                 continue;
             }
             throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);

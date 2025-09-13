@@ -24,6 +24,11 @@ public class CategoryController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getStatusClass());
     }
 
+    @GetMapping("/status-order")
+    public ApiResponse<List<CategoryResponse>> getStatusOrder() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getStatusClass());
+    }
+
     @GetMapping("/post")
     public ApiResponse<List<CategoryResponse>> getPosts() {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getCategoryPost());

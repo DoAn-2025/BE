@@ -40,7 +40,7 @@ public class ClassController {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CLASS, classService.getClasses(httpServletRequest, dto));
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
     public ApiResponse<Void> deleteClass(HttpServletRequest request, @RequestParam("ids") List<Long> ids) {
         classService.deleteClass(ids, request);
