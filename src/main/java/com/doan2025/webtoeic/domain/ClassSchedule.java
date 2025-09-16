@@ -1,7 +1,10 @@
 package com.doan2025.webtoeic.domain;
 
+import com.doan2025.webtoeic.constants.enums.EScheduleStatus;
+import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +20,7 @@ import java.util.Date;
 @Table(name = "class_schedule")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ClassSchedule {
     /**
      * ID duy nhất của lịch học.
@@ -31,6 +35,10 @@ public class ClassSchedule {
     @ManyToOne
     @JoinColumn(name = "class")
     private Class clazz;
+
+    @ManyToOne
+    @JoinColumn(name = "room")
+    private Room room;
 
     /**
      * Tiêu đề của lịch học.
@@ -50,6 +58,10 @@ public class ClassSchedule {
      */
     @Column(name = "end_at")
     private Date endAt;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private EScheduleStatus status;
 
     /**
      * Trạng thái hoạt động của lịch học (true: hoạt động, false: không hoạt động).
@@ -88,4 +100,17 @@ public class ClassSchedule {
     @ManyToOne
     @JoinColumn(name = "updated_by")
     private User updatedBy;
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
 }

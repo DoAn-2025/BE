@@ -7,6 +7,8 @@ import java.util.List;
 public interface CategoryService {
     List<CategoryResponse> getStatusClass();
 
+    List<CategoryResponse> getStatusSchedule();
+
     List<CategoryResponse> getStatusOrder();
 
     List<CategoryResponse> getCategoryPost();

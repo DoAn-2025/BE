@@ -25,6 +25,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryResponse> getStatusSchedule() {
+        List<CategoryResponse> responses = new ArrayList<>();
+        for (EScheduleStatus e : EScheduleStatus.values()) {
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setId(e.getValue());
+            categoryResponse.setName(e.getName().toUpperCase());
+            responses.add(categoryResponse);
+        }
+        return responses;
+    }
+
+    @Override
     public List<CategoryResponse> getStatusOrder() {
         List<CategoryResponse> responses = new ArrayList<>();
         for (EStatusOrder e : EStatusOrder.values()) {

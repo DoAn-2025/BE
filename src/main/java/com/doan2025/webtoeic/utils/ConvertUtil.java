@@ -22,8 +22,26 @@ public class ConvertUtil {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    public ClassScheduleResponse convertScheduleToDto(HttpServletRequest request, ClassSchedule schedule) {
+        return ClassScheduleResponse.builder()
+                .id(schedule.getId())
+                .title(schedule.getTitle())
+                .status(schedule.getStatus().name())
+                .startAt(schedule.getStartAt())
+                .endAt(schedule.getEndAt())
+                .isActive(schedule.getIsActive())
+                .isDelete(schedule.getIsDelete())
+                .createdAt(schedule.getCreatedAt())
+                .updatedAt(schedule.getUpdatedAt())
+                .clazz(convertClassToDto(request, schedule.getClazz()))
+                .createdBy(modelMapper.map(schedule.getCreatedBy(), UserResponse.class))
+                .updatedBy(schedule.getUpdatedBy() == null ? null : modelMapper.map(schedule.getUpdatedBy(), UserResponse.class))
+                .build();
+
+    }
+
     public ClassResponse convertClassToDto(HttpServletRequest request, Class clazz) {
-        ClassResponse classResponse = ClassResponse.builder()
+        return ClassResponse.builder()
                 .id(clazz.getId())
                 .name(clazz.getName())
                 .description(clazz.getDescription())
@@ -35,7 +53,6 @@ public class ConvertUtil {
                 .teacher(modelMapper.map(clazz.getTeacher(), UserResponse.class))
                 .build();
 
-        return classResponse;
     }
 
     public OrderResponse convertOrderToDto(HttpServletRequest request, Orders order, OrderDetail orderDetail) {

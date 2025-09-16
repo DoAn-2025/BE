@@ -15,6 +15,7 @@ import java.util.List;
 public class ClassRequest {
     private long id;
     private String name;
+    private Long roomId;
     private String description;
     private String subject;
     private String title;
