@@ -23,6 +23,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                     WHERE e.course.id = c.id AND e.user.email = :email
                 ) THEN TRUE
                 ELSE FALSE
+            END ,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM Orders o
+                    JOIN OrderDetail od ON o.id = od.orders.id
+                    WHERE od.course.id = c.id AND o.user.email = :email
+                ) THEN TRUE
+                ELSE FALSE
             END )
             FROM Course c
             LEFT JOIN c.author a
