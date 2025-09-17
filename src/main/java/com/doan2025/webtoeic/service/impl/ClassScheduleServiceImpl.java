@@ -43,6 +43,18 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
 
 
     @Override
+    public ClassScheduleResponse getScheduleDetail(HttpServletRequest request, Long scheduleId) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        ClassSchedule schedule = classScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
+        if (classMemberRepository.existsMemberInClass(scheduleId, user.getId())) {
+            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        }
+        return convertUtil.convertScheduleToDto(request, schedule);
+    }
+
+    @Override
     public Page<?> getClassSchedule(HttpServletRequest request, SearchScheduleSto dto, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));

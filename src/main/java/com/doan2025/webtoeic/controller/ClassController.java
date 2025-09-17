@@ -26,28 +26,33 @@ public class ClassController {
     private final ClassMemberService classMemberService;
     private final ClassScheduleService classScheduleService;
 
-    @PostMapping("/get-schedule-in-class")
+    @GetMapping("/get-schedule-detail-in-class")
+    public ApiResponse<?> getScheduleDetailInClass(HttpServletRequest request, @RequestParam("scheduleId") Long scheduleId) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.SCHEDULE, classScheduleService.getScheduleDetail(request, scheduleId));
+    }
+
+    @PostMapping("/get-schedules-in-class")
     public ApiResponse<?> getScheduleInClass(HttpServletRequest request, @RequestBody SearchScheduleSto dto, Pageable pageable) {
-        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.USER, classScheduleService.getClassSchedule(request, dto, pageable));
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.SCHEDULE, classScheduleService.getClassSchedule(request, dto, pageable));
     }
 
     @PostMapping("/cancelled-schedule-in-class")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
     public ApiResponse<?> cancelledScheduleInClass(HttpServletRequest request, @RequestParam("ids") List<Long> ids) {
         classScheduleService.cancelledScheduleInClass(request, ids);
-        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.USER, null);
+        return ApiResponse.of(ResponseCode.CANCELLED_SUCCESS, ResponseObject.SCHEDULE, null);
     }
 
     @PostMapping("/update-schedule-in-class")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
     public ApiResponse<?> updateScheduleInClass(HttpServletRequest request, @RequestBody ClassScheduleRequest dto) {
-        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.USER, classScheduleService.updateScheduleInClass(request, dto));
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.SCHEDULE, classScheduleService.updateScheduleInClass(request, dto));
     }
 
     @PostMapping("/create-schedule-in-class")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('TEACHER')")
     public ApiResponse<?> createScheduleInClass(HttpServletRequest request, @RequestBody List<ClassScheduleRequest> dtos) {
-        return ApiResponse.of(ResponseCode.DELETE_SUCCESS, ResponseObject.USER, classScheduleService.createScheduleInClass(request, dtos));
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.SCHEDULE, classScheduleService.createScheduleInClass(request, dtos));
     }
 
     @PostMapping("/remove-user-from-class")

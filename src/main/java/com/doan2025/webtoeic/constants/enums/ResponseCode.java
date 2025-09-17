@@ -32,6 +32,7 @@ public enum ResponseCode {
     DELETE_SUCCESS(200, "{entity} has been deleted ", HttpStatus.OK),
     GET_SUCCESS(200, "Get {entity} is successfully", HttpStatus.OK),
     UPLOAD_SUCCESS(200, "Upload {entity} is successfully", HttpStatus.OK),
+    CANCELLED_SUCCESS(200, "Cancelled {entity} is successfully", HttpStatus.OK),
 
     CANNOT_GET(404, "Cannot get {entity}", HttpStatus.NOT_FOUND),
     CANNOT_DELETE(404, "Cannot delete {entity}", HttpStatus.BAD_REQUEST),

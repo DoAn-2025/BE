@@ -28,7 +28,8 @@ public class CourseResponse {
     private UserResponse createdBy;
     private UserResponse updatedBy;
     private List<LessonResponse> lessons;
-    private Boolean isOrdered;
+    private Long isOrdered;
+    private String statusOrder;
 
     public CourseResponse(Long id, String title, String description, Long price, String thumbnailUrl, ECategoryCourse category,
                           Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive, String authorName, String createdByName,
@@ -50,7 +51,8 @@ public class CourseResponse {
 
     public CourseResponse(Long id, String title, String description, Long price, String thumbnailUrl,
                           ECategoryCourse category, Date updatedAt, Date createdAt, Boolean isDelete, Boolean isActive,
-                          String authorName, String createdByName, String updatedByName, Boolean isBought, Boolean isOrdered) {
+                          String authorName, String createdByName, String updatedByName, Boolean isBought, Long isOrdered,
+                          String statusOrder) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -66,5 +68,6 @@ public class CourseResponse {
         this.updatedByName = updatedByName;
         this.isBought = isBought;
         this.isOrdered = isOrdered;
+        this.statusOrder = statusOrder;
     }
 }

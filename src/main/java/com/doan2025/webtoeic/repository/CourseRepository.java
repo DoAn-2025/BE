@@ -29,9 +29,26 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                     SELECT 1 FROM Orders o
                     JOIN OrderDetail od ON o.id = od.orders.id
                     WHERE od.course.id = c.id AND o.user.email = :email
-                ) THEN TRUE
-                ELSE FALSE
-            END )
+                ) THEN (
+                   SELECT MIN(o.id) FROM Orders o
+                   JOIN OrderDetail od ON o.id = od.orders.id
+                   WHERE od.course.id = c.id AND o.user.email = :email
+                 )
+                ELSE NULL
+            END,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM Orders o
+                    JOIN OrderDetail od ON o.id = od.orders.id
+                    WHERE od.course.id = c.id AND o.user.email = :email
+                ) THEN (
+                   SELECT CAST(o.status as string)  FROM Orders o
+                   JOIN OrderDetail od ON o.id = od.orders.id
+                   WHERE od.course.id = c.id AND o.user.email = :email
+                 )
+                ELSE NULL
+            END
+            )
             FROM Course c
             LEFT JOIN c.author a
             left JOIN c.createdBy cb

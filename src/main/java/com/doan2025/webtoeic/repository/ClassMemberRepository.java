@@ -34,4 +34,11 @@ public interface ClassMemberRepository extends JpaRepository<ClassMember, Long> 
                     WHERE cm.clazz.id = :clazzId AND cm.member.id = :userId
             """)
     ClassMember findByClassAndMember(Long userId, Long clazzId);
+
+    @Query("""
+                    SELECT COUNT(cm) > 0 FROM ClassMember cm
+                    WHERE cm.clazz.id = :classId AND cm.member.id = :userId
+                    AND cm.status = :#{T(com.doan2025.webtoeic.constants.enums.EJoinStatus).ACTIVE}
+            """)
+    Boolean existsMemberInClass(Long classId, Long userId);
 }

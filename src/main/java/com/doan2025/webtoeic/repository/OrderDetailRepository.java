@@ -21,6 +21,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
                     SELECT CASE WHEN COUNT(od) > 0 THEN true ELSE false END
                     FROM OrderDetail od
                     WHERE od.course.id=:id AND od.orders.user.email=:email
+                          AND od.orders.status != :#{T(com.doan2025.webtoeic.constants.enums.EStatusOrder).CANCELLED}
             """)
     boolean existsByUserAndCourse(String email, Long id);
 

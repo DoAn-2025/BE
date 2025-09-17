@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ClassScheduleService {
+
+    ClassScheduleResponse getScheduleDetail(HttpServletRequest request, Long scheduleId);
+
     Page<?> getClassSchedule(HttpServletRequest request, SearchScheduleSto dto, Pageable pageable);
 
     List<?> createScheduleInClass(HttpServletRequest request, List<ClassScheduleRequest> classScheduleRequest);
