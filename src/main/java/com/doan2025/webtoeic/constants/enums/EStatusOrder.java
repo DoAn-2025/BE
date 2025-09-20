@@ -26,6 +26,6 @@ public enum EStatusOrder {
 
     @JsonValue
     public String getName() {
-        return name().toLowerCase();
+        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
     }
 }

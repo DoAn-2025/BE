@@ -14,12 +14,7 @@ public enum ECategoryCourse {
     ECategoryCourse(Integer value) {
         this.value = value;
     }
-    public int getValue() {return value;}
 
-    @JsonValue
-    public String getName() {
-        return name().toLowerCase();
-    }
     public static ECategoryCourse fromValue(Integer value) {
         for (ECategoryCourse category : ECategoryCourse.values()) {
             if (category.getValue() == value) {
@@ -27,5 +22,14 @@ public enum ECategoryCourse {
             }
         }
         throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CATEGORY);
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    @JsonValue
+    public String getName() {
+        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
     }
 }

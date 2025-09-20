@@ -13,12 +13,7 @@ public enum ECategoryPost {
     ECategoryPost(Integer value) {
         this.value = value;
     }
-    public int getValue() {return value;}
 
-    @JsonValue
-    public String getName() {
-        return name().toLowerCase();
-    }
     public static ECategoryPost fromValue(Integer value) {
         for (ECategoryPost category : ECategoryPost.values()) {
             if (category.getValue() == value) {
@@ -26,5 +21,14 @@ public enum ECategoryPost {
             }
         }
         throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CATEGORY);
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    @JsonValue
+    public String getName() {
+        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
     }
 }
