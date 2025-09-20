@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ClassService {
 
+    ClassResponse get(HttpServletRequest httpServletRequest, Long classId);
+
     List<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto);
 
     void deleteClass(List<Long> ids, HttpServletRequest httpServletRequest);

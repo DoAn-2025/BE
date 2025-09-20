@@ -3,6 +3,7 @@ package com.doan2025.webtoeic.controller;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.dto.SearchClassDto;
+import com.doan2025.webtoeic.dto.SearchMemberInClassDto;
 import com.doan2025.webtoeic.dto.SearchScheduleSto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.request.ClassScheduleRequest;
@@ -25,6 +26,13 @@ public class ClassController {
     private final ClassService classService;
     private final ClassMemberService classMemberService;
     private final ClassScheduleService classScheduleService;
+
+    @PostMapping("/get-members-in-class")
+    public ApiResponse<?> getStudentInClass(HttpServletRequest httpServletRequest,
+                                            @RequestBody SearchMemberInClassDto request,
+                                            Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.USER, classMemberService.getMemberInClass(httpServletRequest, request, pageable));
+    }
 
     @GetMapping("/get-schedule-detail-in-class")
     public ApiResponse<?> getScheduleDetailInClass(HttpServletRequest request, @RequestParam("scheduleId") Long scheduleId) {
@@ -67,6 +75,11 @@ public class ClassController {
     public ApiResponse<Void> addUserToClass(HttpServletRequest request, @RequestBody ClassRequest classRequest) {
         classMemberService.addUserToClass(request, classRequest);
         return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.CLASS, null);
+    }
+
+    @GetMapping("/detail")
+    public ApiResponse<?> getDetail(HttpServletRequest request, @RequestParam("id") Long id) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CLASS, classService.get(request, id));
     }
 
     @PostMapping("/filter")

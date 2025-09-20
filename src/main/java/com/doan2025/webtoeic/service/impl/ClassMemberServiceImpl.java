@@ -1,12 +1,15 @@
 package com.doan2025.webtoeic.service.impl;
 
 import com.doan2025.webtoeic.constants.enums.EJoinStatus;
+import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.ClassMember;
 import com.doan2025.webtoeic.domain.User;
+import com.doan2025.webtoeic.dto.SearchMemberInClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
+import com.doan2025.webtoeic.dto.response.ClassMemberResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.*;
 import com.doan2025.webtoeic.service.ClassMemberService;
@@ -15,6 +18,8 @@ import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +38,21 @@ public class ClassMemberServiceImpl implements ClassMemberService {
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
 
+
+    @Override
+    public Page<ClassMemberResponse> getMemberInClass(HttpServletRequest httpServletRequest, SearchMemberInClassDto request, Pageable pageable) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        if (Objects.isNull(request.getStatus()) || request.getStatus().isEmpty()) {
+            request.setStatus(null);
+        }
+        if (Objects.equals(user.getRole(), ERole.STUDENT)) {
+            return classMemberRepository.findMembersInClass(request, user.getEmail(), pageable)
+                    .map(item -> convertUtil.convertClassMemberToDto(httpServletRequest, item));
+        }
+        return classMemberRepository.findMembersInClass(request, null, pageable)
+                .map(item -> convertUtil.convertClassMemberToDto(httpServletRequest, item));
+    }
 
     @Override
     public void addUserToClass(HttpServletRequest request, ClassRequest classRequest) {

@@ -22,6 +22,20 @@ public class ConvertUtil {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    public ClassMemberResponse convertClassMemberToDto(HttpServletRequest httpServletRequest, ClassMember classMember) {
+        return ClassMemberResponse.builder()
+                .id(classMember.getId())
+                .memberId(classMember.getMember().getId())
+                .phone(classMember.getMember().getPhone())
+                .address(classMember.getMember().getAddress())
+                .email(classMember.getMember().getEmail())
+                .joinDate(classMember.getJoinDate())
+                .roleInClass(classMember.getRoleInClass().name())
+                .status(classMember.getStatus().name())
+                .name(classMember.getMember().getFirstName() + " " + classMember.getMember().getLastName())
+                .build();
+    }
+
     public ClassScheduleResponse convertScheduleToDto(HttpServletRequest request, ClassSchedule schedule) {
         return ClassScheduleResponse.builder()
                 .id(schedule.getId())
@@ -62,6 +76,7 @@ public class ConvertUtil {
         orderResponse.setPaymentMethod(order.getPaymentMethod());
         orderResponse.setCreatedAt(order.getCreatedAt());
         orderResponse.setUpdatedAt(order.getUpdatedAt());
+
         OrderDetailResponse detail = new OrderDetailResponse();
         detail.setId(orderDetail.getId());
         detail.setPriceAtPurchase(orderDetail.getPriceAtPurchase());

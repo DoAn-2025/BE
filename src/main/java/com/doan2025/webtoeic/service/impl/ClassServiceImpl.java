@@ -39,6 +39,20 @@ public class ClassServiceImpl implements ClassService {
 
 
     @Override
+    public ClassResponse get(HttpServletRequest httpServletRequest, Long classId) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        Class clazz = classRepository.findById(classId)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CLASS));
+        if (!classMemberRepository.existsMemberInClass(classId, user.getId())
+                && Objects.equals(user.getRole(), ERole.STUDENT)) {
+            throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        }
+
+        return convertUtil.convertClassToDto(httpServletRequest, clazz);
+    }
+
+    @Override
     public List<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
