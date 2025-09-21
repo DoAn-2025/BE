@@ -3,7 +3,6 @@ package com.doan2025.webtoeic.service.impl;
 import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.ClassMember;
-import com.doan2025.webtoeic.domain.Room;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
@@ -110,8 +109,6 @@ public class ClassServiceImpl implements ClassService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         User teacher = userRepository.findById(classRequest.getTeacher())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-        Room room = roomRepository.findById(classRequest.getRoomId())
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.ROOM));
         Class createClass = Class.builder()
                 .description(classRequest.getDescription())
                 .title(classRequest.getTitle())
