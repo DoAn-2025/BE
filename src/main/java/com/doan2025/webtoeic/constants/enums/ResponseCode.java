@@ -46,6 +46,8 @@ public enum ResponseCode {
     NOT_SUCCESS(404, "{entity} not successfully ", HttpStatus.BAD_REQUEST),
 
     HAS_PAID(200, "{entity} has been paid ", HttpStatus.OK),
+    OVER_DUE(404, "{entity} has been overdue ", HttpStatus.OK),
+    NOT_START(404, "{entity} has not started yet ", HttpStatus.OK),
     ;
 
 

@@ -28,6 +28,30 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
             """)
     Page<ClassSchedule> filterSchedule(SearchScheduleSto dto, List<Long> classIds, Pageable pageable);
 
+//    @Query("""
+//                SELECT sc.id
+//                FROM ClassSchedule sc
+//                WHERE sc.clazz.id = :classId
+//                AND (
+//                     CURRENT_TIMESTAMP >= TIMESTAMPADD('HOUR', -2, sc.startAt )
+//                  OR CURRENT_TIMESTAMP <= TIMESTAMPADD('HOUR', 2, sc.endAt )
+//                )
+//            """)
+//    Long getAvailableSchedule(Long classId);
+
+    @Query(value = """
+                SELECT sc.id
+                FROM class_schedule sc
+                WHERE sc.class = :classId
+                AND DATE(CURRENT_TIMESTAMP) = DATE(sc.start_at)
+                AND (
+                     CURRENT_TIMESTAMP >= TIMESTAMPADD(HOUR, -2, sc.start_at)
+                  OR CURRENT_TIMESTAMP <= TIMESTAMPADD(HOUR, 2, sc.end_at)
+                )
+            """, nativeQuery = true)
+    Long getAvailableSchedule(Long classId);
+
+
     @Query("""
                     SELECT COUNT(sc) > 0 FROM ClassSchedule sc
                     WHERE sc.room.id = :roomId

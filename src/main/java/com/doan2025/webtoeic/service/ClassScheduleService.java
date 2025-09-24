@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface ClassScheduleService {
 
+    Page<?> detailStatisticAttendance(HttpServletRequest httpServletRequest, Long scheduleId, Pageable pageable);
+
+    Page<?> overviewStatisticAttendance(HttpServletRequest httpServletRequest, Long classId, Pageable pageable);
+
     ClassScheduleResponse getScheduleDetail(HttpServletRequest request, Long scheduleId);
 
     Page<?> getClassSchedule(HttpServletRequest request, SearchScheduleSto dto, Pageable pageable);

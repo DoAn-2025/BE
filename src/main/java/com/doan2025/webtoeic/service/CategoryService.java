@@ -5,6 +5,8 @@ import com.doan2025.webtoeic.dto.response.CategoryResponse;
 import java.util.List;
 
 public interface CategoryService {
+    List<CategoryResponse> getStatusAttendance();
+
     List<CategoryResponse> getStatusClass();
 
     List<CategoryResponse> getStatusSchedule();

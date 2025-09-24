@@ -43,6 +43,30 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
 
 
     @Override
+    public Page<?> detailStatisticAttendance(HttpServletRequest httpServletRequest, Long scheduleId, Pageable pageable) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(scheduleId, user.getId())
+                || Objects.equals(user.getRole(), ERole.CONSULTANT)
+                || Objects.equals(user.getRole(), ERole.MANAGER)) {
+            return attendanceRepository.detailStatisticAttendance(scheduleId, pageable);
+        }
+        throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+    }
+
+    @Override
+    public Page<?> overviewStatisticAttendance(HttpServletRequest httpServletRequest, Long classId, Pageable pageable) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(classId, user.getId())
+                || Objects.equals(user.getRole(), ERole.CONSULTANT)
+                || Objects.equals(user.getRole(), ERole.MANAGER)) {
+            return attendanceRepository.overviewStatisticAttendance(classId, pageable);
+        }
+        throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+    }
+
+    @Override
     public ClassScheduleResponse getScheduleDetail(HttpServletRequest request, Long scheduleId) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(request))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));

@@ -6,93 +6,62 @@ import com.doan2025.webtoeic.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
+    private <E extends Enum<E>> List<CategoryResponse> mapEnumToCategory(
+            E[] values,
+            Function<E, Integer> idMapper,
+            Function<E, String> nameMapper
+    ) {
+        return Arrays.stream(values)
+                .map(e -> new CategoryResponse(idMapper.apply(e), nameMapper.apply(e).toUpperCase()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CategoryResponse> getStatusAttendance() {
+        return mapEnumToCategory(EAttendanceStatus.values(), EAttendanceStatus::getValue, EAttendanceStatus::getName);
+    }
+
     @Override
     public List<CategoryResponse> getStatusClass() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (EClassStatus e : EClassStatus.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(EClassStatus.values(), EClassStatus::getValue, EClassStatus::getName);
     }
 
     @Override
     public List<CategoryResponse> getStatusSchedule() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (EScheduleStatus e : EScheduleStatus.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(EScheduleStatus.values(), EScheduleStatus::getValue, EScheduleStatus::getName);
     }
 
     @Override
     public List<CategoryResponse> getStatusOrder() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (EStatusOrder e : EStatusOrder.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(EStatusOrder.values(), EStatusOrder::getValue, EStatusOrder::getName);
     }
 
     @Override
     public List<CategoryResponse> getCategoryPost() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (ECategoryPost e : ECategoryPost.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(ECategoryPost.values(), ECategoryPost::getValue, ECategoryPost::getName);
     }
 
     @Override
     public List<CategoryResponse> getCategoryGender() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (EGender e : EGender.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(EGender.values(), EGender::getValue, EGender::getName);
     }
 
     @Override
     public List<CategoryResponse> getCategoryRole() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (ERole e : ERole.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getCode().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(ERole.values(), ERole::getValue, ERole::getCode);
     }
 
     @Override
     public List<CategoryResponse> getCategoryCourse() {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (ECategoryCourse e : ECategoryCourse.values()) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(e.getValue());
-            categoryResponse.setName(e.getName().toUpperCase());
-            responses.add(categoryResponse);
-        }
-        return responses;
+        return mapEnumToCategory(ECategoryCourse.values(), ECategoryCourse::getValue, ECategoryCourse::getName);
     }
 }

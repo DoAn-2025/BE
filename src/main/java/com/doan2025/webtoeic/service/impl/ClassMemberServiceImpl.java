@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,6 +74,7 @@ public class ClassMemberServiceImpl implements ClassMemberService {
                     ClassMember.builder()
                             .clazz(clazz)
                             .member(user)
+                            .joinDate(new Date())
                             .roleInClass(user.getRole())
                             .status(EJoinStatus.ACTIVE)
                             .build());

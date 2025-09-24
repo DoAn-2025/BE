@@ -49,13 +49,18 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/v1/post",
             "/api/v1/post/{id}",
-            "/api/v1/category/post",
-            "/api/v1/category/role",
-            "/api/v1/category/gender",
             "/api/v1/course",
             "/api/v1/course/{id}",
             "/api/v1/payment/return",
-            "/api/v1/payment/order-status"
+            "/api/v1/payment/order-status",
+            "/api/v1/category/post",
+            "/api/v1/category/role",
+            "/api/v1/category/gender",
+            "/api/v1/category/course",
+            "/api/v1/category/status-order",
+            "/api/v1/category/status-schedule",
+            "/api/v1/category/status-class",
+            "/api/v1/category/status-attendance",
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

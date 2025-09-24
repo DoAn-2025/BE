@@ -8,6 +8,8 @@ public class Constants {
     public static final String SUCCESS = "success";
     public static final String FAIL = "fail";
 
+    public static final Long TWO_HOURS_MILLIS = 7200000L;
+
     public static final List<ERole> ROLE_BELOW_MANAGER = List.of(ERole.CONSULTANT, ERole.TEACHER, ERole.STUDENT);
     public static final List<ERole> ROLE_BELOW_CONSULTANT = List.of(ERole.TEACHER, ERole.STUDENT);
 

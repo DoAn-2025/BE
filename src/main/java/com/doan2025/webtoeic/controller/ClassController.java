@@ -5,9 +5,11 @@ import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.SearchMemberInClassDto;
 import com.doan2025.webtoeic.dto.SearchScheduleSto;
+import com.doan2025.webtoeic.dto.request.AttendanceRequest;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.request.ClassScheduleRequest;
 import com.doan2025.webtoeic.dto.response.ApiResponse;
+import com.doan2025.webtoeic.service.AttendanceService;
 import com.doan2025.webtoeic.service.ClassMemberService;
 import com.doan2025.webtoeic.service.ClassScheduleService;
 import com.doan2025.webtoeic.service.ClassService;
@@ -26,6 +28,37 @@ public class ClassController {
     private final ClassService classService;
     private final ClassMemberService classMemberService;
     private final ClassScheduleService classScheduleService;
+    private final AttendanceService attendanceService;
+
+    @GetMapping("/detail-statistic-attendance")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
+    public ApiResponse<?> detailStatisticAttendance(HttpServletRequest httpServletRequest,
+                                                    @RequestParam("scheduleId") Long id,
+                                                    Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.ATTENDANCE, classScheduleService.detailStatisticAttendance(httpServletRequest, id, pageable));
+    }
+
+    @GetMapping("/overview-statistic-attendance")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
+    public ApiResponse<?> overviewStatisticAttendance(HttpServletRequest httpServletRequest,
+                                                      @RequestParam("classId") Long id,
+                                                      Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.ATTENDANCE, classScheduleService.overviewStatisticAttendance(httpServletRequest, id, pageable));
+    }
+
+    @PostMapping("/attendance")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ApiResponse<Void> attendance(HttpServletRequest httpServletRequest, @RequestBody List<AttendanceRequest> requests) {
+        attendanceService.attendance(httpServletRequest, requests);
+        return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.ATTENDANCE, null);
+    }
+
+    @PostMapping("/update-attendance")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ApiResponse<Void> updateAttendance(HttpServletRequest httpServletRequest, @RequestBody List<AttendanceRequest> requests) {
+        attendanceService.updateAttendance(httpServletRequest, requests);
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.ATTENDANCE, null);
+    }
 
     @PostMapping("/get-members-in-class")
     public ApiResponse<?> getStudentInClass(HttpServletRequest httpServletRequest,

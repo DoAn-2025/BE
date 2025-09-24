@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.EAttendanceStatus;
+import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,4 +56,29 @@ public class Attendance {
     @ManyToOne
     @JoinColumn(name = "schedule")
     private ClassSchedule schedule;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
 }
