@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,4 +24,5 @@ public class ClassNotificationResponse {
     private Date updatedAt;
     private UserResponse createdBy;
     private UserResponse updatedBy;
+    private List<AttachDocumentClassResponse> attachDocumentClasses;
 }

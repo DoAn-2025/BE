@@ -1,6 +1,5 @@
 package com.doan2025.webtoeic.dto.response;
 
-import com.doan2025.webtoeic.domain.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,6 +17,6 @@ public class AttachDocumentClassResponse {
     private Boolean isDelete;
     private Date createdAt;
     private Date updatedAt;
-    private User createdBy;
-    private User updatedBy;
+    private UserResponse createdBy;
+    private UserResponse updatedBy;
 }

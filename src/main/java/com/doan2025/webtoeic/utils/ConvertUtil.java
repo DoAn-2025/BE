@@ -55,6 +55,22 @@ public class ConvertUtil {
                 .updatedAt(classNotification.getUpdatedAt())
                 .updatedBy(classNotification.getUpdatedBy() == null ? null : modelMapper.map(classNotification.getUpdatedBy(), UserResponse.class))
                 .createdBy(modelMapper.map(classNotification.getCreatedBy(), UserResponse.class))
+                .attachDocumentClasses(attachDocumentClassList.stream()
+                        .map(item -> convertAttachDocumentClassToDto(httpServletRequest, item))
+                        .toList())
+                .build();
+    }
+
+    public AttachDocumentClassResponse convertAttachDocumentClassToDto(HttpServletRequest httpServletRequest, AttachDocumentClass attachDocumentClass) {
+        return AttachDocumentClassResponse.builder()
+                .id(attachDocumentClass.getId())
+                .linkUrl(attachDocumentClass.getLinkUrl())
+                .createdAt(attachDocumentClass.getCreatedAt())
+                .createdBy(modelMapper.map(attachDocumentClass.getCreatedBy(), UserResponse.class))
+                .updatedAt(attachDocumentClass.getUpdatedAt() == null ? null : attachDocumentClass.getUpdatedAt())
+                .updatedBy(attachDocumentClass.getUpdatedBy() == null ? null : modelMapper.map(attachDocumentClass.getUpdatedBy(), UserResponse.class))
+                .isActive(attachDocumentClass.getIsActive())
+                .isDelete(attachDocumentClass.getIsDelete())
                 .build();
     }
 
