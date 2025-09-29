@@ -14,6 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +24,39 @@ public class ConvertUtil {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
+    public SubmitExerciseResponse convertSubmitExerciseToDto(HttpServletRequest httpServletRequest,
+                                                             SubmitExercise submitExercise) {
+        return SubmitExerciseResponse.builder()
+                .id(submitExercise.getId())
+                .linkUrl(submitExercise.getLinkUrl())
+                .isActive(submitExercise.getIsActive())
+                .isDelete(submitExercise.getIsDelete())
+                .createdAt(submitExercise.getCreatedAt())
+                .updatedAt(submitExercise.getUpdatedAt())
+                .createdBy(modelMapper.map(submitExercise.getCreatedBy(), UserResponse.class))
+                .build();
+
+    }
+
+    public ClassNotificationResponse convertClassNotificationToDto(HttpServletRequest httpServletRequest,
+                                                                   ClassNotification classNotification,
+                                                                   List<AttachDocumentClass> attachDocumentClassList) {
+        return ClassNotificationResponse.builder()
+                .id(classNotification.getId())
+                .description(classNotification.getDescription())
+                .isPin(classNotification.getIsPin())
+                .typeNotification(classNotification.getTypeNotification().getName())
+                .fromDate(classNotification.getFromDate())
+                .toDate(classNotification.getToDate())
+                .isDelete(classNotification.getIsDelete())
+                .isActive(classNotification.getIsActive())
+                .createdAt(classNotification.getCreatedAt())
+                .updatedAt(classNotification.getUpdatedAt())
+                .updatedBy(classNotification.getUpdatedBy() == null ? null : modelMapper.map(classNotification.getUpdatedBy(), UserResponse.class))
+                .createdBy(modelMapper.map(classNotification.getCreatedBy(), UserResponse.class))
+                .build();
+    }
 
     public ClassMemberResponse convertClassMemberToDto(HttpServletRequest httpServletRequest, ClassMember classMember) {
         return ClassMemberResponse.builder()
@@ -112,7 +148,7 @@ public class ConvertUtil {
         return cartItemResponse;
     }
 
-    public LessonResponse convertLessonToDto(HttpServletRequest httpServletRequest, Lesson lesson) {
+    public LessonResponse convertLessonToDto(HttpServletRequest httpServletRequest, Lesson lesson, List<AttachDocumentLesson> attachDocumentLessons) {
         LessonResponse lessonResponse = new LessonResponse();
         lessonResponse.setId(lesson.getId());
         lessonResponse.setTitle(lesson.getTitle());
@@ -150,7 +186,21 @@ public class ConvertUtil {
                 }
             }
         }
+        lessonResponse.setAttachDocumentLessons(attachDocumentLessons.stream()
+                .map(item -> convertAttachDocumentLessonToDto(httpServletRequest, item))
+                .collect(Collectors.toList()));
         return lessonResponse;
+    }
+
+    public AttachDocumentLessonResponse convertAttachDocumentLessonToDto(HttpServletRequest httpServletRequest, AttachDocumentLesson attachDocumentLesson) {
+        return AttachDocumentLessonResponse.builder()
+                .linkUrl(attachDocumentLesson.getLinkUrl())
+                .createdAt(attachDocumentLesson.getCreatedAt())
+                .updatedAt(attachDocumentLesson.getUpdatedAt() == null ? null : attachDocumentLesson.getUpdatedAt())
+                .id(attachDocumentLesson.getId())
+                .isActive(attachDocumentLesson.getIsActive())
+                .isDelete(attachDocumentLesson.getIsDelete())
+                .build();
     }
 
     public CourseResponse convertCourseToDto(HttpServletRequest request, Course course) {

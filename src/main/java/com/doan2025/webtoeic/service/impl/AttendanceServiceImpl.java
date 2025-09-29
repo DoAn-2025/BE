@@ -9,9 +9,10 @@ import com.doan2025.webtoeic.domain.ClassSchedule;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.request.AttendanceRequest;
 import com.doan2025.webtoeic.exception.WebToeicException;
-import com.doan2025.webtoeic.repository.*;
+import com.doan2025.webtoeic.repository.AttendanceRepository;
+import com.doan2025.webtoeic.repository.ClassScheduleRepository;
+import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.AttendanceService;
-import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,12 +31,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
     private final ClassScheduleRepository classScheduleRepository;
-    private final ClassRepository classRepository;
-    private final ClassMemberRepository classMemberRepository;
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final ConvertUtil convertUtil;
 
     @Override
     public void updateAttendance(HttpServletRequest httpServletRequest, List<AttendanceRequest> requests) {

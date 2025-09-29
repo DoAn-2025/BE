@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +28,7 @@ public class LessonResponse {
     private UserResponse updatedBy;
     private String createdByName;
     private String updatedByName;
+    private List<AttachDocumentLessonResponse> attachDocumentLessons;
 
     public LessonResponse(Long id, String title, String content, String videoUrl, Double duration, Integer orderIndex,
                           Boolean isPreviewAble, Boolean isDeleted, Boolean isActive,

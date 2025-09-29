@@ -25,6 +25,17 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<CategoryResponse> getJoinClassStatus() {
+        return List.of();
+    }
+
+    @Override
+    public List<CategoryResponse> getTypeClassNotification() {
+        return mapEnumToCategory(EClassNotificationType.values(), EClassNotificationType::getValue, EClassNotificationType::getName);
+    }
+
     @Override
     public List<CategoryResponse> getStatusAttendance() {
         return mapEnumToCategory(EAttendanceStatus.values(), EAttendanceStatus::getValue, EAttendanceStatus::getName);

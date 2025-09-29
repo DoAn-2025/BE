@@ -49,7 +49,7 @@ public interface ClassMemberRepository extends JpaRepository<ClassMember, Long> 
     ClassMember findByClassAndMember(Long userId, Long clazzId);
 
     @Query("""
-                    SELECT COUNT(cm) > 0 FROM ClassMember cm
+                    SELECT CASE WHEN COUNT(cm) > 0 THEN true ELSE false END FROM ClassMember cm
                     WHERE cm.clazz.id = :classId AND cm.member.id = :userId
                     AND cm.status = :#{T(com.doan2025.webtoeic.constants.enums.EJoinStatus).ACTIVE}
             """)

@@ -10,7 +10,6 @@ import com.doan2025.webtoeic.dto.response.ClassResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.ClassMemberRepository;
 import com.doan2025.webtoeic.repository.ClassRepository;
-import com.doan2025.webtoeic.repository.RoomRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.ClassService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
@@ -34,7 +33,6 @@ public class ClassServiceImpl implements ClassService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
-    private final RoomRepository roomRepository;
 
 
     @Override

@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.domain;
 
-import com.doan2025.webtoeic.constants.enums.ETypeNotification;
+import com.doan2025.webtoeic.constants.enums.EClassNotificationType;
+import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,12 +41,24 @@ public class ClassNotification {
      */
     @Column(name = "type_notification")
     @Enumerated(EnumType.STRING)
-    private ETypeNotification typeNotification;
+    private EClassNotificationType typeNotification;
     /**
      * Trạng thái hoạt động của thông báo co ghim lai hay khong (true: co, false: khong).
      */
     @Column(name = "is_pin")
     private Boolean isPin;
+
+    // thoi gian nop bai tu
+    @Column(name = "from_date")
+    private Date fromDate;
+
+    // han nop bai den
+    @Column(name = "to_date")
+    private Date toDate;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class clazz;
     /**
      * Trạng thái hoạt động của thông báo (true: hoạt động, false: không hoạt động).
      */
@@ -83,4 +96,20 @@ public class ClassNotification {
     @ManyToOne
     @JoinColumn(name = "updated_by")
     private User updatedBy;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createdAt = TimeUtil.getCurrentTimestamp();
+        this.updatedAt = null;
+        this.isPin = false;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.getCurrentTimestamp();
+    }
+
 }

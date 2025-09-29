@@ -7,17 +7,17 @@ import lombok.Getter;
 import java.util.Objects;
 
 @Getter
-public enum ETypeNotification {
-    NOTIFICATION(1), EXERCISE(2);
+public enum EClassNotificationType {
+    NOTIFICATION(0), EXERCISE(1);
 
     private final Integer value;
 
-    ETypeNotification(Integer value) {
+    EClassNotificationType(Integer value) {
         this.value = value;
     }
 
-    public static ETypeNotification fromValue(Integer value) {
-        for (ETypeNotification item : ETypeNotification.values()) {
+    public static EClassNotificationType fromValue(Integer value) {
+        for (EClassNotificationType item : EClassNotificationType.values()) {
             if (Objects.equals(item.getValue(), value)) {
                 return item;
             }

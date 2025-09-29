@@ -5,6 +5,11 @@ import com.doan2025.webtoeic.dto.response.CategoryResponse;
 import java.util.List;
 
 public interface CategoryService {
+
+    List<CategoryResponse> getJoinClassStatus();
+
+    List<CategoryResponse> getTypeClassNotification();
+
     List<CategoryResponse> getStatusAttendance();
 
     List<CategoryResponse> getStatusClass();

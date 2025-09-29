@@ -48,7 +48,9 @@ public class LessonServiceImpl implements LessonService {
     public LessonResponse getDetail(HttpServletRequest httpServletRequest, Long id) {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.LESSON));
-        return convertUtil.convertLessonToDto(httpServletRequest, lesson);
+        return convertUtil.convertLessonToDto(httpServletRequest,
+                lesson,
+                attachDocumentLessonRepository.findAllByLessonId(lesson.getId()));
     }
 
     @Override
@@ -100,7 +102,10 @@ public class LessonServiceImpl implements LessonService {
             if (lessonRequest.getIsDelete() != null && !lesson.getIsDelete().equals(lessonRequest.getIsDelete())) {
                 lesson.setIsDelete(lessonRequest.getIsDelete());
             }
-            return convertUtil.convertLessonToDto(request, lessonRepository.save(lesson));
+            Lesson savedLesson = lessonRepository.save(lesson);
+            return convertUtil.convertLessonToDto(request,
+                    savedLesson,
+                    attachDocumentLessonRepository.findAllByLessonId(savedLesson.getId()));
         }
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.LESSON);
     }
@@ -134,7 +139,10 @@ public class LessonServiceImpl implements LessonService {
                     attachDocumentLessonRepository.save(doc);
                 }
             }
-            return convertUtil.convertLessonToDto(request, lessonRepository.save(lesson));
+            Lesson saved = lessonRepository.save(lesson);
+            return convertUtil.convertLessonToDto(request,
+                    saved,
+                    attachDocumentLessonRepository.findAllByLessonId(saved.getId()));
         }
         throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
 
@@ -171,6 +179,9 @@ public class LessonServiceImpl implements LessonService {
                 attachDocumentLessonRepository.save(document);
             }
         }
-        return convertUtil.convertLessonToDto(request, lessonRepository.save(saveLesson));
+        Lesson savedLesson = lessonRepository.save(saveLesson);
+        return convertUtil.convertLessonToDto(request,
+                savedLesson,
+                attachDocumentLessonRepository.findAllByLessonId(savedLesson.getId()));
     }
 }

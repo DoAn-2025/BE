@@ -19,6 +19,16 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    @GetMapping("/type-class-notification")
+    public ApiResponse<List<CategoryResponse>> getTypeClassNotification() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getTypeClassNotification());
+    }
+
+    @GetMapping("/join-class-status")
+    public ApiResponse<List<CategoryResponse>> getJoinClassStatus() {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getJoinClassStatus());
+    }
+
     @GetMapping("/status-attendance")
     public ApiResponse<List<CategoryResponse>> getStatusAttendance() {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.CATEGORY, categoryService.getStatusAttendance());

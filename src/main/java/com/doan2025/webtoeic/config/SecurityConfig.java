@@ -61,6 +61,8 @@ public class SecurityConfig {
             "/api/v1/category/status-schedule",
             "/api/v1/category/status-class",
             "/api/v1/category/status-attendance",
+            "/api/v1/category/type-class-notification",
+            "/api/v1/category/join-class-status",
     };
 
     private final CustomerJwtDecoder customerJwtDecoder;

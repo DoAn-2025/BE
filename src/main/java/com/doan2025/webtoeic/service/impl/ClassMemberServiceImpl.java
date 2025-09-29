@@ -11,7 +11,9 @@ import com.doan2025.webtoeic.dto.SearchMemberInClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.response.ClassMemberResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
-import com.doan2025.webtoeic.repository.*;
+import com.doan2025.webtoeic.repository.ClassMemberRepository;
+import com.doan2025.webtoeic.repository.ClassRepository;
+import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.ClassMemberService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
@@ -31,10 +33,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 public class ClassMemberServiceImpl implements ClassMemberService {
-    private final ClassScheduleRepository classScheduleRepository;
     private final ClassRepository classRepository;
     private final ClassMemberRepository classMemberRepository;
-    private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
