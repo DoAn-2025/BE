@@ -4,6 +4,8 @@ import com.doan2025.webtoeic.dto.SearchClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import com.doan2025.webtoeic.dto.response.ClassResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface ClassService {
 
     ClassResponse get(HttpServletRequest httpServletRequest, Long classId);
 
-    List<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto);
+    Page<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto, Pageable pageable);
 
     void deleteClass(List<Long> ids, HttpServletRequest httpServletRequest);
 

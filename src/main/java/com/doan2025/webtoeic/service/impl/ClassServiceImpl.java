@@ -18,11 +18,12 @@ import com.doan2025.webtoeic.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,19 +51,17 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public List<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto) {
+    public Page<ClassResponse> getClasses(HttpServletRequest httpServletRequest, SearchClassDto dto, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-        List<Class> classes = List.of();
+        Page<Class> classes = Page.empty();
         if (Objects.equals(user.getRole(), ERole.STUDENT) || Objects.equals(user.getRole(), ERole.TEACHER)) {
             List<Long> ids = classMemberRepository.findClassOfMember(user.getEmail());
-            classes = classRepository.filterClass(dto, ids);
+            classes = classRepository.filterClass(dto, ids, pageable);
         } else if (Objects.equals(user.getRole(), ERole.CONSULTANT) || Objects.equals(user.getRole(), ERole.MANAGER)) {
-            classes = classRepository.filterClass(dto, null);
+            classes = classRepository.filterClass(dto, null, pageable);
         }
-        return classes.stream()
-                .map(item -> convertUtil.convertClassToDto(httpServletRequest, item))
-                .collect(Collectors.toList());
+        return classes.map(item -> convertUtil.convertClassToDto(httpServletRequest, item));
     }
 
     @Override

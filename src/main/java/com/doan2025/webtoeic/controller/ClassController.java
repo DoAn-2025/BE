@@ -237,10 +237,11 @@ public class ClassController {
 
     @PostMapping("/filter")
     public ApiResponse<?> filterClass(@RequestBody SearchClassDto dto,
-                                      HttpServletRequest httpServletRequest) {
+                                      HttpServletRequest httpServletRequest,
+                                      Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS,
                 ResponseObject.CLASS,
-                classService.getClasses(httpServletRequest, dto));
+                classService.getClasses(httpServletRequest, dto, pageable));
     }
 
     @PostMapping("/delete")
