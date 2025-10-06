@@ -8,6 +8,7 @@ import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.dto.request.FileRequest;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.service.CloudService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
 public class CloudServiceImpl implements CloudService {
     private final Cloudinary cloudinary;
 
@@ -90,6 +92,19 @@ public class CloudServiceImpl implements CloudService {
             return result;
         } catch (IOException e) {
             throw new WebToeicException(ResponseCode.CANNOT_DELETE, ResponseObject.FILE);
+        }
+    }
+
+    public Double getVideoDuration(String url) {
+        try{
+            String publicId = extractPublicId(url);
+            publicId = publicId.substring(0, publicId.lastIndexOf("."));
+            Map res = cloudinary.api().resource(publicId, ObjectUtils.asMap(
+                    "resource_type", "video","media_metadata", true
+            ));
+            return (Double) res.get(Constants.DURATION);
+        }catch (Exception e){
+            throw new WebToeicException(ResponseCode.UNSUPPORTED, ResponseObject.FILE);
         }
     }
 

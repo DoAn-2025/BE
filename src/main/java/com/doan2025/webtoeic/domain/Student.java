@@ -16,16 +16,23 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "education")
+    @Lob
+    @Column(name = "education", columnDefinition = "LONGTEXT")
     private String education;
 
-    @Column(name = "major")
+    @Lob
+    @Column(name = "major", columnDefinition = "LONGTEXT")
     private String major;
 
     @JsonIgnoreProperties(allowSetters = true, allowGetters = true, value = {"user"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
+
+    public Student(String education, String major) {
+        this.education = education;
+        this.major = major;
+    }
 
     @Override
     public String toString() {

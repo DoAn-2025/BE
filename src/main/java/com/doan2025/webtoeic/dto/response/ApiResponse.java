@@ -31,18 +31,4 @@ public class ApiResponse<T> {
                 .data(data)
                 .build();
     }
-    public ApiResponse(ResponseCode responseCode, T data) {
-        this.code = responseCode.getCode();
-        this.message = responseCode.getMessage();
-        this.data = data;
-    }
-    public ApiResponse(ResponseCode responseCode, ResponseObject responseObject) {
-        this.code = responseCode.getCode();
-        this.message = responseCode.getMessage().replace("{entity}", responseObject.toString());
-    }
-    public ApiResponse(ResponseCode responseCode, ResponseObject responseObject, T data) {
-        this.code = responseCode.getCode();
-        this.message = responseCode.getMessage().replace("{entity}", responseObject.toString());
-        this.data = data;
-    }
 }

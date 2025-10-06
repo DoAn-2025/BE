@@ -1,5 +1,6 @@
 package com.doan2025.webtoeic.security;
 
+import com.doan2025.webtoeic.constants.Constants;
 import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
@@ -7,10 +8,14 @@ import com.doan2025.webtoeic.domain.*;
 import com.doan2025.webtoeic.dto.request.AuthenticationRequest;
 import com.doan2025.webtoeic.dto.request.IntrospectRequest;
 import com.doan2025.webtoeic.dto.request.RegisterRequest;
+import com.doan2025.webtoeic.dto.request.VerifyRequest;
 import com.doan2025.webtoeic.dto.response.AuthenticationResponse;
 import com.doan2025.webtoeic.dto.response.IntrospectResponse;
+import com.doan2025.webtoeic.dto.response.VerifyResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.*;
+import com.doan2025.webtoeic.service.EmailService;
+import com.doan2025.webtoeic.utils.CommonUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
@@ -34,6 +39,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Random;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -50,6 +56,8 @@ public class AuthenticationService {
     private final ConsultantRepository consultantRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final EmailService emailService;
+    private final ForgotPasswordRepository forgotPasswordRepository;
     private final JwtUtil jwtUtil;
 
     @NonFinal
@@ -85,6 +93,10 @@ public class AuthenticationService {
         var user = userRepository
                 .findByEmail((request.getEmail()).trim())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.EMAIL));
+
+        if(!user.getIsActive() && user.getIsDelete()) {
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
+        }
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
@@ -132,6 +144,10 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new WebToeicException(ResponseCode.UNAUTHENTICATED, ResponseObject.EMAIL));
 
+        if(!user.getIsActive() && user.getIsDelete()) {
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
+        }
+
         var token = generateToken(user);
 
         return AuthenticationResponse.builder().token(token).authenticated(true).role(user.getRole().getValue()).build();
@@ -155,6 +171,14 @@ public class AuthenticationService {
                 request.getFirstName(),
                 request.getLastName(),
                 role);
+        boolean check = false;
+        while(!check) {
+            String code = generatedUserCode(role);
+            if(!userRepository.existsByCode(code)){
+                user.setCode(code);
+                check = true;
+            }
+        }
         User savedUser = userRepository.save(user);
         if(savedUser.getRole().equals(ERole.MANAGER)){
             Manager manager = new Manager();
@@ -222,5 +246,62 @@ public class AuthenticationService {
             stringJoiner.add( "ROLE_" + user.getRole().getCode());
         }
         return stringJoiner.toString();
+    }
+
+    public void verifyMail(VerifyRequest request) {
+        User user = checkEmailUser(request);
+        Integer otp = CommonUtil.otpGenerator();
+        if(forgotPasswordRepository.existsByUser(user)){
+            forgotPasswordRepository.deleteByUser(user);
+        }
+        ForgotPassword fp = ForgotPassword.builder()
+                .otp(otp)
+                .expiryTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                .user(user)
+                .build();
+        emailService.sendEmail(request.getEmail(),
+                Constants.SUBJECT_RESET_PASSWORD,
+                CommonUtil.replaceValueResetPassword(user, otp));
+        forgotPasswordRepository.save(fp);
+
+    }
+
+    public VerifyResponse verify_otp(VerifyRequest request) {
+        User user = checkEmailUser(request);
+        if (request.getOtp() == null) {
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.CODE);
+        }
+        ForgotPassword fp = forgotPasswordRepository.findByOtpAndUser(request.getOtp(), user)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CODE));
+
+        if (fp.getExpiryTime().before(Date.from(Instant.now()))) {
+            forgotPasswordRepository.deleteById(fp.getId());
+            throw new WebToeicException(ResponseCode.TOKEN_EXPIRED, ResponseObject.CODE);
+        }
+        forgotPasswordRepository.deleteById(fp.getId());
+        String token = generateToken(user);
+        return VerifyResponse.builder().token(token).build();
+    }
+
+    private User checkEmailUser(VerifyRequest request){
+        if(request.getEmail() == null ){
+            throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.EMAIL);
+        }
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+
+        if(!user.getIsActive() && user.getIsDelete()) {
+            throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.USER);
+        }
+        return user;
+    }
+
+    private String generatedUserCode(ERole role) {
+        return switch (role) {
+            case TEACHER -> Constants.PRE_CODE_TEACHER + new Random().nextLong(100_000_000, 999_999_999);
+            case CONSULTANT -> Constants.PRE_CODE_CONSULTANT + new Random().nextLong(100_000_000, 999_999_999);
+            case MANAGER -> Constants.PRE_CODE_MANAGER + new Random().nextLong(100_000_000, 999_999_999);
+            default -> Constants.PRE_CODE_STUDENT + new Random().nextLong(100_000_000, 999_999_999);
+        };
     }
 }

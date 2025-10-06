@@ -1,6 +1,5 @@
 package com.doan2025.webtoeic.dto.response;
 
-import com.doan2025.webtoeic.constants.enums.ERole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
