@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface RangeTopicService {
-    RangeTopicResponse getRangeTopic(HttpServletRequest request, Integer id);
+    RangeTopicResponse getRangeTopic(HttpServletRequest request, Long id);
 
     Page<RangeTopicResponse> getRangeTopics(HttpServletRequest request, SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
 

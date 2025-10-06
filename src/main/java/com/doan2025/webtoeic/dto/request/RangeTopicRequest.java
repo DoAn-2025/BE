@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class RangeTopicRequest {
 
-    private int rangeTopicId;
+    private Long rangeTopicId;
     private String content;
     private String description;
     private String vietnamese;

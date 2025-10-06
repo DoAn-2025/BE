@@ -29,7 +29,7 @@ public class ScoreScaleServiceImpl implements ScoreScaleService {
     private final ConvertUtil convertUtil;
 
     @Override
-    public ScoreScaleResponse getScoreScale(HttpServletRequest request, Integer id) {
+    public ScoreScaleResponse getScoreScale(HttpServletRequest request, Long id) {
         return convertUtil.convertScoreScaleToDto(request, scoreScaleRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCORE_SCALE)
                 )

@@ -21,7 +21,7 @@ public class ScoreScaleController {
     private final ScoreScaleService scoreScaleService;
 
     @GetMapping()
-    public ApiResponse<?> getRangeTopic(HttpServletRequest request, Integer id) {
+    public ApiResponse<?> getRangeTopic(HttpServletRequest request, Long id) {
         return ApiResponse.of(
                 ResponseCode.GET_SUCCESS,
                 ResponseObject.RANGE_TOPIC,

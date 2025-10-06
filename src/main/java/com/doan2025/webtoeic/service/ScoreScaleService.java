@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ScoreScaleService {
 
-    ScoreScaleResponse getScoreScale(HttpServletRequest request, Integer id);
+    ScoreScaleResponse getScoreScale(HttpServletRequest request, Long id);
 
     Page<ScoreScaleResponse> getScoreScales(HttpServletRequest request, SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
 

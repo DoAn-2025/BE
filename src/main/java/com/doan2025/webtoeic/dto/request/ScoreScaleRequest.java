@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ScoreScaleRequest {
-    private Integer scoreScaleId;
+    private Long scoreScaleId;
     private String title;
     private Integer fromScore;
     private Integer toScore;

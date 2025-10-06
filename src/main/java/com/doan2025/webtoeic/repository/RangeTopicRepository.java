@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RangeTopicRepository extends JpaRepository<RangeTopic, Integer> {
+public interface RangeTopicRepository extends JpaRepository<RangeTopic, Long> {
     @Query("""
                     SELECT rt FROM RangeTopic rt
                     WHERE COALESCE(:#{#dto.searchString}, NULL) is NULL
-                    OR LOWER(CAST(rt.content as string)) LIKE CONCAT("%", :#{#dto.searchString} , "%")
-                    OR LOWER(CAST(rt.vietnamese as string)) LIKE CONCAT("%", :#{#dto.searchString} , "%")
-                    OR LOWER(CAST(rt.description as string)) LIKE CONCAT("%", :#{#dto.searchString} , "%")
+                    OR LOWER(CAST(rt.content as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
+                    OR LOWER(CAST(rt.vietnamese as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
+                    OR LOWER(CAST(rt.description as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
             """)
     Page<RangeTopic> filter(SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
 }

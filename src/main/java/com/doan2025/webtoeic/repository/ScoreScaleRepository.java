@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ScoreScaleRepository extends JpaRepository<ScoreScale, Integer> {
+public interface ScoreScaleRepository extends JpaRepository<ScoreScale, Long> {
     @Query("""
-            SELECT rt FROM ScoreScale rt
+            SELECT ss FROM ScoreScale ss
             WHERE COALESCE(:#{#dto.searchString}, NULL) is NULL
-            OR LOWER(CAST(rt.title as string)) LIKE CONCAT("%", :#{#dto.searchString} , "%")
+            OR LOWER(CAST(ss.title as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
             """)
     Page<ScoreScale> filter(SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
 }

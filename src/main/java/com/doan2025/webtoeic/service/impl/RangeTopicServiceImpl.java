@@ -28,7 +28,7 @@ public class RangeTopicServiceImpl implements RangeTopicService {
     private final ConvertUtil convertUtil;
 
     @Override
-    public RangeTopicResponse getRangeTopic(HttpServletRequest request, Integer id) {
+    public RangeTopicResponse getRangeTopic(HttpServletRequest request, Long id) {
         RangeTopic topic = rangeTopicRepository.findById(id)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.RANGE_TOPIC));
 
