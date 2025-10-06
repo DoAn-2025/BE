@@ -25,6 +25,32 @@ public class ConvertUtil {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    public ScoreScaleResponse convertScoreScaleToDto(HttpServletRequest request, ScoreScale scoreScale) {
+        return ScoreScaleResponse.builder()
+                .id(scoreScale.getId())
+                .title(scoreScale.getTitle())
+                .fromScore(scoreScale.getFromScore())
+                .toScore(scoreScale.getToScore())
+                .isActive(scoreScale.getIsActive())
+                .createdAt(scoreScale.getCreatedAt())
+                .updatedAt(scoreScale.getUpdatedAt())
+                .isDelete(scoreScale.getIsDelete())
+                .build();
+    }
+
+    public RangeTopicResponse convertRangeTopicToDto(HttpServletRequest request, RangeTopic topic) {
+        return RangeTopicResponse.builder()
+                .id(topic.getId())
+                .vietnamese(topic.getVietnamese())
+                .content(topic.getContent())
+                .description(topic.getDescription())
+                .isActive(topic.getIsActive())
+                .isDelete(topic.getIsDelete())
+                .createdAt(topic.getCreatedAt())
+                .updatedAt(topic.getUpdatedAt())
+                .build();
+    }
+
     public SubmitExerciseResponse convertSubmitExerciseToDto(HttpServletRequest httpServletRequest,
                                                              SubmitExercise submitExercise) {
         return SubmitExerciseResponse.builder()

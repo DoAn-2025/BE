@@ -48,6 +48,8 @@ public enum ResponseCode {
     HAS_PAID(200, "{entity} has been paid ", HttpStatus.OK),
     OVER_DUE(404, "{entity} has been overdue ", HttpStatus.OK),
     NOT_START(404, "{entity} has not started yet ", HttpStatus.OK),
+
+
     ;
 
 
