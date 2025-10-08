@@ -138,6 +138,7 @@ public class ConvertUtil {
                 .name(clazz.getName())
                 .description(clazz.getDescription())
                 .title(clazz.getTitle())
+                .status(clazz.getStatus().name())
                 .createdAt(clazz.getCreatedAt())
                 .updatedAt(clazz.getUpdatedAt())
                 .createdByName(clazz.getCreatedBy().getFirstName() + " " + clazz.getCreatedBy().getLastName())
