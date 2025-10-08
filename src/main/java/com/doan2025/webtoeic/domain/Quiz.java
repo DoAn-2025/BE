@@ -1,5 +1,6 @@
 package com.doan2025.webtoeic.domain;
 
+import com.doan2025.webtoeic.constants.enums.EQuizStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,13 @@ public class Quiz {
 
     @Column(name = "total_questions")
     private Long totalQuestions;
+
+    @Column(name = "is_student_created")
+    private Boolean isStudentCreated;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private EQuizStatus status;
 
     @Column(name = "create_at")
     private Date createAt;
