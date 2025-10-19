@@ -3,6 +3,9 @@ package com.doan2025.webtoeic.service.impl;
 import com.doan2025.webtoeic.constants.Constants;
 import com.doan2025.webtoeic.constants.enums.ERangeTopic;
 import com.doan2025.webtoeic.constants.enums.EScoreScale;
+import com.doan2025.webtoeic.domain.RangeTopic;
+import com.doan2025.webtoeic.domain.ScoreScale;
+import com.doan2025.webtoeic.dto.response.AiResponse;
 import com.doan2025.webtoeic.dto.response.QuestionResponse;
 import com.doan2025.webtoeic.repository.*;
 import com.doan2025.webtoeic.service.AIService;
@@ -14,7 +17,6 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +37,6 @@ public class AIServiceImpl implements AIService {
     private final ChatClient chatClient;
     private final ReaderService readerService;
 
-    @Value("${GOOGLE_API_KEY}")
-    private String geminiApiKey;
 
     public AIServiceImpl(ChatClient.Builder builder, AnswerRepository answerRepository, QuestionRepository questionRepository,
                          ExplanationQuestionRepository explanationQuestionRepository, RangeTopicRepository rangeTopicRepository,
@@ -71,11 +71,11 @@ public class AIServiceImpl implements AIService {
     }
 
     @Override
-    public List<QuestionResponse> analysisWithAI(String url) {
+    public AiResponse analysisWithAI(String url) {
 
         String readerText = readerService.readContentOfFile(url);
-        String rangeTopic = getRangeTopicString();
-        String scoreScale = getScoreScaleString();
+        String rangeTopic = getRangeTopicFromDBString();
+        String scoreScale = getScoreScaleFromDBString();
 
         ChatOptions chatOptions = ChatOptions.builder()
                 .temperature(0D)
@@ -88,13 +88,37 @@ public class AIServiceImpl implements AIService {
 
         String userPrompt = Constants.USER_PROMPT + readerText;
 
-        return chatClient.prompt()
-                .system(systemPrompt)
-                .user(userPrompt)
-                .options(chatOptions)
-                .call()
-                .entity(new ParameterizedTypeReference<List<QuestionResponse>>() {
-                });
+        return AiResponse.builder()
+                .url(url)
+                .questions(
+                        chatClient.prompt()
+                                .system(systemPrompt)
+                                .user(userPrompt)
+                                .options(chatOptions)
+                                .call()
+                                .entity(new ParameterizedTypeReference<List<QuestionResponse>>() {
+                                })
+                )
+                .build();
+
+    }
+
+    private String getRangeTopicFromDBString() {
+        StringBuilder result = new StringBuilder();
+        for (RangeTopic rangeTopic : rangeTopicRepository.findAll()) {
+            result.append(rangeTopic.getContent().toLowerCase()).append(", ");
+        }
+        result.delete(result.length() - 2, result.length());
+        return result.toString();
+    }
+
+    private String getScoreScaleFromDBString() {
+        StringBuilder result = new StringBuilder();
+        for (ScoreScale scoreScale : scoreScaleRepository.findAll()) {
+            result.append(scoreScale.getTitle().toLowerCase()).append(", ");
+        }
+        result.delete(result.length() - 2, result.length());
+        return result.toString();
     }
 
     private String getRangeTopicString() {

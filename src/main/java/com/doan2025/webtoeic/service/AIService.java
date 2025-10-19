@@ -1,11 +1,9 @@
 package com.doan2025.webtoeic.service;
 
-import com.doan2025.webtoeic.dto.response.QuestionResponse;
-
-import java.util.List;
+import com.doan2025.webtoeic.dto.response.AiResponse;
 
 public interface AIService {
     String checkCallAI();
 
-    List<QuestionResponse> analysisWithAI(String url);
+    AiResponse analysisWithAI(String url);
 }

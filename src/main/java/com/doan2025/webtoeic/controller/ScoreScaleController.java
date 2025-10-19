@@ -9,6 +9,7 @@ import com.doan2025.webtoeic.service.ScoreScaleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ public class ScoreScaleController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> createRangeTopic(HttpServletRequest request, ScoreScaleRequest dto) {
         return ApiResponse.of(
                 ResponseCode.CREATE_SUCCESS,
@@ -48,6 +50,7 @@ public class ScoreScaleController {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> updateRangeTopic(HttpServletRequest request, ScoreScaleRequest dto) {
         return ApiResponse.of(
                 ResponseCode.UPDATE_SUCCESS,
