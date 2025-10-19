@@ -15,9 +15,9 @@ services:
       - key: DB_USER
         value: avnadmin
       - key: DB_PASSWORD
-        sync: false  # Nhập thủ công trên dashboard
+        sync: false
       - key: JWT_SIGNER_KEY
-        sync: false  # Nhập thủ công trên dashboard
+        sync: false
       - key: CLOUD_NAME
         sync: false
       - key: API_KEY
@@ -29,4 +29,6 @@ services:
       - key: VPN_TMN_CODE
         sync: false
       - key: SECRET_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
         sync: false

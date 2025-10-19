@@ -33,6 +33,7 @@ public enum ResponseCode {
     GET_SUCCESS(200, "Get {entity} is successfully", HttpStatus.OK),
     UPLOAD_SUCCESS(200, "Upload {entity} is successfully", HttpStatus.OK),
     CANCELLED_SUCCESS(200, "Cancelled {entity} is successfully", HttpStatus.OK),
+    ANALYSIS_SUCCESS(200, "Analysis {entity} is successfully", HttpStatus.OK),
 
     CANNOT_GET(404, "Cannot get {entity}", HttpStatus.NOT_FOUND),
     CANNOT_DELETE(404, "Cannot delete {entity}", HttpStatus.BAD_REQUEST),
@@ -48,8 +49,8 @@ public enum ResponseCode {
     HAS_PAID(200, "{entity} has been paid ", HttpStatus.OK),
     OVER_DUE(404, "{entity} has been overdue ", HttpStatus.OK),
     NOT_START(404, "{entity} has not started yet ", HttpStatus.OK),
-
-
+    CANNOT_READ(404, "{entity} cannot read ", HttpStatus.BAD_REQUEST),
+    UNSUPPORTED_TYPE(404, "{entity} is not supported", HttpStatus.BAD_REQUEST),
     ;
 
 

@@ -23,6 +23,9 @@ public class QuestionBank {
     @Column(name = "title", columnDefinition = "LONGTEXT")
     private String title;
 
+    @Column(name = "link_url")
+    private String linkUrl;
+
     @Column(name = "create_at")
     private Date createAt;
 
