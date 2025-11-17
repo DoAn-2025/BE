@@ -83,7 +83,7 @@ public class Course {
 
     @PrePersist
     protected void onCreate() {
-        this.isActive = false;
+        this.isActive = true;
         this.isDelete = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
         this.updatedAt = null;

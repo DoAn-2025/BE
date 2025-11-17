@@ -74,7 +74,7 @@ public class Lesson {
 
     @PrePersist
     protected void onCreate() {
-        this.isActive = false;
+        this.isActive = true;
         this.isDelete = false;
         this.isPreviewAble = false;
         this.createdAt = TimeUtil.getCurrentTimestamp();
