@@ -22,6 +22,6 @@ public class SearchBaseDto {
     private String title;
     private List<String> categoryPost;
     private List<String> categories;
-
     private Long id;
+    // todo: them truong isBought, isOrder check da mua hay chua
 }

@@ -1,5 +1,6 @@
 package com.doan2025.webtoeic.domain;
 
+import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,4 +40,23 @@ public class QuestionBank {
     @ManyToOne
     @JoinColumn(name = "update_by")
     private User updateBy;
+
+    @Column(name = "is_delete")
+    private Boolean isDelete;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createAt = TimeUtil.getCurrentTimestamp();
+        this.updateAt = null;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = TimeUtil.getCurrentTimestamp();
+    }
 }

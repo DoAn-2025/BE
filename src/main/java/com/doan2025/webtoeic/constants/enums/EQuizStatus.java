@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Getter
 public enum EQuizStatus {
-    PRIVATE(0), OWNER(2), PUBLIC(3);
+    PRIVATE(1), OWNER(2), PUBLIC(3);
     private final Integer value;
 
     EQuizStatus(Integer value) {

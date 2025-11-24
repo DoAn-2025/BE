@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.domain;
 
 import com.doan2025.webtoeic.constants.enums.EQuizStatus;
+import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +39,12 @@ public class Quiz {
     @Enumerated(EnumType.STRING)
     private EQuizStatus status;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column(name = "is_delete")
+    private Boolean isDelete;
+
     @Column(name = "create_at")
     private Date createAt;
 
@@ -51,4 +58,17 @@ public class Quiz {
     @ManyToOne
     @JoinColumn(name = "update_by")
     private User updateBy;
+
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.isDelete = false;
+        this.createAt = TimeUtil.getCurrentTimestamp();
+        this.updateAt = null;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = TimeUtil.getCurrentTimestamp();
+    }
 }

@@ -20,6 +20,12 @@ public class SharedQuiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "start_at")
+    private Date startAt;
+
+    @Column(name = "end_at")
+    private Date endAt;
+
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Class clazz;

@@ -47,6 +47,8 @@ public class ScoreScale {
         this.title = title;
         this.fromScore = fromScore;
         this.toScore = toScore;
+        this.isActive = true;
+        this.isDelete = false;
     }
 
     @PrePersist

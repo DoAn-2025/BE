@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "submit_excercise")
+@Table(name = "submit_excercise_in_noti")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

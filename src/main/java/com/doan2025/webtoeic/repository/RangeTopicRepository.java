@@ -18,4 +18,11 @@ public interface RangeTopicRepository extends JpaRepository<RangeTopic, Long> {
                     OR LOWER(CAST(rt.description as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
             """)
     Page<RangeTopic> filter(SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
+
+    @Query("""
+                    SELECT rt FROM RangeTopic rt
+                    WHERE (LOWER(CAST(rt.content as string))  LIKE LOWER( CONCAT('%', :content,'%') )
+                                OR LOWER(CAST(rt.description as string))  LIKE LOWER( CONCAT('%', :content,'%') ))
+            """)
+    RangeTopic findByContent(String content);
 }

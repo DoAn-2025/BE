@@ -12,5 +12,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AiResponse {
     private String url;
+    private String questionBankTitle;
     private List<QuestionResponse> questions;
 }

@@ -7,6 +7,9 @@ import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.*;
 import com.doan2025.webtoeic.dto.response.*;
 import com.doan2025.webtoeic.exception.WebToeicException;
+import com.doan2025.webtoeic.repository.AnswerRepository;
+import com.doan2025.webtoeic.repository.ExplanationQuestionRepository;
+import com.doan2025.webtoeic.repository.QuestionRepository;
 import com.doan2025.webtoeic.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,123 @@ public class ConvertUtil {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
+    private final ExplanationQuestionRepository explanationQuestionRepository;
+
+    public SubmitResponse convertSubmitToDto(HttpServletRequest request, StudentQuiz studentQuiz, boolean isList) {
+        return SubmitResponse.builder()
+                .idSubmitted(studentQuiz.getId())
+                .score(studentQuiz.getScore())
+                .user(modelMapper.map(studentQuiz.getUser(), UserResponse.class))
+                .startAt(studentQuiz.getStartAt())
+                .endAt(studentQuiz.getEndAt())
+                .titleQuiz(studentQuiz.getQuiz().getTitle())
+                .quiz(isList ? null : convertQuizToDto(studentQuiz.getQuiz()))
+                .build();
+    }
+
+    public ShareQuizResponse convertShareQuizToDto(HttpServletRequest request, SharedQuiz sharedQuiz) {
+        return ShareQuizResponse.builder()
+                .sharedQuizId(sharedQuiz.getId())
+                .startAt(sharedQuiz.getStartAt())
+                .endAt(sharedQuiz.getEndAt())
+                .createdAt(sharedQuiz.getCreatedAt())
+                .updatedAt(sharedQuiz.getUpdatedAt())
+                .isActive(sharedQuiz.getIsActive())
+                .isDelete(sharedQuiz.getIsDelete())
+                .clazz(convertClassToDto(request, sharedQuiz.getClazz()))
+                .quiz(convertQuizToDto(sharedQuiz.getQuiz()))
+                .createdBy(modelMapper.map(sharedQuiz.getCreatedBy(), UserResponse.class))
+                .updatedBy(modelMapper.map(sharedQuiz.getUpdatedBy(), UserResponse.class))
+                .build();
+    }
+
+    public QuizResponse convertQuizToDto(Quiz quiz) {
+        List<Question> questionsInQuiz = questionRepository.findByQuizId(quiz.getId());
+        return QuizResponse.builder()
+                .id(quiz.getId())
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .totalQuestions(quiz.getTotalQuestions())
+                .status(quiz.getStatus())
+                .createAt(quiz.getCreateAt())
+                .updateAt(quiz.getUpdateAt())
+                .createBy(quiz.getCreateBy() != null ? modelMapper.map(quiz.getCreateBy(), UserResponse.class) : null)
+                .updateBy(quiz.getUpdateBy() != null ? modelMapper.map(quiz.getUpdateBy(), UserResponse.class) : null)
+                .questions(questionsInQuiz.stream().map(this::convertQuestionToDto).collect(Collectors.toList()))
+                .build();
+    }
+
+    public BankResponse convertQuestionBankToDto(QuestionBank questionBank) {
+        List<Question> questionsInBank = questionRepository.findByQuestionBankId(questionBank.getId());
+        return BankResponse.builder()
+                .id(questionBank.getId())
+                .questionBankTitle(questionBank.getTitle())
+                .url(questionBank.getLinkUrl())
+                .questions(questionsInBank.stream().map(this::convertQuestionToDto).collect(Collectors.toList()))
+                .isActive(questionBank.getIsActive())
+                .isDeleted(questionBank.getIsDelete())
+                .createdAt(questionBank.getCreateAt())
+                .updatedAt(questionBank.getUpdateAt() != null ? questionBank.getUpdateAt() : null)
+                .createdBy(questionBank.getCreateBy() != null ?
+                        modelMapper.map(questionBank.getCreateBy(), UserResponse.class) : null)
+                .updatedBy(questionBank.getUpdateBy() != null ?
+                        modelMapper.map(questionBank.getUpdateBy(), UserResponse.class) : null)
+                .build();
+    }
+
+    public QuestionResponse convertQuestionToDto(Question question) {
+        ExplanationQuestion explanationQuestion = explanationQuestionRepository.findByQuestionId(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionId(question.getId());
+        return QuestionResponse.builder()
+                .questionContent(question.getContent())
+                .difficulty(question.getScoreScale() != null ? question.getScoreScale().getTitle() : null)
+                .category(question.getRangeTopic() != null ? question.getRangeTopic().getContent() : null)
+                .id(question.getId())
+                .explanation(convertExplanationQuestionToDto(explanationQuestion))
+                .answers(answers.stream().map(this::convertAnswerToDto).collect(Collectors.toList()))
+                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
+                .isDeleted(question.getIsDelete())
+                .isActive(question.getIsActive())
+                .createdBy(question.getCreateBy() != null ? modelMapper.map(question.getCreateBy(), UserResponse.class) : null)
+                .updatedBy(question.getUpdateBy() != null ? modelMapper.map(question.getUpdateBy(), UserResponse.class) : null)
+                .build();
+    }
+
+    public AnswerResponse convertAnswerToDto(Answer answer) {
+        return AnswerResponse.builder()
+                .id(answer.getId())
+                .isCorrect(answer.getIsCorrect())
+                .content(answer.getContent())
+                .isDeleted(answer.getIsDelete())
+                .isActive(answer.getIsActive())
+                .createdAt(answer.getCreatedAt())
+                .updatedAt(answer.getUpdatedAt())
+                .createdBy(answer.getCreatedAt() != null ?
+                        modelMapper.map(answer.getCreatedAt(), UserResponse.class) : null)
+                .updatedBy(answer.getUpdatedAt() != null ?
+                        modelMapper.map(answer.getUpdatedAt(), UserResponse.class) : null)
+                .build();
+    }
+
+    public ExplanationQuestionResponse convertExplanationQuestionToDto(ExplanationQuestion explanationQuestion) {
+        return ExplanationQuestionResponse.builder()
+                .id(explanationQuestion.getId())
+                .explanationVietnamese(explanationQuestion.getExplanationVietnamese())
+                .explanationEnglish(explanationQuestion.getExplanationEnglish())
+                .createdAt(explanationQuestion.getCreatedAt())
+                .updatedAt(explanationQuestion.getUpdatedAt())
+                .isActive(explanationQuestion.getIsActive())
+                .isDeleted(explanationQuestion.getIsDelete())
+                .createdBy(explanationQuestion.getCreatedBy() != null ?
+                        modelMapper.map(explanationQuestion.getCreatedBy(), UserResponse.class) : null)
+                .updatedBy(explanationQuestion.getUpdatedBy() != null ?
+                        modelMapper.map(explanationQuestion.getUpdatedBy(), UserResponse.class) : null)
+                .build();
+    }
+
 
     public ScoreScaleResponse convertScoreScaleToDto(HttpServletRequest request, ScoreScale scoreScale) {
         return ScoreScaleResponse.builder()

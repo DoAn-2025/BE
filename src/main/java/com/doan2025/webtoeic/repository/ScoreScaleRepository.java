@@ -16,4 +16,10 @@ public interface ScoreScaleRepository extends JpaRepository<ScoreScale, Long> {
             OR LOWER(CAST(ss.title as string)) LIKE CONCAT('%', :#{#dto.searchString} , '%')
             """)
     Page<ScoreScale> filter(SearchRangeTopicAndScoreScaleDto dto, Pageable pageable);
+
+    @Query("""
+                    SELECT ss FROM ScoreScale ss
+                    WHERE (LOWER(CAST(ss.title as string))  LIKE LOWER(:title))
+            """)
+    ScoreScale findByTitle(String title);
 }

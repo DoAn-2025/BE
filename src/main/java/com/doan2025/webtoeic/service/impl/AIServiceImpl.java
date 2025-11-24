@@ -7,11 +7,10 @@ import com.doan2025.webtoeic.domain.RangeTopic;
 import com.doan2025.webtoeic.domain.ScoreScale;
 import com.doan2025.webtoeic.dto.response.AiResponse;
 import com.doan2025.webtoeic.dto.response.QuestionResponse;
-import com.doan2025.webtoeic.repository.*;
+import com.doan2025.webtoeic.repository.RangeTopicRepository;
+import com.doan2025.webtoeic.repository.ScoreScaleRepository;
 import com.doan2025.webtoeic.service.AIService;
 import com.doan2025.webtoeic.service.ReaderService;
-import com.doan2025.webtoeic.utils.ConvertUtil;
-import com.doan2025.webtoeic.utils.JwtUtil;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -26,30 +25,19 @@ import java.util.List;
 //@RequiredArgsConstructor
 public class AIServiceImpl implements AIService {
 
-    private final AnswerRepository answerRepository;
-    private final QuestionRepository questionRepository;
-    private final ExplanationQuestionRepository explanationQuestionRepository;
+
     private final RangeTopicRepository rangeTopicRepository;
     private final ScoreScaleRepository scoreScaleRepository;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
-    private final ConvertUtil convertUtil;
+
     private final ChatClient chatClient;
     private final ReaderService readerService;
 
 
-    public AIServiceImpl(ChatClient.Builder builder, AnswerRepository answerRepository, QuestionRepository questionRepository,
-                         ExplanationQuestionRepository explanationQuestionRepository, RangeTopicRepository rangeTopicRepository,
-                         ScoreScaleRepository scoreScaleRepository, UserRepository userRepository, JwtUtil jwtUtil, ConvertUtil convertUtil, ReaderService readerService) {
+    public AIServiceImpl(ChatClient.Builder builder, RangeTopicRepository rangeTopicRepository,
+                         ScoreScaleRepository scoreScaleRepository, ReaderService readerService) {
         this.chatClient = builder.build();
-        this.answerRepository = answerRepository;
-        this.questionRepository = questionRepository;
-        this.explanationQuestionRepository = explanationQuestionRepository;
         this.rangeTopicRepository = rangeTopicRepository;
         this.scoreScaleRepository = scoreScaleRepository;
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
-        this.convertUtil = convertUtil;
         this.readerService = readerService;
     }
 

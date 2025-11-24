@@ -49,6 +49,8 @@ public class RangeTopic {
         this.content = content;
         this.description = description;
         this.vietnamese = vietnamese;
+        this.isActive = true;
+        this.isDelete = false;
     }
 
     @PrePersist

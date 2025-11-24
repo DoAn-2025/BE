@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -28,7 +29,7 @@ public class StudentQuiz {
     private Quiz quiz;
 
     @Column(name = "score")
-    private Long score;
+    private BigDecimal score;
 
     @Column(name = "start_at")
     private Date startAt;

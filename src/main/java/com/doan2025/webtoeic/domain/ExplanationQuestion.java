@@ -3,6 +3,7 @@ package com.doan2025.webtoeic.domain;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 @Table(name = "explanation_question")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ExplanationQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,10 @@ public class ExplanationQuestion {
     @Lob
     @Column(name = "explanation_vietnamese", columnDefinition = "LONGTEXT")
     private String explanationVietnamese;
+
+    @OneToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Column(name = "created_at")
     private Date createdAt;

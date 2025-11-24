@@ -11,13 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionResponse {
+public class BankResponse {
     private Long id;
-    private String questionContent;
-    private String category;
-    private String difficulty;
-    private List<AnswerResponse> answers;
-    private ExplanationQuestionResponse explanation;
+    private String url;
+    private String questionBankTitle;
+    private List<QuestionResponse> questions;
     private UserResponse createdBy;
     private UserResponse updatedBy;
     private Boolean isActive;
