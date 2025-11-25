@@ -26,8 +26,9 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             FROM Lesson l
             LEFT JOIN l.createdBy cb
             LEFT JOIN l.updatedBy ub
-            WHERE l.isDelete = FALSE AND l.isActive = TRUE
-                  AND l.course.id = :#{#dto.id}
+            WHERE l.course.id = :#{#dto.id}
+                  AND (COALESCE(:#{#dto.isActive}, null) is null or l.isActive = :#{#dto.isActive} )
+                  AND (COALESCE(:#{#dto.isDelete}, null) is null or l.isDelete = :#{#dto.isDelete} )
             ORDER BY l.orderIndex asc
             """)
     Page<LessonResponse> findLessons(SearchBaseDto dto, String email, Pageable pageable);

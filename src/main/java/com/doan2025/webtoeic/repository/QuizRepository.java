@@ -2,11 +2,11 @@ package com.doan2025.webtoeic.repository;
 
 import com.doan2025.webtoeic.domain.Quiz;
 import com.doan2025.webtoeic.dto.SearchQuizDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
@@ -17,5 +17,5 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
                             OR LOWER(CAST(quiz.description as string)) like LOWER(CONCAT('%', :#{#dto.searchString}, '%'))
                     ) )
             """)
-    List<Quiz> filter(SearchQuizDto dto);
+    Page<Quiz> filter(SearchQuizDto dto, Pageable pageable);
 }

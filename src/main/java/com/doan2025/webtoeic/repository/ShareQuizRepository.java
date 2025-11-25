@@ -2,6 +2,8 @@ package com.doan2025.webtoeic.repository;
 
 import com.doan2025.webtoeic.domain.SharedQuiz;
 import com.doan2025.webtoeic.dto.SearchQuizDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,9 +18,18 @@ public interface ShareQuizRepository extends JpaRepository<SharedQuiz, Long> {
                     WHERE (COALESCE(:#{#dto.searchString}, NULL ) is null 
                         OR LOWER(cast(sq.quiz.description as string) ) LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%'))  
                         OR LOWER(cast(sq.quiz.title as string) ) LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%')) 
-                        ) 
+                        ) AND sq.clazz.id = :idClass
             """)
-    List<SharedQuiz> filter(SearchQuizDto dto);
+    Page<SharedQuiz> filter(SearchQuizDto dto, Long idClass, Pageable pageable);
+
+    @Query("""
+                    select sq from SharedQuiz sq
+                    WHERE (COALESCE(:#{#dto.searchString}, NULL ) is null 
+                        OR LOWER(cast(sq.quiz.description as string) ) LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%'))  
+                        OR LOWER(cast(sq.quiz.title as string) ) LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%')) 
+                        ) AND sq.clazz.id = :idClass
+            """)
+    List<SharedQuiz> filter(SearchQuizDto dto, Long idClass);
 
 
     @Query(value = "WITH  quiz_cte AS (" +

@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.service.impl;
 
 import com.doan2025.webtoeic.constants.enums.EQuizStatus;
+import com.doan2025.webtoeic.constants.enums.ERole;
 import com.doan2025.webtoeic.constants.enums.ResponseCode;
 import com.doan2025.webtoeic.constants.enums.ResponseObject;
 import com.doan2025.webtoeic.domain.Class;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +48,7 @@ public class QuizServiceImpl implements QuizService {
     private final ShareQuizRepository shareQuizRepository;
     private final StudentQuizRepository studentQuizRepository;
     private final StudentAnswerRepository studentAnswerRepository;
+    private final ClassMemberRepository classMemberRepository;
 
     @Override
     public OverviewResponse statisticDetailQuizInClass(HttpServletRequest httpServletRequest,
@@ -71,7 +72,7 @@ public class QuizServiceImpl implements QuizService {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        Long total = (long) shareQuizRepository.filter(dto).size();
+        Long total = (long) shareQuizRepository.filter(dto, idClass).size();
         Long overScore = shareQuizRepository.statisticOverviewOverScoreQuizInClass(idClass, dto, score);
         return OverviewResponse.builder()
                 .total(total)
@@ -83,11 +84,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public SubmitResponse getDetailSubmitQuiz(HttpServletRequest httpServletRequest, Long idQuiz) {
+    public SubmitResponse getDetailSubmitQuiz(HttpServletRequest httpServletRequest, Long idSubmitted) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        StudentQuiz studentQuiz = studentQuizRepository.findById(idQuiz)
+        StudentQuiz studentQuiz = studentQuizRepository.findById(idSubmitted)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SUBMIT));
 
         return convertUtil.convertSubmitToDto(httpServletRequest, studentQuiz, false);
@@ -97,6 +98,12 @@ public class QuizServiceImpl implements QuizService {
     public Page<SubmitResponse> getListSubmitQuiz(HttpServletRequest httpServletRequest, Long iQuiz, Long idClass, SearchSubmittedDto dto, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+
+        if (user.getRole().equals(ERole.TEACHER) || user.getRole().equals(ERole.STUDENT)) {
+            if (!classMemberRepository.existsMemberInClass(idClass, user.getId())) {
+                throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+            }
+        }
 
         Page<StudentQuiz> studentQuizzes = studentQuizRepository.filter(iQuiz, idClass, dto, pageable);
 
@@ -148,14 +155,18 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<ShareQuizResponse> getListQuizInClass(HttpServletRequest httpServletRequest, SearchQuizDto dto) {
+    public Page<ShareQuizResponse> getListQuizInClass(HttpServletRequest httpServletRequest, Long idClass, SearchQuizDto dto, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        List<SharedQuiz> sharedQuizList = shareQuizRepository.filter(dto);
-        return sharedQuizList.stream()
-                .map(item -> convertUtil.convertShareQuizToDto(httpServletRequest, item))
-                .collect(Collectors.toList());
+        if (user.getRole().equals(ERole.TEACHER) || user.getRole().equals(ERole.STUDENT)) {
+            if (!classMemberRepository.existsMemberInClass(idClass, user.getId())) {
+                throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+            }
+        }
+        Page<SharedQuiz> sharedQuizList = shareQuizRepository.filter(dto, idClass, pageable);
+        return sharedQuizList.map(
+                item -> convertUtil.convertShareQuizToDto(httpServletRequest, item));
     }
 
     @Override
@@ -163,6 +174,11 @@ public class QuizServiceImpl implements QuizService {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
+        if (user.getRole().equals(ERole.TEACHER)) {
+            if (!classMemberRepository.existsMemberInClass(request.getClassId(), user.getId())) {
+                throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+            }
+        }
         SharedQuiz sharedQuiz = shareQuizRepository.findById(request.getSharedQuizId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUIZ));
 
@@ -181,6 +197,12 @@ public class QuizServiceImpl implements QuizService {
     public void pullQuizToClass(HttpServletRequest httpServletRequest, SharedQuizRequest request) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+
+        if (user.getRole().equals(ERole.TEACHER)) {
+            if (!classMemberRepository.existsMemberInClass(request.getClassId(), user.getId())) {
+                throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+            }
+        }
 
         Quiz quiz = quizRepository.findById(request.getQuizId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUIZ));
@@ -205,10 +227,9 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<QuizResponse> getQuizes(HttpServletRequest httpServletRequest, SearchQuizDto dto) {
-        List<Quiz> quizes = quizRepository.filter(dto);
-        return quizes.stream()
-                .map(convertUtil::convertQuizToDto).collect(Collectors.toList());
+    public Page<QuizResponse> getQuizes(HttpServletRequest httpServletRequest, SearchQuizDto dto, Pageable pageable) {
+        Page<Quiz> quizes = quizRepository.filter(dto, pageable);
+        return quizes.map(convertUtil::convertQuizToDto);
     }
 
     @Override

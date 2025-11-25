@@ -25,6 +25,7 @@ public class QuizController {
     private final QuizService quizzService;
 
     @PostMapping("statistic-detail-quiz-in-class")
+    @PreAuthorize("hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> statisticDetailQuizInClass(HttpServletRequest httpServletRequest,
                                                      @RequestParam("id-quiz") Long idQuiz,
                                                      @RequestParam("id-class") Long idClass,
@@ -36,6 +37,7 @@ public class QuizController {
     }
 
     @PostMapping("statistic-overview-quizzes-in-class")
+    @PreAuthorize("hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> statisticOverviewQuizInClass(HttpServletRequest httpServletRequest,
                                                        @RequestParam("id-class") Long idClass,
                                                        @RequestParam("score") Long score,
@@ -46,7 +48,7 @@ public class QuizController {
     }
 
     // get detail submitted
-    @PostMapping("view-submitted-quiz-by-student-in-class")
+    @PostMapping("view-detail-submitted-quiz-by-student-in-class")
     public ApiResponse<?> viewSubmittedQuizInClass(HttpServletRequest httpServletRequest,
                                                    @RequestParam("id-submitted") Long id) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.QUIZ, quizzService.getDetailSubmitQuiz(httpServletRequest, id));
@@ -73,8 +75,13 @@ public class QuizController {
     }
 
     @PostMapping("list-quiz-in-class")
-    public ApiResponse<?> listQuizInClass(HttpServletRequest httpServletRequest, @RequestBody SearchQuizDto searchQuizDto) {
-        return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.QUIZ, quizzService.getListQuizInClass(httpServletRequest, searchQuizDto));
+    public ApiResponse<?> listQuizInClass(HttpServletRequest httpServletRequest,
+                                          @RequestParam("id-class") Long idClass,
+                                          @RequestBody SearchQuizDto searchQuizDto,
+                                          Pageable pageable) {
+        return ApiResponse.of(ResponseCode.GET_SUCCESS,
+                ResponseObject.QUIZ,
+                quizzService.getListQuizInClass(httpServletRequest, idClass, searchQuizDto, pageable));
     }
 
     @PostMapping("update-quiz-in-class")
@@ -100,10 +107,10 @@ public class QuizController {
     }
 
     @PostMapping("search-quizz")
-    public ApiResponse<?> searchQuizz(HttpServletRequest httpServletRequest, @RequestBody SearchQuizDto dto) {
+    public ApiResponse<?> searchQuizz(HttpServletRequest httpServletRequest, @RequestBody SearchQuizDto dto, Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS,
                 ResponseObject.QUIZ,
-                quizzService.getQuizes(httpServletRequest, dto));
+                quizzService.getQuizes(httpServletRequest, dto, pageable));
     }
 
     @PostMapping("create-quizz")

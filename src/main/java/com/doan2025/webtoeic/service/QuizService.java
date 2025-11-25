@@ -26,7 +26,7 @@ public interface QuizService {
 
     void submitQuiz(HttpServletRequest request, Long quizId, List<SubmitRequest> requests);
 
-    List<ShareQuizResponse> getListQuizInClass(HttpServletRequest httpServletRequest, SearchQuizDto dto);
+    Page<ShareQuizResponse> getListQuizInClass(HttpServletRequest httpServletRequest, Long idClass, SearchQuizDto dto, Pageable pageable);
 
     void updateQuizInClass(HttpServletRequest httpServletRequest, SharedQuizRequest request);
 
@@ -34,7 +34,7 @@ public interface QuizService {
 
     QuizResponse getQuiz(HttpServletRequest httpServletRequest, Long id);
 
-    List<QuizResponse> getQuizes(HttpServletRequest httpServletRequest, SearchQuizDto dto);
+    Page<QuizResponse> getQuizes(HttpServletRequest httpServletRequest, SearchQuizDto dto, Pageable pageable);
 
     QuizResponse createQuiz(HttpServletRequest httpServletRequest, QuizRequest quizRequest);
 
