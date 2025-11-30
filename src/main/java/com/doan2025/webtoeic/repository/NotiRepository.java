@@ -14,7 +14,7 @@ public interface NotiRepository extends JpaRepository<Notification, Long> {
     @Query("""
                     SELECT COUNT(n) from Notification n
                     JOIN NotificationReceive nr ON n.id = nr.notification.id
-                    WHERE nr.receiver.id = ?1
+                    WHERE nr.receiver.id = ?1 AND nr.isRead = false
             """)
     Long countNotiByReceiverId(Long receiverId);
 
