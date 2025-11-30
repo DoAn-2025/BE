@@ -1,9 +1,7 @@
 package com.doan2025.webtoeic.service.impl;
 
-import com.doan2025.webtoeic.constants.enums.EJoinStatus;
-import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.constants.enums.ResponseCode;
-import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.constants.Constants;
+import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.ClassMember;
 import com.doan2025.webtoeic.domain.User;
@@ -17,6 +15,7 @@ import com.doan2025.webtoeic.repository.UserRepository;
 import com.doan2025.webtoeic.service.ClassMemberService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
+import com.doan2025.webtoeic.utils.NotiUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +37,7 @@ public class ClassMemberServiceImpl implements ClassMemberService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
+    private final NotiUtils notiUtils;
 
 
     @Override
@@ -78,6 +78,11 @@ public class ClassMemberServiceImpl implements ClassMemberService {
                             .roleInClass(user.getRole())
                             .status(EJoinStatus.ACTIVE)
                             .build());
+            notiUtils.sendNoti(List.of(user),
+                    ENotiType.ADD_TO_CLASS,
+                    Constants.ADD_TO_CLASS_CONTENT,
+                    Constants.ADD_TO_CLASS_CONTENT,
+                    clazz.getId());
         }
     }
 

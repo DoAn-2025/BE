@@ -1,9 +1,7 @@
 package com.doan2025.webtoeic.service.impl;
 
-import com.doan2025.webtoeic.constants.enums.EQuizStatus;
-import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.constants.enums.ResponseCode;
-import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.constants.Constants;
+import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.*;
 import com.doan2025.webtoeic.dto.SearchQuizDto;
@@ -21,6 +19,7 @@ import com.doan2025.webtoeic.service.QuizService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
+import com.doan2025.webtoeic.utils.NotiUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +48,7 @@ public class QuizServiceImpl implements QuizService {
     private final StudentQuizRepository studentQuizRepository;
     private final StudentAnswerRepository studentAnswerRepository;
     private final ClassMemberRepository classMemberRepository;
+    private final NotiUtils notiUtils;
 
     @Override
     public OverviewResponse statisticDetailQuizInClass(HttpServletRequest httpServletRequest,
@@ -218,6 +218,12 @@ public class QuizServiceImpl implements QuizService {
                 .createdBy(user)
                 .build();
         shareQuizRepository.save(sharedQuiz);
+        List<User> users = classMemberRepository.findMembersInClass(request.getClassId());
+        notiUtils.sendNoti(users,
+                ENotiType.NEW_QUIZ_IN_CLASS,
+                Constants.NEW_QUIZ_IN_CLASS_CONTENT,
+                Constants.NEW_QUIZ_IN_CLASS_CONTENT,
+                clazz.getId());
     }
 
     @Override

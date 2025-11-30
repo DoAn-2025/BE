@@ -1,6 +1,7 @@
 package com.doan2025.webtoeic.repository;
 
 import com.doan2025.webtoeic.domain.ClassMember;
+import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchMemberInClassDto;
 import com.doan2025.webtoeic.dto.request.ClassRequest;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,16 @@ public interface ClassMemberRepository extends JpaRepository<ClassMember, Long> 
                     AND cm.roleInClass = :#{T(com.doan2025.webtoeic.constants.enums.ERole).STUDENT}
             """)
     Page<ClassMember> findMembersInClass(SearchMemberInClassDto request, String email, Pageable pageable);
+
+    @Query("""
+                SELECT m FROM ClassMember cm
+                JOIN cm.clazz c
+                JOIN cm.member m
+                WHERE c.id = :classId
+                AND ( cm.status = :#{T(com.doan2025.webtoeic.constants.enums.EJoinStatus).ACTIVE} )
+                AND cm.roleInClass = :#{T(com.doan2025.webtoeic.constants.enums.ERole).STUDENT}
+            """)
+    List<User> findMembersInClass(Long classId);
 
     @Query("""
                     SELECT clazz.id

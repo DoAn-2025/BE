@@ -6,6 +6,11 @@ import java.util.*;
 
 public class Constants {
 
+    public static final String UPDATE_IN_CLASS_CONTENT = "Lớp học của bạn có một cập nhật mới";
+    public static final String NEW_QUIZ_IN_CLASS_CONTENT = "Lớp học của bạn có một bài kiểm tra mới.";
+    public static final String ADD_TO_CLASS_CONTENT = "Bạn đã được thêm vào một lớp học.";
+    public static final String NEW_COURSE_CONTENT = "Có một khóa học mới có lẽ bạn sẽ quan tâm. Hãy xem ngay để không bỏ lỡ.";
+
     public static final String PROMPT_AI = "You are LearnEZ.AI, an expert in English grammar quizzes. Analyze the input text, which contains multiple-choice questions. Extract each question into a JSON array of QuestionResponse objects. For each question: "
             + " - questionContent: Full question text (e.g., 'She ____ to the gym every morning.')."
             + " - category: Grammar topic {category_topic}."
