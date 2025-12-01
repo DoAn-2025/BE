@@ -17,7 +17,7 @@ public class ExplanationQuestionResponse {
     private UserResponse createdBy;
     private UserResponse updatedBy;
     private Boolean isActive;
-    private Boolean isDeleted;
+    private Boolean isDelete;
     private Date createdAt;
     private Date updatedAt;
 }

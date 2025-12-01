@@ -83,7 +83,7 @@ public class ConvertUtil {
                 .url(questionBank.getLinkUrl())
                 .questions(questionsInBank.stream().map(this::convertQuestionToDto).collect(Collectors.toList()))
                 .isActive(questionBank.getIsActive())
-                .isDeleted(questionBank.getIsDelete())
+                .isDelete(questionBank.getIsDelete())
                 .createdAt(questionBank.getCreateAt())
                 .updatedAt(questionBank.getUpdateAt() != null ? questionBank.getUpdateAt() : null)
                 .createdBy(questionBank.getCreateBy() != null ?
@@ -105,7 +105,7 @@ public class ConvertUtil {
                 .answers(answers.stream().map(this::convertAnswerToDto).collect(Collectors.toList()))
                 .createdAt(question.getCreatedAt())
                 .updatedAt(question.getUpdatedAt())
-                .isDeleted(question.getIsDelete())
+                .isDelete(question.getIsDelete())
                 .isActive(question.getIsActive())
                 .createdBy(question.getCreateBy() != null ? modelMapper.map(question.getCreateBy(), UserResponse.class) : null)
                 .updatedBy(question.getUpdateBy() != null ? modelMapper.map(question.getUpdateBy(), UserResponse.class) : null)
@@ -117,7 +117,7 @@ public class ConvertUtil {
                 .id(answer.getId())
                 .isCorrect(answer.getIsCorrect())
                 .content(answer.getContent())
-                .isDeleted(answer.getIsDelete())
+                .isDelete(answer.getIsDelete())
                 .isActive(answer.getIsActive())
                 .createdAt(answer.getCreatedAt())
                 .updatedAt(answer.getUpdatedAt())
@@ -136,7 +136,7 @@ public class ConvertUtil {
                 .createdAt(explanationQuestion.getCreatedAt())
                 .updatedAt(explanationQuestion.getUpdatedAt())
                 .isActive(explanationQuestion.getIsActive())
-                .isDeleted(explanationQuestion.getIsDelete())
+                .isDelete(explanationQuestion.getIsDelete())
                 .createdBy(explanationQuestion.getCreatedBy() != null ?
                         modelMapper.map(explanationQuestion.getCreatedBy(), UserResponse.class) : null)
                 .updatedBy(explanationQuestion.getUpdatedBy() != null ?
