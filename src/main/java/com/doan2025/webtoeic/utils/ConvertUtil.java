@@ -321,7 +321,7 @@ public class ConvertUtil {
         lessonResponse.setCreatedAt(lesson.getCreatedAt());
         lessonResponse.setUpdatedAt(lesson.getUpdatedAt());
         lessonResponse.setIsPreviewAble(lesson.getIsPreviewAble());
-        lessonResponse.setIsDeleted(lesson.getIsDelete());
+        lessonResponse.setIsDelete(lesson.getIsDelete());
         lessonResponse.setIsActive(lesson.getIsActive());
         lessonResponse.setDuration(lesson.getDuration());
         lessonResponse.setOrderIndex(lesson.getOrderIndex());

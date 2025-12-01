@@ -20,7 +20,7 @@ public class LessonResponse {
     private Boolean isPreviewAble;
     private CourseResponse courseId;
     private Boolean isBought;
-    private Boolean isDeleted;
+    private Boolean isDelete;
     private Boolean isActive;
     private Date createdAt;
     private Date updatedAt;
@@ -40,7 +40,7 @@ public class LessonResponse {
         this.duration = duration;
         this.orderIndex = orderIndex;
         this.isPreviewAble = isPreviewAble;
-        this.isDeleted = isDeleted;
+        this.isDelete = isDeleted;
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -58,7 +58,7 @@ public class LessonResponse {
         this.duration = duration;
         this.orderIndex = orderIndex;
         this.isPreviewAble = isPreviewAble;
-        this.isDeleted = isDeleted;
+        this.isDelete = isDeleted;
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
