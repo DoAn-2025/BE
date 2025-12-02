@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +28,7 @@ public class ScoreScaleController {
     }
 
     @PostMapping("/filter")
-    public ApiResponse<?> filter(HttpServletRequest request, SearchRangeTopicAndScoreScaleDto dto, Pageable pageable) {
+    public ApiResponse<?> filter(HttpServletRequest request, @RequestBody SearchRangeTopicAndScoreScaleDto dto, Pageable pageable) {
         return ApiResponse.of(
                 ResponseCode.GET_SUCCESS,
                 ResponseObject.RANGE_TOPIC,
@@ -41,7 +38,7 @@ public class ScoreScaleController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
-    public ApiResponse<?> createRangeTopic(HttpServletRequest request, ScoreScaleRequest dto) {
+    public ApiResponse<?> createRangeTopic(HttpServletRequest request, @RequestBody ScoreScaleRequest dto) {
         return ApiResponse.of(
                 ResponseCode.CREATE_SUCCESS,
                 ResponseObject.RANGE_TOPIC,
@@ -51,7 +48,7 @@ public class ScoreScaleController {
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
-    public ApiResponse<?> updateRangeTopic(HttpServletRequest request, ScoreScaleRequest dto) {
+    public ApiResponse<?> updateRangeTopic(HttpServletRequest request, @RequestBody ScoreScaleRequest dto) {
         return ApiResponse.of(
                 ResponseCode.UPDATE_SUCCESS,
                 ResponseObject.RANGE_TOPIC,
