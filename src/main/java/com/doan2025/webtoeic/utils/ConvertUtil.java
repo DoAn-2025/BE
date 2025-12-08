@@ -283,8 +283,6 @@ public class ConvertUtil {
         courseResponse.setAuthor(orderDetail.getCourse().getAuthor() != null ? modelMapper.map(orderDetail.getCourse().getAuthor(), UserResponse.class) : null);
         courseResponse.setCreatedBy(orderDetail.getCourse().getCreatedBy() != null ? modelMapper.map(orderDetail.getCourse().getCreatedBy(), UserResponse.class) : null);
         courseResponse.setUpdatedBy(orderDetail.getCourse().getUpdatedBy() != null ? modelMapper.map(orderDetail.getCourse().getUpdatedBy(), UserResponse.class) : null);
-        courseResponse.setThumbnailUrl(orderDetail.getCourse().getThumbnailUrl());
-        courseResponse.setCategoryName(orderDetail.getCourse().getCategoryCourse().getName());
 
         detail.setCourse(courseResponse);
         orderResponse.setDetail(convertOrderDetailToDto(request, orderDetail));
@@ -375,6 +373,8 @@ public class ConvertUtil {
         courseResponse.setTitle(course.getTitle());
         courseResponse.setDescription(course.getDescription());
         courseResponse.setPrice(course.getPrice());
+        courseResponse.setThumbnailUrl(course.getThumbnailUrl());
+        courseResponse.setCategoryName(course.getCategoryCourse().getName());
         courseResponse.setIsActive(course.getIsActive());
         courseResponse.setIsDelete(course.getIsDelete());
         courseResponse.setCreatedAt(course.getCreatedAt());
