@@ -280,9 +280,12 @@ public class ConvertUtil {
         detail.setId(orderDetail.getId());
         detail.setPriceAtPurchase(orderDetail.getPriceAtPurchase());
         CourseResponse courseResponse = convertCourseToDto(request, orderDetail.getCourse());
-        courseResponse.setAuthor(null);
-        courseResponse.setCreatedBy(null);
-        courseResponse.setUpdatedBy(null);
+        courseResponse.setAuthor(orderDetail.getCourse().getAuthor() != null ? modelMapper.map(orderDetail.getCourse().getAuthor(), UserResponse.class) : null);
+        courseResponse.setCreatedBy(orderDetail.getCourse().getCreatedBy() != null ? modelMapper.map(orderDetail.getCourse().getCreatedBy(), UserResponse.class) : null);
+        courseResponse.setUpdatedBy(orderDetail.getCourse().getUpdatedBy() != null ? modelMapper.map(orderDetail.getCourse().getUpdatedBy(), UserResponse.class) : null);
+        courseResponse.setThumbnailUrl(orderDetail.getCourse().getThumbnailUrl());
+        courseResponse.setCategoryName(orderDetail.getCourse().getCategoryCourse().getName());
+
         detail.setCourse(courseResponse);
         orderResponse.setDetail(convertOrderDetailToDto(request, orderDetail));
         return orderResponse;
