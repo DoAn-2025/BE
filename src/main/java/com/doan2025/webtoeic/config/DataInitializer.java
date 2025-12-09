@@ -31,6 +31,8 @@ public class DataInitializer implements CommandLineRunner {
     private final PostRepository postRepository;
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
+    private final ScoreScaleRepository scoreScaleRepository;
+    private final RangeTopicRepository topicRepository;
     @Value("${account.manager.email}")
     private String MANAGER_EMAIL;
     @Value("${account.manager.password}")
@@ -54,6 +56,8 @@ public class DataInitializer implements CommandLineRunner {
         generateDataPost();
         generateDataCourse();
         generateDataLesson();
+        initDataRangeTopic();
+        initDataScoreScale();
     }
 
     private void generateDataUser() {
@@ -194,6 +198,32 @@ public class DataInitializer implements CommandLineRunner {
             checkInitRepository.save(new CheckInit(ResponseObject.LESSON.name()));
         }
 
+    }
+
+    private void initDataScoreScale() {
+        if (!checkInitRepository.existsByCode(ResponseObject.SCORE_SCALE.name())) {
+            for (EScoreScale item : EScoreScale.values()) {
+                scoreScaleRepository.save(new ScoreScale(
+                        item.getValue(),
+                        item.getCode(),
+                        item.getFromScore(),
+                        item.getToScore()
+                ));
+            }
+        }
+    }
+
+    private void initDataRangeTopic() {
+        if (!checkInitRepository.existsByCode(ResponseObject.RANGE_TOPIC.name())) {
+            for (ERangeTopic gr : ERangeTopic.values()) {
+                topicRepository.save(new RangeTopic(
+                        gr.getValue(),
+                        gr.name(),
+                        gr.getTitle(),
+                        gr.getDescription()
+                ));
+            }
+        }
     }
 
     private String generatedUserCode(ERole role) {

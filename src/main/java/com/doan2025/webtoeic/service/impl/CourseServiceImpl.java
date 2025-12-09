@@ -1,9 +1,7 @@
 package com.doan2025.webtoeic.service.impl;
 
-import com.doan2025.webtoeic.constants.enums.ECategoryCourse;
-import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.constants.enums.ResponseCode;
-import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.constants.Constants;
+import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.Course;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
@@ -17,6 +15,7 @@ import com.doan2025.webtoeic.service.CourseService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
+import com.doan2025.webtoeic.utils.NotiUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +38,7 @@ public class CourseServiceImpl implements CourseService {
     private final JwtUtil jwtUtil;
     private final ConvertUtil convertUtil;
     private final EnrollmentRepository enrollmentRepository;
+    private final NotiUtils notiUtils;
 
     @Override
     public Page<CourseResponse> findByCourseBought(HttpServletRequest httpServletRequest, Pageable pageable) {
@@ -118,6 +118,12 @@ public class CourseServiceImpl implements CourseService {
                 .thumbnailUrl(request.getThumbnailUrl())
                 .build();
         Course savedCourse = courseRepository.save(course);
+        List<User> users = userRepository.findUserOnlyStudent();
+        notiUtils.sendNoti(users,
+                ENotiType.NEW_COURSE,
+                Constants.NEW_COURSE_CONTENT,
+                Constants.NEW_COURSE_CONTENT,
+                course.getId());
         return convertUtil.convertCourseToDto(httpServletRequest, savedCourse);
     }
 

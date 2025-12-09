@@ -88,7 +88,7 @@ public class ClassController {
     }
 
     @PostMapping("/disable-or-delete-notification-in-class")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> disableOrDeleteNotificationInClass(HttpServletRequest httpServletRequest,
                                                              @RequestBody ClassNotificationRequest dto) {
         return ApiResponse.of(ResponseCode.DELETE_SUCCESS,
@@ -97,7 +97,7 @@ public class ClassController {
     }
 
     @PostMapping("/update-notification-in-class")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> updateNotificationInClass(HttpServletRequest httpServletRequest,
                                                     @RequestBody ClassNotificationRequest dto) {
         return ApiResponse.of(ResponseCode.UPDATE_SUCCESS,
@@ -106,7 +106,7 @@ public class ClassController {
     }
 
     @PostMapping("/create-notification-in-class")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> createNotificationInClass(HttpServletRequest httpServletRequest,
                                                     @RequestBody ClassNotificationRequest dto) {
         return ApiResponse.of(ResponseCode.CREATE_SUCCESS,
@@ -237,10 +237,11 @@ public class ClassController {
 
     @PostMapping("/filter")
     public ApiResponse<?> filterClass(@RequestBody SearchClassDto dto,
-                                      HttpServletRequest httpServletRequest) {
+                                      HttpServletRequest httpServletRequest,
+                                      Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS,
                 ResponseObject.CLASS,
-                classService.getClasses(httpServletRequest, dto));
+                classService.getClasses(httpServletRequest, dto, pageable));
     }
 
     @PostMapping("/delete")

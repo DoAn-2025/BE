@@ -2,6 +2,8 @@ package com.doan2025.webtoeic.repository;
 
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.dto.SearchClassDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,5 +26,5 @@ public interface ClassRepository extends JpaRepository<Class, Long> {
                 AND (COALESCE(:#{#dto.statusClass}, NULL) IS NULL OR c.status IN (:#{#dto.statusClass}))
                 AND (COALESCE(:classIds, NULL) IS NULL OR c.id IN (:classIds) )
             """)
-    List<Class> filterClass(SearchClassDto dto, List<Long> classIds);
+    Page<Class> filterClass(SearchClassDto dto, List<Long> classIds, Pageable pageable);
 }

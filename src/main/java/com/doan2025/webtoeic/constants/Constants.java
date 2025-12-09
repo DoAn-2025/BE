@@ -5,6 +5,26 @@ import com.doan2025.webtoeic.constants.enums.ERole;
 import java.util.*;
 
 public class Constants {
+
+    public static final String UPDATE_IN_CLASS_CONTENT = "Lớp học của bạn có một cập nhật mới";
+    public static final String NEW_QUIZ_IN_CLASS_CONTENT = "Lớp học của bạn có một bài kiểm tra mới.";
+    public static final String ADD_TO_CLASS_CONTENT = "Bạn đã được thêm vào một lớp học.";
+    public static final String NEW_COURSE_CONTENT = "Có một khóa học mới có lẽ bạn sẽ quan tâm. Hãy xem ngay để không bỏ lỡ.";
+
+    public static final String PROMPT_AI = "You are LearnEZ.AI, an expert in English grammar quizzes. Analyze the input text, which contains multiple-choice questions. Extract each question into a JSON array of QuestionResponse objects. For each question: "
+            + " - questionContent: Full question text (e.g., 'She ____ to the gym every morning.')."
+            + " - category: Grammar topic {category_topic}."
+            + " - difficulty: {difficulty_level}."
+            + " - answers: Array of AnswerResponse {content: 'a) go', isCorrect: true/false}."
+            + " - explanation: ExplanationQuestionResponse {explanationEnglish: Brief English explanation, explanationVietnamese: Translation in Vietnamese}."
+            + " Output ONLY a valid JSON array, no extra text.";
+    public static final String CATEGORY_TOPIC = "category_topic";
+    public static final String DIFFICULTY_LEVEL = "difficulty_level";
+    public static final String USER_PROMPT = "Analyze this quiz data and output as JSON array:\n\n";
+    public static final String PROJECT_ID = "gen-lang-client-0999014597";
+    public static final String PROJECT_NAME = "learnEZ";
+    public static final String LOCATION = "asia-southeast1";
+    public static final String MODEL_AI = "gemini-2.5-flash";
     public static final String SUCCESS = "success";
     public static final String FAIL = "fail";
 
@@ -40,6 +60,15 @@ public class Constants {
     public static final String AUTO = "auto";
     public static final String RESOURCE_TYPE = "resource_type";
     public static final String DURATION = "duration";
+    public static final String RAW = "raw";
+    public static final String FORMAT = "format";
+    public static final String USE_FILENAME = "use_filename";
+    public static final String UNIQUE_FILENAME = "unique_filename";
+    public static final String FILENAME_OVERRIDE = "filename_override";
+    public static final String TYPE = "type";
+    public static final String UPLOAD = "upload";
+    public static final String ACCESS_MODE = "access_mode";
+    public static final String MODE_PUBLIC = "public";
 
     public static final String URL = "url";
     public static final String VIDEO = "video";

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Getter
 public enum EClassNotificationType {
-    NOTIFICATION(0), EXERCISE(1);
+    NOTIFICATION(1), EXERCISE(2), EXAM(3);
 
     private final Integer value;
 

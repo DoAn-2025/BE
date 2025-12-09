@@ -17,6 +17,7 @@ public class ClassResponse {
     private String description;
     private String subject;
     private String title;
+    private String status;
     private UserResponse teacher;
     private Date createdAt;
     private Date updatedAt;

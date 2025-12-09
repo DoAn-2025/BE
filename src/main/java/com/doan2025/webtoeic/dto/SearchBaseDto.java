@@ -22,6 +22,5 @@ public class SearchBaseDto {
     private String title;
     private List<String> categoryPost;
     private List<String> categories;
-
     private Long id;
 }

@@ -1,9 +1,7 @@
 package com.doan2025.webtoeic.service.impl;
 
-import com.doan2025.webtoeic.constants.enums.EClassNotificationType;
-import com.doan2025.webtoeic.constants.enums.ERole;
-import com.doan2025.webtoeic.constants.enums.ResponseCode;
-import com.doan2025.webtoeic.constants.enums.ResponseObject;
+import com.doan2025.webtoeic.constants.Constants;
+import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.domain.AttachDocumentClass;
 import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.ClassNotification;
@@ -17,6 +15,7 @@ import com.doan2025.webtoeic.service.ClassNotificationService;
 import com.doan2025.webtoeic.utils.ConvertUtil;
 import com.doan2025.webtoeic.utils.FieldUpdateUtil;
 import com.doan2025.webtoeic.utils.JwtUtil;
+import com.doan2025.webtoeic.utils.NotiUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +37,7 @@ public class ClassNotificationServiceImpl implements ClassNotificationService {
     private final ClassNotificationRepository classNotificationRepository;
     private final AttachDocumentClassRepository attachDocumentClassRepository;
     private final ClassMemberRepository classMemberRepository;
+    private final NotiUtils notiUtils;
 
     @Override
     public ClassNotificationResponse getDetailNotificationInClass(HttpServletRequest httpServletRequest, Long notificationId) {
@@ -113,6 +113,13 @@ public class ClassNotificationServiceImpl implements ClassNotificationService {
                 attachDocumentClassRepository.save(attachment);
             }
         }
+
+        List<User> users = classMemberRepository.findMembersInClass(clazz.getId());
+        notiUtils.sendNoti(users,
+                ENotiType.UPDATE_IN_CLASS,
+                Constants.UPDATE_IN_CLASS_CONTENT,
+                Constants.UPDATE_IN_CLASS_CONTENT,
+                clazz.getId());
 
         return convertUtil.convertClassNotificationToDto(httpServletRequest,
                 saved,

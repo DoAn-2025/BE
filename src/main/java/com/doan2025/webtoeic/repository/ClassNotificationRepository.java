@@ -14,6 +14,7 @@ public interface ClassNotificationRepository extends JpaRepository<ClassNotifica
     @Query("""
                     SELECT cn FROM ClassNotification cn
                     WHERE cn.clazz.id = :#{#dto.classId}
+                        AND (COALESCE(:#{#dto.notiTypes}, null) IS NULL OR cn.typeNotification IN (:#{#dto.notiTypes}) )
                          AND (coalesce(:#{#dto.searchString} , null) IS NULL
                                 OR LOWER(CAST(cn.description as string ) )  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%')))
                           AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
