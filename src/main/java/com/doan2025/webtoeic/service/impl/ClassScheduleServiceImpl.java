@@ -47,8 +47,7 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
     
-        ClassSchedule schedule = classScheduleRepository.findById(scheduleId).orElseThrow(() -> new WebtoeicApplication(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
-        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(schedule.getClazz().getId(), user.getId())
+        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(scheduleId, user.getId())
                 || Objects.equals(user.getRole(), ERole.CONSULTANT)
                 || Objects.equals(user.getRole(), ERole.MANAGER)) {
             return attendanceRepository.detailStatisticAttendance(scheduleId, pageable);
