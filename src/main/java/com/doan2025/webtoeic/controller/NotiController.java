@@ -111,7 +111,10 @@ public class NotiController {
     @PostMapping("/update")
     public ApiResponse<Void> update(
             @Parameter(hidden = true) HttpServletRequest request,
-            @Parameter(description = "List of notification IDs to mark as read", required = true)
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "List of notification IDs to mark as read",
+                    required = true
+            )
             @RequestBody List<Long> notiIds
     ) {
         notiService.updateNoti(request, notiIds);
