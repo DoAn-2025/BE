@@ -3,6 +3,7 @@ package com.doan2025.webtoeic.domain;
 import com.doan2025.webtoeic.utils.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 @Table(name = "lesson")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

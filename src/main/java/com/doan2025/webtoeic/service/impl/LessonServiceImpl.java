@@ -164,12 +164,21 @@ public class LessonServiceImpl implements LessonService {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.URL);
         }
 
-        Lesson saveLesson = modelMapper.map(lesson, Lesson.class);
-        saveLesson.setCourse(course);
-        saveLesson.setOrderIndex(course.getLessons().size() + 1);
+//        Lesson saveLesson = modelMapper.map(lesson, Lesson.class);
+        Lesson saveLesson = Lesson.builder()
+                .course(course)
+                .title(lesson.getTitle())
+                .content(lesson.getContent())
+                .isPreviewAble(lesson.getIsPreviewAble())
+                .orderIndex(course.getLessons().size() + 1)
+                .duration(lesson.getDuration())
+                .build();
+//        saveLesson.setCourse(course);
+//        saveLesson.setOrderIndex(course.getLessons().size() + 1);
         saveLesson.setCreatedBy(createdBy);
-        Double duration = cloudService.getVideoDuration(lesson.getVideoUrl());
-        saveLesson.setDuration(duration);
+//        Double duration = cloudService.getVideoDuration(lesson.getVideoUrl());
+//        saveLesson.setDuration(duration);
+        Lesson savedLesson = lessonRepository.save(saveLesson);
         if (Objects.nonNull(lesson.getDocumentUrls())) {
             for (String documentUrl : lesson.getDocumentUrls()) {
                 AttachDocumentLesson document = AttachDocumentLesson.builder()
@@ -179,7 +188,7 @@ public class LessonServiceImpl implements LessonService {
                 attachDocumentLessonRepository.save(document);
             }
         }
-        Lesson savedLesson = lessonRepository.save(saveLesson);
+
         return convertUtil.convertLessonToDto(request,
                 savedLesson,
                 attachDocumentLessonRepository.findAllByLessonId(savedLesson.getId()));
