@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class NotiController {
     }
 
     @PostMapping("/update")
-    public ApiResponse<Void> update(HttpServletRequest request, List<Long> notiIds) {
+    public ApiResponse<Void> update(HttpServletRequest request, @RequestParam List<Long> notiIds) {
         notiService.updateNoti(request, notiIds);
         return ApiResponse.of(ResponseCode.GET_SUCCESS,
                 ResponseObject.NOTIFICATION,
