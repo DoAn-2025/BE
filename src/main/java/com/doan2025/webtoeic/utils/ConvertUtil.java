@@ -54,8 +54,8 @@ public class ConvertUtil {
                 .isDelete(sharedQuiz.getIsDelete())
                 .clazz(convertClassToDto(request, sharedQuiz.getClazz()))
                 .quiz(convertQuizToDto(sharedQuiz.getQuiz()))
-                .createdBy(modelMapper.map(sharedQuiz.getCreatedBy(), UserResponse.class))
-                .updatedBy(modelMapper.map(sharedQuiz.getUpdatedBy(), UserResponse.class))
+                .createdBy(sharedQuiz.getCreatedBy() != null ? modelMapper.map(sharedQuiz.getCreatedBy(), UserResponse.class) : null)
+                .updatedBy(sharedQuiz.getUpdatedBy() != null ? modelMapper.map(sharedQuiz.getUpdatedBy(), UserResponse.class) : null)
                 .build();
     }
 
