@@ -135,7 +135,7 @@ public class LessonServiceImpl implements LessonService {
             ).forEach(FieldUpdateUtil::updateIfNeeded);
 
             if (Objects.nonNull(lessonRequest.getDocumentUrls())) {
-                attachDocumentLessonRepository.deleteAttachDocumentLessonsByLessonId(lesson.getId());
+                attachDocumentLessonRepository.deleteAttachDocumentLessonsByLesson_Id(lesson.getId());
 
                 for (String documentUrl : lessonRequest.getDocumentUrls()) {
                     AttachDocumentLesson doc = AttachDocumentLesson.builder()
