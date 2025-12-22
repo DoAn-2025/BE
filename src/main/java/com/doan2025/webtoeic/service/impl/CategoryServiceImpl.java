@@ -2,9 +2,11 @@ package com.doan2025.webtoeic.service.impl;
 
 import com.doan2025.webtoeic.constants.enums.*;
 import com.doan2025.webtoeic.dto.response.CategoryResponse;
+import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = {Exception.class, WebToeicException.class})
 public class CategoryServiceImpl implements CategoryService {
 
     private <E extends Enum<E>> List<CategoryResponse> mapEnumToCategory(
