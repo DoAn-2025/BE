@@ -76,11 +76,6 @@ public class AIServiceImpl implements AIService {
 
         String userPrompt = Constants.USER_PROMPT + readerText;
 
-//        String result = chatClient.prompt()
-//                .system(systemPrompt)
-//                .user(userPrompt)
-//                .options(chatOptions)
-//                .call().content();
         return AiResponse.builder()
                 .url(url)
                 .questions(
