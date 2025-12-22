@@ -50,6 +50,8 @@ public class RangeTopicServiceImpl implements RangeTopicService {
                 .description(rangeTopicRequest.getDescription())
                 .vietnamese(rangeTopicRequest.getVietnamese())
                 .build();
+        
+        rangeTopic = rangeTopicRepository.save(rangeTopic);
 
         return convertUtil.convertRangeTopicToDto(request, rangeTopic);
     }

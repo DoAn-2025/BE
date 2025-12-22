@@ -44,7 +44,11 @@ public class ScoreScaleServiceImpl implements ScoreScaleService {
 
     @Override
     public ScoreScaleResponse createScoreScale(HttpServletRequest request, ScoreScaleRequest dto) {
-        ScoreScale scoreScale = ScoreScale.builder().build();
+        ScoreScale scoreScale = ScoreScale.builder()
+                .title(dto.getTitle())
+                .fromScore(dto.getFromScore())
+                .toScore(dto.getToScore())
+                .build();
         return convertUtil.convertScoreScaleToDto(request, scoreScaleRepository.save(scoreScale));
     }
 
