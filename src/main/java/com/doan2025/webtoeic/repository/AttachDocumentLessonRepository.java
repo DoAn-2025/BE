@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface AttachDocumentLessonRepository extends JpaRepository<AttachDocumentLesson, Long> {
 
-    void deleteAllByLessonId(Long id);
+    void deleteAttachDocumentLessonsByLessonId(Long id);
 
     List<AttachDocumentLesson> findAllByLessonId(Long lessonId);
 }
