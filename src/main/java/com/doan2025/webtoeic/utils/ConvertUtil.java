@@ -115,7 +115,7 @@ public class ConvertUtil {
     public AnswerResponse convertAnswerToDto(Answer answer) {
         return AnswerResponse.builder()
                 .id(answer.getId())
-                .isCorrect(answer.getIsCorrect())
+                .correct(answer.getIsCorrect())
                 .content(answer.getContent())
                 .isDelete(answer.getIsDelete())
                 .isActive(answer.getIsActive())

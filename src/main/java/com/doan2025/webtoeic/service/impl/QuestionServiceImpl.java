@@ -106,7 +106,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .question(savedQuestion)
                         .content(answerResponse.getContent())
                         .order(order)
-                        .isCorrect(answerResponse.isCorrect())
+                        .isCorrect(answerResponse.getCorrect())
                         .createdBy(user)
                         .build();
                 answerRepository.save(answer);
