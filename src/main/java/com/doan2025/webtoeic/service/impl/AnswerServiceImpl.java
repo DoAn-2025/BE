@@ -47,7 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         Answer answer = Answer.builder()
                 .content(answerRequest.getContent())
-                .isCorrect(answerRequest.isCorrect())
+                .isCorrect(answerRequest.getCorrect())
                 .createdBy(user)
                 .build();
         Answer savedAnswer = answerRepository.save(answer);
@@ -61,7 +61,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         List.of(
                 new FieldUpdateUtil<>(answer::getContent, answer::setContent, answerRequest.getContent()),
-                new FieldUpdateUtil<>(answer::getIsCorrect, answer::setIsCorrect, answerRequest.isCorrect())
+                new FieldUpdateUtil<>(answer::getIsCorrect, answer::setIsCorrect, answerRequest.getCorrect())
         ).forEach(FieldUpdateUtil::updateIfNeeded);
 
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))

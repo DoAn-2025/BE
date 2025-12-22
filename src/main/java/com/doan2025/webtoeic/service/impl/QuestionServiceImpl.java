@@ -141,7 +141,7 @@ public class QuestionServiceImpl implements QuestionService {
         for (AnswerRequest item : questionRequest.getAnswers()) {
             Answer answer = Answer.builder()
                     .createdBy(user)
-                    .isCorrect(item.isCorrect())
+                    .isCorrect(item.getCorrect())
                     .question(savedQuestion)
                     .content(item.getContent())
                     .build();
