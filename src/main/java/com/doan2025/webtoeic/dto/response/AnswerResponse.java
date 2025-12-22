@@ -20,4 +20,5 @@ public class AnswerResponse {
     private Boolean isDelete;
     private Date createdAt;
     private Date updatedAt;
+    private Boolean isChoose;
 }

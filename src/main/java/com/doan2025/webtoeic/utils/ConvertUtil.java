@@ -7,10 +7,7 @@ import com.doan2025.webtoeic.domain.Class;
 import com.doan2025.webtoeic.domain.*;
 import com.doan2025.webtoeic.dto.response.*;
 import com.doan2025.webtoeic.exception.WebToeicException;
-import com.doan2025.webtoeic.repository.AnswerRepository;
-import com.doan2025.webtoeic.repository.ExplanationQuestionRepository;
-import com.doan2025.webtoeic.repository.QuestionRepository;
-import com.doan2025.webtoeic.repository.UserRepository;
+import com.doan2025.webtoeic.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,6 +27,7 @@ public class ConvertUtil {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final ExplanationQuestionRepository explanationQuestionRepository;
+    private final StudentAnswerRepository studentAnswerRepository;
 
     public SubmitResponse convertSubmitToDto(HttpServletRequest request, StudentQuiz studentQuiz, boolean isList) {
         return SubmitResponse.builder()
@@ -39,7 +37,60 @@ public class ConvertUtil {
                 .startAt(studentQuiz.getStartAt())
                 .endAt(studentQuiz.getEndAt())
                 .titleQuiz(studentQuiz.getQuiz().getTitle())
-                .quiz(isList ? null : convertQuizToDto(studentQuiz.getQuiz()))
+                .quiz(isList ? null : convertQuizResponseToDto(studentQuiz))
+                .build();
+    }
+
+    public QuizResponse convertQuizResponseToDto(StudentQuiz studentQuiz) {
+        List<Question> questionsInQuiz = questionRepository.findByQuizId(studentQuiz.getQuiz().getId());
+        return QuizResponse.builder()
+                .id(studentQuiz.getQuiz().getId())
+                .title(studentQuiz.getQuiz().getTitle())
+                .description(studentQuiz.getQuiz().getDescription())
+                .totalQuestions(studentQuiz.getQuiz().getTotalQuestions())
+                .status(studentQuiz.getQuiz().getStatus())
+                .createAt(studentQuiz.getQuiz().getCreateAt())
+                .updateAt(studentQuiz.getQuiz().getUpdateAt())
+                .createBy(studentQuiz.getQuiz().getCreateBy() != null ? modelMapper.map(studentQuiz.getQuiz().getCreateBy(), UserResponse.class) : null)
+                .updateBy(studentQuiz.getQuiz().getUpdateBy() != null ? modelMapper.map(studentQuiz.getQuiz().getUpdateBy(), UserResponse.class) : null)
+                .questions(questionsInQuiz.stream().map(item -> convertQuestionResponseToDto(item, studentQuiz.getId())).toList())
+                .build();
+    }
+
+    public QuestionResponse convertQuestionResponseToDto(Question question, Long studentQuiz) {
+        ExplanationQuestion explanationQuestion = explanationQuestionRepository.findByQuestionId(question.getId());
+        List<Answer> answers = answerRepository.findByQuestionId(question.getId());
+        return QuestionResponse.builder()
+                .questionContent(question.getContent())
+                .difficulty(question.getScoreScale() != null ? question.getScoreScale().getTitle() : null)
+                .category(question.getRangeTopic() != null ? question.getRangeTopic().getContent() : null)
+                .id(question.getId())
+                .explanation(convertExplanationQuestionToDto(explanationQuestion))
+                .answers(answers.stream().map(item -> convertAnswerResponseToDto(item, studentQuiz)).toList())
+                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
+                .isDelete(question.getIsDelete())
+                .isActive(question.getIsActive())
+                .createdBy(question.getCreateBy() != null ? modelMapper.map(question.getCreateBy(), UserResponse.class) : null)
+                .updatedBy(question.getUpdateBy() != null ? modelMapper.map(question.getUpdateBy(), UserResponse.class) : null)
+                .build();
+    }
+
+    public AnswerResponse convertAnswerResponseToDto(Answer answer, Long studentQuiz) {
+        StudentAnswer studentAnswer = studentAnswerRepository.findByAnswer_IdAndStudentQuiz_Id(answer.getId(), studentQuiz);
+        return AnswerResponse.builder()
+                .id(answer.getId())
+                .correct(answer.getIsCorrect())
+                .content(answer.getContent())
+                .isDelete(answer.getIsDelete())
+                .isActive(answer.getIsActive())
+                .createdAt(answer.getCreatedAt())
+                .updatedAt(answer.getUpdatedAt())
+                .createdBy(answer.getCreatedAt() != null ?
+                        modelMapper.map(answer.getCreatedAt(), UserResponse.class) : null)
+                .updatedBy(answer.getUpdatedAt() != null ?
+                        modelMapper.map(answer.getUpdatedAt(), UserResponse.class) : null)
+                .isChoose(studentAnswer != null)
                 .build();
     }
 
