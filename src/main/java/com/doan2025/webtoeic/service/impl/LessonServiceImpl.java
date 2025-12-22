@@ -93,7 +93,9 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = lessonRepository.findById(lessonRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.LESSON));
 
-        if (updatedBy.getRole().equals(ERole.MANAGER)) {
+        if ((updatedBy.getRole().equals(ERole.CONSULTANT)
+                && lesson.getCreatedBy().getEmail().equals(email))
+                || updatedBy.getRole().equals(ERole.MANAGER)) {
             // function: disable
             if (lessonRequest.getIsActive() != null && !lesson.getIsActive().equals(lessonRequest.getIsActive())) {
                 lesson.setIsActive(lessonRequest.getIsActive());
@@ -119,7 +121,9 @@ public class LessonServiceImpl implements LessonService {
 
         Lesson lesson = lessonRepository.findById(lessonRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.LESSON));
-        if (updatedBy.getRole().equals(ERole.CONSULTANT) && lesson.getCreatedBy().getEmail().equals(email)) {
+        if ((updatedBy.getRole().equals(ERole.CONSULTANT)
+                && lesson.getCreatedBy().getEmail().equals(email))
+                || updatedBy.getRole().equals(ERole.MANAGER)) {
             List.of(
                     new FieldUpdateUtil<>(lesson::getTitle, lesson::setTitle, lessonRequest.getTitle()),
                     new FieldUpdateUtil<>(lesson::getContent, lesson::setContent, lessonRequest.getContent()),
