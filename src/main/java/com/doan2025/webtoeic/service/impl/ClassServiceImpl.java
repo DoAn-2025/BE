@@ -94,7 +94,7 @@ public class ClassServiceImpl implements ClassService {
                 new FieldUpdateUtil<>(clazz::getTeacher, clazz::setTeacher,
                         userRepository.findById(classRequest.getTeacher())
                                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER))),
-                new FieldUpdateUtil<>(clazz::getStatus, clazz::setStatus, EClassStatus.fromValue(classRequest.getStatus()))
+                new FieldUpdateUtil<>(clazz::getStatus, clazz::setStatus, (classRequest.getStatus() == null) ? clazz.getStatus() : EClassStatus.fromValue(classRequest.getStatus()))
         ).forEach(FieldUpdateUtil::updateIfNeeded);
         clazz.setUpdatedBy(user);
         return convertUtil.convertClassToDto(httpServletRequest, classRepository.save(clazz));
