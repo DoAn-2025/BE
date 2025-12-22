@@ -169,7 +169,7 @@ public class QuestionServiceImpl implements QuestionService {
         question.setUpdateBy(user);
         Question saved = questionRepository.save(question);
         questionRequest.getAnswers()
-                .stream().map(item -> answerService.updateAnswer(httpServletRequest, item));
+                .stream().map(item -> answerService.updateAnswer(httpServletRequest, item)).toList();
         explanationQuestionService.updateExplanationQuestion(httpServletRequest, questionRequest.getExplanation());
         return convertUtil.convertQuestionToDto(saved);
     }
