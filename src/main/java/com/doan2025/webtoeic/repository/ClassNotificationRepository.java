@@ -14,6 +14,7 @@ public interface ClassNotificationRepository extends JpaRepository<ClassNotifica
     @Query("""
                     SELECT cn FROM ClassNotification cn
                     WHERE cn.clazz.id = :#{#dto.classId}
+                        AND (:role != 'STUDENT' OR (cn.isDelete = false AND cn.isActive = true) )
                         AND (COALESCE(:#{#dto.notiTypes}, null) IS NULL OR cn.typeNotification IN (:#{#dto.notiTypes}) )
                          AND (coalesce(:#{#dto.searchString} , null) IS NULL
                                 OR LOWER(CAST(cn.description as string ) )  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%')))
@@ -23,5 +24,5 @@ public interface ClassNotificationRepository extends JpaRepository<ClassNotifica
                               OR cn.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
             
             """)
-    Page<ClassNotification> findByClazzId(SearchNotificationInClassDto dto, Pageable pageable);
+    Page<ClassNotification> findByClazzId(SearchNotificationInClassDto dto, String role, Pageable pageable);
 }

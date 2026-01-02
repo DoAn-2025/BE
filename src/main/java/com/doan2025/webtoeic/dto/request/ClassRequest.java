@@ -20,7 +20,7 @@ public class ClassRequest {
     private String subject;
     private String title;
     private List<Long> memberIds;
-    private int status;
+    private Integer status;
     private Long teacher;
     private Date createdAt;
     private Date updatedAt;

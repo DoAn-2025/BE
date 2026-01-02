@@ -106,7 +106,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .question(savedQuestion)
                         .content(answerResponse.getContent())
                         .order(order)
-                        .isCorrect(answerResponse.isCorrect())
+                        .isCorrect(answerResponse.getCorrect())
                         .createdBy(user)
                         .build();
                 answerRepository.save(answer);
@@ -141,7 +141,7 @@ public class QuestionServiceImpl implements QuestionService {
         for (AnswerRequest item : questionRequest.getAnswers()) {
             Answer answer = Answer.builder()
                     .createdBy(user)
-                    .isCorrect(item.isCorrect())
+                    .isCorrect(item.getCorrect())
                     .question(savedQuestion)
                     .content(item.getContent())
                     .build();
@@ -169,7 +169,7 @@ public class QuestionServiceImpl implements QuestionService {
         question.setUpdateBy(user);
         Question saved = questionRepository.save(question);
         questionRequest.getAnswers()
-                .stream().map(item -> answerService.updateAnswer(httpServletRequest, item));
+                .stream().map(item -> answerService.updateAnswer(httpServletRequest, item)).toList();
         explanationQuestionService.updateExplanationQuestion(httpServletRequest, questionRequest.getExplanation());
         return convertUtil.convertQuestionToDto(saved);
     }

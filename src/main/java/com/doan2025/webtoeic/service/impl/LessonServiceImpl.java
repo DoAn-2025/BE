@@ -26,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = {Exception.class, WebToeicException.class})
 public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
@@ -93,7 +95,9 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = lessonRepository.findById(lessonRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.LESSON));
 
-        if (updatedBy.getRole().equals(ERole.MANAGER)) {
+        if ((updatedBy.getRole().equals(ERole.CONSULTANT)
+                && lesson.getCreatedBy().getEmail().equals(email))
+                || updatedBy.getRole().equals(ERole.MANAGER)) {
             // function: disable
             if (lessonRequest.getIsActive() != null && !lesson.getIsActive().equals(lessonRequest.getIsActive())) {
                 lesson.setIsActive(lessonRequest.getIsActive());
@@ -119,7 +123,9 @@ public class LessonServiceImpl implements LessonService {
 
         Lesson lesson = lessonRepository.findById(lessonRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.LESSON));
-        if (updatedBy.getRole().equals(ERole.CONSULTANT) && lesson.getCreatedBy().getEmail().equals(email)) {
+        if ((updatedBy.getRole().equals(ERole.CONSULTANT)
+                && lesson.getCreatedBy().getEmail().equals(email))
+                || updatedBy.getRole().equals(ERole.MANAGER)) {
             List.of(
                     new FieldUpdateUtil<>(lesson::getTitle, lesson::setTitle, lessonRequest.getTitle()),
                     new FieldUpdateUtil<>(lesson::getContent, lesson::setContent, lessonRequest.getContent()),
@@ -129,7 +135,7 @@ public class LessonServiceImpl implements LessonService {
             ).forEach(FieldUpdateUtil::updateIfNeeded);
 
             if (Objects.nonNull(lessonRequest.getDocumentUrls())) {
-                attachDocumentLessonRepository.deleteAllByLessonId(lesson.getId());
+                attachDocumentLessonRepository.deleteAttachDocumentLessonsByLesson_Id(lesson.getId());
 
                 for (String documentUrl : lessonRequest.getDocumentUrls()) {
                     AttachDocumentLesson doc = AttachDocumentLesson.builder()
@@ -164,12 +170,21 @@ public class LessonServiceImpl implements LessonService {
             throw new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.URL);
         }
 
-        Lesson saveLesson = modelMapper.map(lesson, Lesson.class);
-        saveLesson.setCourse(course);
-        saveLesson.setOrderIndex(course.getLessons().size() + 1);
+//        Lesson saveLesson = modelMapper.map(lesson, Lesson.class);
+        Lesson saveLesson = Lesson.builder()
+                .course(course)
+                .title(lesson.getTitle())
+                .content(lesson.getContent())
+                .isPreviewAble(lesson.getIsPreviewAble())
+                .orderIndex(course.getLessons().size() + 1)
+                .duration(lesson.getDuration())
+                .build();
+//        saveLesson.setCourse(course);
+//        saveLesson.setOrderIndex(course.getLessons().size() + 1);
         saveLesson.setCreatedBy(createdBy);
-        Double duration = cloudService.getVideoDuration(lesson.getVideoUrl());
-        saveLesson.setDuration(duration);
+//        Double duration = cloudService.getVideoDuration(lesson.getVideoUrl());
+//        saveLesson.setDuration(duration);
+        Lesson savedLesson = lessonRepository.save(saveLesson);
         if (Objects.nonNull(lesson.getDocumentUrls())) {
             for (String documentUrl : lesson.getDocumentUrls()) {
                 AttachDocumentLesson document = AttachDocumentLesson.builder()
@@ -179,7 +194,7 @@ public class LessonServiceImpl implements LessonService {
                 attachDocumentLessonRepository.save(document);
             }
         }
-        Lesson savedLesson = lessonRepository.save(saveLesson);
+
         return convertUtil.convertLessonToDto(request,
                 savedLesson,
                 attachDocumentLessonRepository.findAllByLessonId(savedLesson.getId()));

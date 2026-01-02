@@ -11,12 +11,14 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = {Exception.class, WebToeicException.class})
 public class ReaderServiceImpl implements ReaderService {
     private final CloudService cloudService;
 

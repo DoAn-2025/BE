@@ -16,7 +16,7 @@ public class LessonRequest {
     private String title;
     private String content;
     private String videoUrl;
-    private Integer duration; // truong auto fill
+    private Double duration; // truong auto fill
     private Integer orderIndex;
     private Boolean isPreviewAble;
     private Long courseId;

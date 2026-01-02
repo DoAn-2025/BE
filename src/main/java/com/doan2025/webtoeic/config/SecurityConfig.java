@@ -103,7 +103,8 @@ public class SecurityConfig {
         corsConfiguration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
                 "https://fe-q0rg.onrender.com",
-                "https://fe-learnez.vercel.app"
+                "https://fe-learnez.vercel.app",
+                "https://learn-ez-fe-local.vercel.app/"
         ));
 
         // Thêm pattern cho IP (nếu cần)

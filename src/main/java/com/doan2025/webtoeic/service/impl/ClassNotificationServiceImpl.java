@@ -72,7 +72,7 @@ public class ClassNotificationServiceImpl implements ClassNotificationService {
             }
         }
 
-        Page<ClassNotification> classNotifications = classNotificationRepository.findByClazzId(dto, pageable);
+        Page<ClassNotification> classNotifications = classNotificationRepository.findByClazzId(dto, user.getRole().name(), pageable);
 
         return classNotifications.map(item ->
                 convertUtil.convertClassNotificationToDto(

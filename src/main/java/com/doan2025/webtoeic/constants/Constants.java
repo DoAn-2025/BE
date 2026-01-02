@@ -15,7 +15,7 @@ public class Constants {
             + " - questionContent: Full question text (e.g., 'She ____ to the gym every morning.')."
             + " - category: Grammar topic {category_topic}."
             + " - difficulty: {difficulty_level}."
-            + " - answers: Array of AnswerResponse {content: 'a) go', isCorrect: true/false}."
+            + " - answers: Array of AnswerResponse {content: 'a) go', correct: true/false}."
             + " - explanation: ExplanationQuestionResponse {explanationEnglish: Brief English explanation, explanationVietnamese: Translation in Vietnamese}."
             + " Output ONLY a valid JSON array, no extra text.";
     public static final String CATEGORY_TOPIC = "category_topic";

@@ -45,8 +45,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<PostResponse> findOwnPostsWithFilter(@Param("dto") SearchBaseDto dto, Pageable pageable);
 
     @Query(value = """
-                        SELECT new com.doan2025.webtoeic.dto.response.PostResponse(p.id, p.title, p.content, p.themeUrl, p.categoryPost, p.createdAt)
+                        SELECT new com.doan2025.webtoeic.dto.response.PostResponse(p.id, p.title, p.content, p.themeUrl, p.categoryPost, p.createdAt, concat(au.lastName , ' ', au.firstName))
                         FROM Post p
+                        JOIN p.author au
                         WHERE p.isDelete = FALSE AND p.isActive = TRUE
                             AND (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string)) LIKE CONCAT('%',:#{#dto.title},'%'))
                              AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
