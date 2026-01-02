@@ -62,22 +62,23 @@ public class ClassMemberServiceImpl implements ClassMemberService {
         for (Long id : classRequest.getMemberIds()) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-            ClassMember classMember = classMemberRepository.findByClassAndMember(classRequest.getId(), id);
+            ClassMember classMember = classMemberRepository.findByClassAndMember(id, classRequest.getId());
             if (Objects.nonNull(classMember)) {
                 if (classMember.getStatus().equals(EJoinStatus.DROPPED)) {
                     classMember.setStatus(EJoinStatus.ACTIVE);
                     classMemberRepository.save(classMember);
                 }
                 continue;
+            } else {
+                classMemberRepository.save(
+                        ClassMember.builder()
+                                .clazz(clazz)
+                                .member(user)
+                                .joinDate(new Date())
+                                .roleInClass(user.getRole())
+                                .status(EJoinStatus.ACTIVE)
+                                .build());
             }
-            classMemberRepository.save(
-                    ClassMember.builder()
-                            .clazz(clazz)
-                            .member(user)
-                            .joinDate(new Date())
-                            .roleInClass(user.getRole())
-                            .status(EJoinStatus.ACTIVE)
-                            .build());
             notiUtils.sendNoti(List.of(user),
                     ENotiType.ADD_TO_CLASS,
                     Constants.ADD_TO_CLASS_CONTENT,

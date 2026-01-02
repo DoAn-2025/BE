@@ -91,7 +91,9 @@ public class ClassNotificationServiceImpl implements ClassNotificationService {
         Class clazz = classRepository.findById(request.getClassId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CLASS));
 
-        if (!Objects.equals(user.getEmail(), clazz.getTeacher().getEmail())) {
+        if (!Objects.equals(user.getEmail(), clazz.getTeacher().getEmail())
+                && !Objects.equals(ERole.CONSULTANT, user.getRole())
+                && !Objects.equals(ERole.MANAGER, user.getRole())) {
             throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
         }
         ClassNotification noti = ClassNotification.builder()
@@ -100,8 +102,8 @@ public class ClassNotificationServiceImpl implements ClassNotificationService {
                 .clazz(clazz)
                 .createdBy(user)
                 .typeNotification(EClassNotificationType.fromValue(request.getTypeNotification()))
-                .fromDate(Objects.equals(request.getTypeNotification(), EClassNotificationType.EXERCISE) ? request.getFromDate() : null)
-                .toDate(Objects.equals(request.getTypeNotification(), EClassNotificationType.EXERCISE) ? request.getToDate() : null)
+                .fromDate(request.getFromDate())
+                .toDate(request.getToDate())
                 .build();
         ClassNotification saved = classNotificationRepository.save(noti);
         if (request.getUrlAttachment() != null && !request.getUrlAttachment().isEmpty()) {

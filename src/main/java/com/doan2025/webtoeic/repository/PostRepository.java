@@ -18,9 +18,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
                     SELECT new com.doan2025.webtoeic.dto.response.PostResponse(
                         p.id, p.title, p.content, p.themeUrl, p.createdAt,
-                         p.updatedAt, p.isActive, p.isDelete, p.categoryPost)
+                         p.updatedAt, p.isActive, p.isDelete, p.categoryPost, concat(au.lastName , ' ', au.firstName))
                     FROM Post p
-                    LEFT JOIN p.author u
+                    LEFT JOIN p.author au
                     WHERE (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string))  LIKE CONCAT('%',:#{#dto.title},'%'))
                         AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
                                 OR p.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
@@ -33,8 +33,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
                     SELECT new com.doan2025.webtoeic.dto.response.PostResponse(
                         p.id, p.title, p.content, p.themeUrl, p.createdAt,
-                         p.updatedAt, p.isActive, p.isDelete,p.categoryPost)
+                         p.updatedAt, p.isActive, p.isDelete,p.categoryPost, concat(au.lastName , ' ', au.firstName))
                     FROM Post p
+                    JOIN p.author au
                     WHERE p.isDelete = FALSE
                         AND p.author.email = :#{#dto.email}
                         AND (COALESCE(:#{#dto.title}, null ) is null or LOWER(cast(p.title as string)) LIKE CONCAT('%',:#{#dto.title},'%'))
@@ -63,8 +64,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                         CASE
                             WHEN p.author.email = :email THEN TRUE
                             ELSE FALSE
-                        END as isOwn )
+                        END as isOwn,concat(au.lastName , ' ', au.firstName) )
                     FROM Post p
+                    JOIN p.author au
                     WHERE p.id = :id AND p.isDelete = FALSE AND p.isActive = TRUE
             """)
     Optional<PostResponse> findPostDetail(Long id, String email);

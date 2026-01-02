@@ -24,4 +24,5 @@ public class ClassScheduleResponse {
     private Date updatedAt;
     private UserResponse createdBy;
     private UserResponse updatedBy;
+    private RoomResponse room;
 }

@@ -24,7 +24,7 @@ public class PostResponse {
     private String category;
     private String author;
 
-    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category, Boolean isOwn) {
+    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category, Boolean isOwn, String author) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -35,9 +35,10 @@ public class PostResponse {
         this.isDelete = isDelete;
         this.category = category == null ? null : category.name();
         this.isOwn = isOwn;
+        this.author = author;
     }
 
-    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category) {
+    public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category, String author) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -47,6 +48,7 @@ public class PostResponse {
         this.isActive = isActive;
         this.isDelete = isDelete;
         this.category = category == null ? null : category.name();
+        this.author = author;
     }
 
     public PostResponse(Long id, String title, String content, String themeUrl, ECategoryPost category, Date createdAt, String author) {

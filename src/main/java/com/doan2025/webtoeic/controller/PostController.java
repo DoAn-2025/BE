@@ -42,7 +42,7 @@ public class PostController {
     }
 
     @PostMapping("/all-posts")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') OR hasRole('CONSULTANT')")
     public ApiResponse<Page<PostResponse>> getAllPosts(HttpServletRequest request,
                                                        @RequestBody SearchBaseDto dto,
                                                        Pageable pageable) {
@@ -58,13 +58,13 @@ public class PostController {
     @PostMapping("/update-info")
     @PreAuthorize("hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<PostResponse> updatePost(HttpServletRequest request, @RequestBody PostRequest postRequest) {
-        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.POST, postService.updatePost(request,postRequest));
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.POST, postService.updatePost(request, postRequest));
     }
 
     @PostMapping("/update-status")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') OR hasRole('CONSULTANT')")
     public ApiResponse<PostResponse> disableOrDeletePost(HttpServletRequest request, @RequestBody PostRequest postRequest) {
-        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.POST, postService.disableOrDeletePost(request,postRequest));
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS, ResponseObject.POST, postService.disableOrDeletePost(request, postRequest));
     }
 
 

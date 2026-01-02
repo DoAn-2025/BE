@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(rollbackOn = { WebToeicException.class, Exception.class })
+@Transactional(rollbackOn = {WebToeicException.class, Exception.class})
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final JwtUtil jwtUtil;
@@ -40,39 +40,39 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponse> getAllPosts(SearchBaseDto dto, Pageable pageable) {
-        if(dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
+        if (dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
             dto.setCategoryPost(null);
         }
-        return postRepository.findPostByManagerWithFilter(dto,pageable);
+        return postRepository.findPostByManagerWithFilter(dto, pageable);
     }
 
     @Override
     public Page<PostResponse> getOwnPosts(HttpServletRequest request, SearchBaseDto dto, Pageable pageable) {
         String email = jwtUtil.getEmailFromToken(request);
         dto.setEmail(email);
-        if(dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
+        if (dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
             dto.setCategoryPost(null);
         }
-        return postRepository.findOwnPostsWithFilter(dto,pageable);
+        return postRepository.findOwnPostsWithFilter(dto, pageable);
     }
 
     @Override
     public Page<PostResponse> getPosts(SearchBaseDto dto, Pageable pageable) {
-        if(dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
+        if (dto.getCategoryPost() == null || dto.getCategoryPost().isEmpty()) {
             dto.setCategoryPost(null);
         }
-        return postRepository.findPostFilter(dto,pageable);
+        return postRepository.findPostFilter(dto, pageable);
     }
 
     @Override
     public PostResponse getPostDetail(HttpServletRequest request, Long id) {
-        String email = "" ;
+        String email = "";
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             email = jwtUtil.getEmailFromToken(request);
         }
         return postRepository.findPostDetail(id, email)
-                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.POST) );
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.POST));
     }
 
 
@@ -111,12 +111,12 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         Post post = postRepository.findById(postRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.POST));
-        if(user.getRole().equals(ERole.CONSULTANT) && post.getAuthor().getEmail().equals(email)){
+        if (user.getRole().equals(ERole.CONSULTANT) && post.getAuthor().getEmail().equals(email)) {
             List.of(
                     new FieldUpdateUtil<>(post::getTitle, post::setTitle, postRequest.getTitle()),
                     new FieldUpdateUtil<>(post::getContent, post::setContent, postRequest.getContent()),
                     new FieldUpdateUtil<>(post::getThemeUrl, post::setThemeUrl, postRequest.getThemeUrl()),
-                    new FieldUpdateUtil<>(post::getCategoryPost,post::setCategoryPost, ECategoryPost.fromValue(postRequest.getCategoryId()))
+                    new FieldUpdateUtil<>(post::getCategoryPost, post::setCategoryPost, ECategoryPost.fromValue(postRequest.getCategoryId()))
             ).forEach(FieldUpdateUtil::updateIfNeeded);
             return modelMapper.map(postRepository.save(post), PostResponse.class);
         }
@@ -131,17 +131,17 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         Post post = postRepository.findById(postRequest.getId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.POST));
-        if(user.getRole().equals(ERole.MANAGER)){
-            // function: disable post
-            if(postRequest.getIsActive() != null && !postRequest.getIsActive().equals(post.getIsActive())) {
-                post.setIsActive(postRequest.getIsActive());
-            }
-            // function: delete post
-            if (postRequest.getIsDelete() != null && !post.getIsDelete().equals(postRequest.getIsDelete())) {
-                post.setIsDelete(postRequest.getIsDelete());
-            }
-            return modelMapper.map(postRepository.save(post), PostResponse.class);
+//        if(user.getRole().equals(ERole.MANAGER)){
+        // function: disable post
+        if (postRequest.getIsActive() != null && !postRequest.getIsActive().equals(post.getIsActive())) {
+            post.setIsActive(postRequest.getIsActive());
         }
-        throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
+        // function: delete post
+        if (postRequest.getIsDelete() != null && !post.getIsDelete().equals(postRequest.getIsDelete())) {
+            post.setIsDelete(postRequest.getIsDelete());
+        }
+        return modelMapper.map(postRepository.save(post), PostResponse.class);
+//        }
+//        throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
     }
 }

@@ -73,7 +73,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             left JOIN c.updatedBy ub
             WHERE ( COALESCE(:#{#dto.title}, null) is null OR LOWER(cast( c.title as string)) LIKE LOWER(CONCAT('%', :#{#dto.title}, '%'))  )
                 AND ( (COALESCE(:#{#dto.fromDate}, null ) is null AND COALESCE(:#{#dto.toDate}, null ) is null )
-                        OR c.createdAt between :#{#dto.fromDate} and :#{#dto.toDate})
+                        OR (
+                            CAST(c.createdAt AS DATE) >= CAST(:#{#dto.fromDate} AS DATE)\s
+                            AND\s
+                            CAST(c.createdAt AS DATE) <= CAST(:#{#dto.toDate} AS DATE)
+                        ))
                 AND (COALESCE(:#{#dto.categories}, null) is null OR c.categoryCourse IN (:#{#dto.categories}) )
                 AND (COALESCE(:#{#dto.isActive}, NULL) IS NULL OR c.isActive = :#{#dto.isActive} )
                 AND (COALESCE(:#{#dto.isDelete}, NULL) IS NULL OR c.isDelete = :#{#dto.isDelete} )

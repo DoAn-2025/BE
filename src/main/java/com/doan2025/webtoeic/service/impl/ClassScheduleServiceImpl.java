@@ -145,7 +145,8 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
         ClassSchedule schedule = classScheduleRepository.findById(classScheduleRequest.getClassScheduleId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
-        if (!Objects.equals(user.getRole(), ERole.CONSULTANT)) {
+        if (!Objects.equals(user.getRole(), ERole.CONSULTANT)
+                && !Objects.equals(user.getEmail(), schedule.getClazz().getTeacher().getEmail())) {
             throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
         }
         List.of(

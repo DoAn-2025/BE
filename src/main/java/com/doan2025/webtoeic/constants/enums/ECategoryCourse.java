@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ECategoryCourse {
 
-    TIPS(1),
-    EVENT(2),
-    EXAM_EXPERIENCE(3),
-    GRAMMAR_AND_VOCABULARY(4);
+    LISTENING(1),
+    SPEAKING(2),
+    READING(3),
+    WRITING(4);
     private final Integer value;
 
     ECategoryCourse(Integer value) {

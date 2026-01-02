@@ -299,6 +299,7 @@ public class ConvertUtil {
                 .clazz(convertClassToDto(request, schedule.getClazz()))
                 .createdBy(modelMapper.map(schedule.getCreatedBy(), UserResponse.class))
                 .updatedBy(schedule.getUpdatedBy() == null ? null : modelMapper.map(schedule.getUpdatedBy(), UserResponse.class))
+                .room(modelMapper.map(schedule.getRoom(), RoomResponse.class))
                 .build();
 
     }

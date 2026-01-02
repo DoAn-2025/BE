@@ -178,6 +178,7 @@ public class LessonServiceImpl implements LessonService {
                 .isPreviewAble(lesson.getIsPreviewAble())
                 .orderIndex(course.getLessons().size() + 1)
                 .duration(lesson.getDuration())
+                .videoUrl(lesson.getVideoUrl())
                 .build();
 //        saveLesson.setCourse(course);
 //        saveLesson.setOrderIndex(course.getLessons().size() + 1);
