@@ -22,7 +22,7 @@ public class PostResponse {
     private Boolean isDelete;
     private Boolean isOwn;
     private String category;
-    private UserResponse author;
+    private String author;
 
     public PostResponse(Long id, String title, String content, String themeUrl, Date createdAt, Date updatedAt, Boolean isActive, Boolean isDelete, ECategoryPost category, Boolean isOwn) {
         this.id = id;
@@ -49,12 +49,13 @@ public class PostResponse {
         this.category = category == null ? null : category.name();
     }
 
-    public PostResponse(Long id, String title, String content, String themeUrl, ECategoryPost category, Date createdAt) {
+    public PostResponse(Long id, String title, String content, String themeUrl, ECategoryPost category, Date createdAt, String author) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.themeUrl = themeUrl;
         this.createdAt = createdAt;
         this.category = category == null ? null : category.name();
+        this.author = author;
     }
 }

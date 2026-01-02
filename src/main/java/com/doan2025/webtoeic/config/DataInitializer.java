@@ -53,9 +53,9 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         generateDataUser();
-        generateDataPost();
-        generateDataCourse();
-        generateDataLesson();
+//        generateDataPost();
+//        generateDataCourse();
+//        generateDataLesson();
         initDataRangeTopic();
         initDataScoreScale();
     }
