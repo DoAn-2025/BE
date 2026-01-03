@@ -28,6 +28,10 @@ public class StudentQuiz {
     @JoinColumn(name = "quiz")
     private Quiz quiz;
 
+    @ManyToOne
+    @JoinColumn(name = "clazz")
+    private Class clazz;
+
     @Column(name = "score")
     private BigDecimal score;
 

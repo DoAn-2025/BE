@@ -87,6 +87,10 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (Objects.isNull(scheduleId)) {
             throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.ATTENDANCE);
         }
+        List<Long> isAttendance = attendanceRepository.findByScheduleId(requests.get(0).getScheduleId());
+        if (!Objects.isNull(isAttendance)) {
+            throw new WebToeicException(ResponseCode.EXISTED, ResponseObject.ATTENDANCE);
+        }
         ClassSchedule schedule = classScheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
         if (!Objects.equals(user.getRole(), ERole.TEACHER) ||

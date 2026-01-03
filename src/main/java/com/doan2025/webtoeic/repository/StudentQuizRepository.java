@@ -15,17 +15,20 @@ public interface StudentQuizRepository extends JpaRepository<StudentQuiz, Long> 
                     SELECT sq FROM StudentQuiz sq
                     JOIN sq.quiz q ON q.id = sq.quiz.id
                     JOIN sq.user u ON u.id = sq.user.id
-                    JOIN SharedQuiz shq ON q.id = shq.quiz.id
+                    JOIN SharedQuiz shq ON q.id = shq.quiz.id AND shq.clazz.id = :idClass
+                    JOIN ClassMember cm ON cm.member.id = u.id AND cm.clazz.id = :idClass
                     WHERE q.id = :idQuiz AND shq.clazz.id = :idClass
-                        AND ( COALESCE(:#{#dto.searchString}, null) is null
-                        OR LOWER(CAST( q.title as string))  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%') )
-                        OR LOWER(CAST( q.description as string))  LIKE LOWER(Concat('%', :#{#dto.searchString}, '%'))
-                        OR LOWER(CAST(concat(u.firstName, ' ', u.lastName)  as string))  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%') )
+                        AND (
+                            COALESCE(:#{#dto.searchString}, null) is null
+                            OR LOWER(CAST( q.title as string))  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%') )
+                            OR LOWER(CAST( q.description as string))  LIKE LOWER(Concat('%', :#{#dto.searchString}, '%'))
+                            OR LOWER(CAST(concat(u.firstName, ' ', u.lastName)  as string))  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%') )
                         )
                         AND (COALESCE(:#{#dto.fromScore}, null) is null OR sq.score >= :#{#dto.fromScore})
                         AND (COALESCE(:#{#dto.toScore}, null) is null OR sq.score <= :#{#dto.toScore})
+                        AND (COALESCE(:email, null) is null OR :email = u.email)
             """)
-    Page<StudentQuiz> filter(Long idQuiz, Long idClass, SearchSubmittedDto dto, Pageable pageable);
+    Page<StudentQuiz> filter(Long idQuiz, Long idClass, SearchSubmittedDto dto, Pageable pageable, String email);
 
     @Query("""
                     SELECT sq FROM StudentQuiz sq

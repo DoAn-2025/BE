@@ -9,6 +9,7 @@ import com.doan2025.webtoeic.dto.request.SharedQuizRequest;
 import com.doan2025.webtoeic.dto.request.SubmitRequest;
 import com.doan2025.webtoeic.dto.response.ApiResponse;
 import com.doan2025.webtoeic.service.QuizService;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -69,8 +70,9 @@ public class QuizController {
     @PostMapping("submit-quiz-in-class")
     public ApiResponse<Void> submitQuizInClass(HttpServletRequest httpServletRequest,
                                                @RequestParam("id-quiz") Long idQuiz,
-                                               @RequestBody List<SubmitRequest> requests) {
-        quizzService.submitQuiz(httpServletRequest, idQuiz, requests);
+                                               @RequestParam("id-class") Long idClass,
+                                               @RequestBody @Nullable List<SubmitRequest> requests) {
+        quizzService.submitQuiz(httpServletRequest, idQuiz, requests, idClass);
         return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.SUBMIT, null);
     }
 

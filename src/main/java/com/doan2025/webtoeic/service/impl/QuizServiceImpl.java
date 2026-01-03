@@ -56,7 +56,7 @@ public class QuizServiceImpl implements QuizService {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        Long total = studentQuizRepository.filter(idQuiz, idClass, dto, null).getTotalElements();
+        Long total = studentQuizRepository.filter(idQuiz, idClass, dto, null, null).getTotalElements();
         Long overScore = studentQuizRepository.countOver(idQuiz, dto, score);
         return OverviewResponse.builder()
                 .total(total)
@@ -98,29 +98,40 @@ public class QuizServiceImpl implements QuizService {
     public Page<SubmitResponse> getListSubmitQuiz(HttpServletRequest httpServletRequest, Long iQuiz, Long idClass, SearchSubmittedDto dto, Pageable pageable) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
-
+        Page<StudentQuiz> studentQuizzes;
         if (user.getRole().equals(ERole.TEACHER) || user.getRole().equals(ERole.STUDENT)) {
             if (!classMemberRepository.existsMemberInClass(idClass, user.getId())) {
                 throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
             }
+            if (user.getRole().equals(ERole.STUDENT)) {
+                studentQuizzes = studentQuizRepository.filter(iQuiz, idClass, dto, pageable, user.getEmail());
+            } else {
+                studentQuizzes = studentQuizRepository.filter(iQuiz, idClass, dto, pageable, null);
+            }
+
+        } else {
+            studentQuizzes = studentQuizRepository.filter(iQuiz, idClass, dto, pageable, null);
         }
 
-        Page<StudentQuiz> studentQuizzes = studentQuizRepository.filter(iQuiz, idClass, dto, pageable);
 
         return studentQuizzes.map(item -> convertUtil.convertSubmitToDto(httpServletRequest, item, true));
     }
 
     @Override
-    public void submitQuiz(HttpServletRequest httpServletRequest, Long quizId, List<SubmitRequest> requests) {
+    public void submitQuiz(HttpServletRequest httpServletRequest, Long quizId, List<SubmitRequest> requests, Long idClass) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUIZ));
 
+        Class clazz = classRepository.findById(idClass)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CLASS));
+
         StudentQuiz studentQuiz = StudentQuiz.builder()
                 .user(user)
                 .quiz(quiz)
+                .clazz(clazz)
                 .startAt(requests.get(0).getStartAt())
                 .endAt(requests.get(0).getEndAt())
                 .build();
@@ -128,24 +139,26 @@ public class QuizServiceImpl implements QuizService {
         StudentQuiz studentQuizSaved = studentQuizRepository.save(studentQuiz);
 
         long cntIsCorrect = 0;
-        for (SubmitRequest request : requests) {
-            Question question = questionRepository.findById(request.getQuestionId())
-                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUESTION));
+        if (!requests.isEmpty()) {
+            for (SubmitRequest request : requests) {
+                Question question = questionRepository.findById(request.getQuestionId())
+                        .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUESTION));
 
-            Answer answer = answerRepository.findById(request.getAnswerId())
-                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.ANSWER));
+                Answer answer = answerRepository.findById(request.getAnswerId())
+                        .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.ANSWER));
 
-            StudentAnswer studentAnswer = StudentAnswer.builder()
-                    .answer(answer)
-                    .question(question)
-                    .studentQuiz(studentQuizSaved)
-                    .isCorrect(answer.getIsCorrect())
-                    .build();
+                StudentAnswer studentAnswer = StudentAnswer.builder()
+                        .answer(answer)
+                        .question(question)
+                        .studentQuiz(studentQuizSaved)
+                        .isCorrect(answer.getIsCorrect())
+                        .build();
 
-            if (answer.getIsCorrect()) {
-                cntIsCorrect++;
+                if (answer.getIsCorrect()) {
+                    cntIsCorrect++;
+                }
+                studentAnswerRepository.save(studentAnswer);
             }
-            studentAnswerRepository.save(studentAnswer);
         }
         BigDecimal score = BigDecimal.valueOf(cntIsCorrect)
                 .divide(BigDecimal.valueOf(quiz.getTotalQuestions()), 2, RoundingMode.HALF_UP)

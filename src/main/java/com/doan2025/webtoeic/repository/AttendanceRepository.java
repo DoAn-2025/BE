@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query("""
@@ -17,7 +19,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                     CASE WHEN att.status = :#{T(com.doan2025.webtoeic.constants.enums.EAttendanceStatus).PRESENT} THEN true ELSE false END,
                     CASE WHEN att.status = :#{T(com.doan2025.webtoeic.constants.enums.EAttendanceStatus).ABSENT} THEN true ELSE false END,
                     CASE WHEN att.status = :#{T(com.doan2025.webtoeic.constants.enums.EAttendanceStatus).LATE} THEN true ELSE false END,
-                    att.checkIn
+                    att.checkIn,
+                    att.id
             
                 )
                 FROM ClassSchedule cs
@@ -25,7 +28,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                 JOIN cs.clazz c
                 LEFT JOIN att.student st
                 WHERE cs.id = :scheduleId
-                GROUP BY st.id, c.id, cs.id, st.firstName, st.lastName, st.email, st.phone, st.address, att.status, att.checkIn
+                GROUP BY st.id, c.id, cs.id, st.firstName, st.lastName, st.email, st.phone, st.address, att.status, att.checkIn, att.id
             """)
     Page<DetailStatisticAttendance> detailStatisticAttendance(Long scheduleId, Pageable pageable);
 
@@ -43,4 +46,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             GROUP BY cs.id
             """)
     Page<OverviewStatisticAttendance> overviewStatisticAttendance(Long classId, Pageable pageable);
+
+
+    @Query("""
+            SELECT att.id FROM Attendance att
+            WHERE att.schedule.id = :scheduleId
+            """)
+    List<Long> findByScheduleId(Long scheduleId);
 }

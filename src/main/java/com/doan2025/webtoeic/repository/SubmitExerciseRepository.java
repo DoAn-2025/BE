@@ -17,10 +17,11 @@ public interface SubmitExerciseRepository extends JpaRepository<SubmitExercise, 
                      SELECT se FROM SubmitExercise se
                      JOIN se.createdBy uc
                      WHERE se.classNotification.id = :#{#dto.notificationId}
+                        AND (COALESCE(:email, null) is null OR :email = uc.email)
                         AND (COALESCE(:#{#dto.searchString}, null) IS NULL
                             OR LOWER(CAST(CONCAT(uc.firstName, ' ', uc.lastName) as string)) LIKE CONCAT('%', :#{#dto.searchString}, '%') )
             """)
-    Page<SubmitExercise> findByClassNotificationId(SearchSubmitExerciseDto dto, Pageable pageable);
+    Page<SubmitExercise> findByClassNotificationId(SearchSubmitExerciseDto dto, Pageable pageable, String email);
 
     List<SubmitExercise> findByClassNotificationIdAndCreatedById(Long notificationId, Long id);
 }

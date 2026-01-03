@@ -53,7 +53,7 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
     @Query(value = """
                 SELECT sc.id
                 FROM class_schedule sc
-                WHERE sc.class = :classId
+                WHERE sc.class = :classId AND sc.status = 'ACTIVE'
                 AND DATE(CURRENT_TIMESTAMP) = DATE(sc.start_at)
                 AND (
                      CURRENT_TIMESTAMP >= TIMESTAMPADD(HOUR, -2, sc.start_at)

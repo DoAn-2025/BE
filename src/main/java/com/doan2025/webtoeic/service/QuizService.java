@@ -24,7 +24,7 @@ public interface QuizService {
 
     Page<SubmitResponse> getListSubmitQuiz(HttpServletRequest httpServletRequest, Long iQuiz, Long idClass, SearchSubmittedDto dto, Pageable pageable);
 
-    void submitQuiz(HttpServletRequest request, Long quizId, List<SubmitRequest> requests);
+    void submitQuiz(HttpServletRequest request, Long quizId, List<SubmitRequest> requests, Long idClass);
 
     Page<ShareQuizResponse> getListQuizInClass(HttpServletRequest httpServletRequest, Long idClass, SearchQuizDto dto, Pageable pageable);
 

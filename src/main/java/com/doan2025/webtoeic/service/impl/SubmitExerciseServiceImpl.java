@@ -64,10 +64,13 @@ public class SubmitExerciseServiceImpl implements SubmitExersiceService {
         ClassNotification noti = classNotificationRepository.findById(dto.getNotificationId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.NOTIFICATION));
 
-        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(noti.getClazz().getId(), user.getId())) {
-
-            Page<SubmitExercise> pages = submitExerciseRepository.findByClassNotificationId(dto, pageable);
-
+        if (classMemberRepository.existsMemberInClass(noti.getClazz().getId(), user.getId())) {
+            Page<SubmitExercise> pages;
+            if (Objects.equals(user.getRole(), ERole.TEACHER)) {
+                pages = submitExerciseRepository.findByClassNotificationId(dto, pageable, null);
+            } else {
+                pages = submitExerciseRepository.findByClassNotificationId(dto, pageable, user.getEmail());
+            }
             return pages.map(submitExercise
                     -> convertUtil.convertSubmitExerciseToDto(httpServletRequest, submitExercise));
         }

@@ -35,7 +35,7 @@ public class ClassController {
     }
 
     @PostMapping("/get-list-exercise-in-notification")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER')")
     public ApiResponse<?> getListSubmitExercise(HttpServletRequest httpServletRequest,
                                                 @RequestBody SearchSubmitExerciseDto dto, Pageable pageable) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS,

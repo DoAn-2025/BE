@@ -20,6 +20,6 @@ public class DetailStatisticAttendance {
     private boolean absent;
     private boolean late;
     private Date checkInDate;
-
+    private Long attendanceId;
 
 }
