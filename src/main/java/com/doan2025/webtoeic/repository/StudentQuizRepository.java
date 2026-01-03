@@ -15,9 +15,7 @@ public interface StudentQuizRepository extends JpaRepository<StudentQuiz, Long> 
                     SELECT sq FROM StudentQuiz sq
                     JOIN sq.quiz q ON q.id = sq.quiz.id
                     JOIN sq.user u ON u.id = sq.user.id
-                    JOIN SharedQuiz shq ON q.id = shq.quiz.id AND shq.clazz.id = :idClass
-                    JOIN ClassMember cm ON cm.member.id = u.id AND cm.clazz.id = :idClass
-                    WHERE q.id = :idQuiz AND shq.clazz.id = :idClass
+                    WHERE sq.quiz.id = :idQuiz AND sq.clazz.id = :idClass
                         AND (
                             COALESCE(:#{#dto.searchString}, null) is null
                             OR LOWER(CAST( q.title as string))  LIKE LOWER(CONCAT('%', :#{#dto.searchString}, '%') )
