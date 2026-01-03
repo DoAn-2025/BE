@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -132,8 +134,8 @@ public class QuizServiceImpl implements QuizService {
                 .user(user)
                 .quiz(quiz)
                 .clazz(clazz)
-                .startAt(requests.get(0).getStartAt())
-                .endAt(requests.get(0).getEndAt())
+                .startAt((requests.isEmpty() || Objects.isNull(requests)) ? new Date() : requests.get(0).getStartAt())
+                .endAt((requests.isEmpty() || Objects.isNull(requests)) ? new Date() : requests.get(0).getEndAt())
                 .build();
 
         StudentQuiz studentQuizSaved = studentQuizRepository.save(studentQuiz);

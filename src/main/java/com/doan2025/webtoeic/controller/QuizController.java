@@ -9,7 +9,6 @@ import com.doan2025.webtoeic.dto.request.SharedQuizRequest;
 import com.doan2025.webtoeic.dto.request.SubmitRequest;
 import com.doan2025.webtoeic.dto.response.ApiResponse;
 import com.doan2025.webtoeic.service.QuizService;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -71,7 +71,10 @@ public class QuizController {
     public ApiResponse<Void> submitQuizInClass(HttpServletRequest httpServletRequest,
                                                @RequestParam("id-quiz") Long idQuiz,
                                                @RequestParam("id-class") Long idClass,
-                                               @RequestBody @Nullable List<SubmitRequest> requests) {
+                                               @RequestBody(required = false) List<SubmitRequest> requests) {
+        if (requests == null) {
+            requests = new ArrayList<>();
+        }
         quizzService.submitQuiz(httpServletRequest, idQuiz, requests, idClass);
         return ApiResponse.of(ResponseCode.CREATE_SUCCESS, ResponseObject.SUBMIT, null);
     }
