@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/question")
@@ -29,9 +31,19 @@ public class QuestionController {
     @PostMapping("add-question-to-bank")
     @PreAuthorize("hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
     public ApiResponse<?> addQuestionToBank(HttpServletRequest httpServletRequest, @RequestParam("bankId") Long bankId, @RequestBody QuestionRequest request) {
-        return ApiResponse.of(ResponseCode.CREATE_SUCCESS,
-                ResponseObject.QUESTION,
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS,
+                ResponseObject.BANK,
                 questionService.addQuestionToBank(httpServletRequest, request, bankId));
+    }
+
+    @PostMapping("remove-question-from-bank")
+    @PreAuthorize("hasRole('TEACHER') OR hasRole('CONSULTANT') OR hasRole('MANAGER')")
+    public ApiResponse<?> removeQuestionFromBank(HttpServletRequest httpServletRequest,
+                                                 @RequestParam("bankId") Long bankId,
+                                                 @RequestParam("questionsIds") List<Long> questionIds) {
+        return ApiResponse.of(ResponseCode.UPDATE_SUCCESS,
+                ResponseObject.BANK,
+                questionService.removeQuestionFromBank(httpServletRequest, questionIds, bankId));
     }
 
     @PostMapping("filter-question")

@@ -151,6 +151,22 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public BankResponse removeQuestionFromBank(HttpServletRequest httpServletRequest, List<Long> questionIds, Long bankId) {
+        User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
+        QuestionBank bank = questionBankRepository.findById(bankId)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.BANK));
+        for (Long questionId : questionIds) {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.QUESTION));
+
+            question.setIsDelete(true);
+            questionRepository.save(question);
+        }
+        return convertUtil.convertQuestionBankToDto(bank);
+    }
+
+    @Override
     public QuestionResponse updateQuestion(HttpServletRequest httpServletRequest, QuestionRequest questionRequest) {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));

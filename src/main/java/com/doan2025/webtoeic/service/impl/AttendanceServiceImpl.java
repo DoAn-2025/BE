@@ -47,7 +47,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         ClassSchedule schedule = classScheduleRepository.findById(requests.get(0).getScheduleId())
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
 
-        if (!Objects.equals(user.getRole(), ERole.TEACHER) ||
+        if (!Objects.equals(user.getRole(), ERole.TEACHER) &&
                 !Objects.equals(user.getEmail(), schedule.getClazz().getTeacher().getEmail())) {
             throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
         }

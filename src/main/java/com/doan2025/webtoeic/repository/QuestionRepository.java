@@ -14,8 +14,8 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("""
                     SELECT q FROM Question q
-                    join q.rangeTopic r
-                    join q.scoreScale sc
+                    left join q.rangeTopic r
+                    left join q.scoreScale sc
                     where (COALESCE(:#{#dto.idQuestionBank}, null ) IS NULL OR q.questionBank.id = :#{#dto.idQuestionBank})
                     AND (COALESCE(:#{#dto.searchString}, null) IS NULL OR LOWER(CAST(q.content as string)) LIKE CONCAT('%',  :#{#dto.searchString}, '%')  )
                     AND (COALESCE(:#{#dto.rangeTopics}, null) IS NULL OR q.rangeTopic.id IN (:#{#dto.rangeTopics})  )

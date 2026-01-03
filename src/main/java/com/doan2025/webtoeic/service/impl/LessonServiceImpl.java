@@ -9,6 +9,7 @@ import com.doan2025.webtoeic.domain.Lesson;
 import com.doan2025.webtoeic.domain.User;
 import com.doan2025.webtoeic.dto.SearchBaseDto;
 import com.doan2025.webtoeic.dto.request.LessonRequest;
+import com.doan2025.webtoeic.dto.response.AttachDocumentLessonResponse;
 import com.doan2025.webtoeic.dto.response.LessonResponse;
 import com.doan2025.webtoeic.exception.WebToeicException;
 import com.doan2025.webtoeic.repository.AttachDocumentLessonRepository;
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +67,23 @@ public class LessonServiceImpl implements LessonService {
         if (dto.getCategories() == null || dto.getCategories().isEmpty()) {
             dto.setCategories(null);
         }
-        return lessonRepository.findLessons(dto, email, pageable);
+        Page<LessonResponse> responses = lessonRepository.findLessons(dto, email, pageable);
+        List<LessonResponse> lessonResponses = responses.getContent();
+        for (LessonResponse item : lessonResponses) {
+            List<AttachDocumentLesson> attachDocumentLessons = attachDocumentLessonRepository.findAllByLessonId(item.getId());
+            List<AttachDocumentLessonResponse> attachDocumentLessonResponses = attachDocumentLessons.stream()
+                    .map(doc -> AttachDocumentLessonResponse.builder()
+                            .id(doc.getId())
+                            .linkUrl(doc.getLinkUrl())
+                            .isActive(doc.getIsActive())
+                            .isDelete(doc.getIsDelete())
+                            .createdAt(doc.getCreatedAt())
+                            .updatedAt(doc.getUpdatedAt())
+                            .build())
+                    .toList();
+            item.setAttachDocumentLessons(attachDocumentLessonResponses);
+        }
+        return new PageImpl<>(lessonResponses, pageable, responses.getTotalElements());
     }
 
     @Override

@@ -37,9 +37,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                 SUM(CASE WHEN att.status = :#{T(com.doan2025.webtoeic.constants.enums.EAttendanceStatus).LATE} THEN 1 ELSE 0 END)
             )
             FROM ClassSchedule cs
-            LEFT JOIN Attendance  att ON cs.id = att.schedule.id
+            JOIN Attendance  att ON cs.id = att.schedule.id
             JOIN cs.clazz c
-            WHERE c.id = :classId AND cs.startAt <= CURRENT_TIME
+            WHERE c.id = :classId
             GROUP BY cs.id
             """)
     Page<OverviewStatisticAttendance> overviewStatisticAttendance(Long classId, Pageable pageable);

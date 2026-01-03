@@ -2,6 +2,7 @@ package com.doan2025.webtoeic.repository;
 
 import com.doan2025.webtoeic.domain.ClassSchedule;
 import com.doan2025.webtoeic.dto.SearchScheduleSto;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,6 +35,7 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
              AND ( COALESCE(:#{#dto.teacherId}, null ) is null OR sc.clazz.teacher.id IN (:#{#dto.teacherId}) )
              AND ( COALESCE(:#{#dto.status}, null ) is null OR sc.status IN (:#{#dto.status})  )
              AND (COALESCE(:classIds, null ) is null OR sc.clazz.id IN (:classIds) )
+             order by sc.startAt
             """)
     Page<ClassSchedule> filterSchedule(SearchScheduleSto dto, List<Long> classIds, Pageable pageable);
 
@@ -61,10 +63,32 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
     Long getAvailableSchedule(Long classId);
 
 
-    @Query("""
-                    SELECT COUNT(sc) > 0 FROM ClassSchedule sc
-                    WHERE sc.room.id = :roomId
-                    AND sc.startAt = :startAt AND sc.endAt = :endAt
-            """)
-    boolean existsScheduleByRoomIdAndStartAtAndEndAt(Date startAt, Date endAt, Long roomId);
+    @Query(value = """
+                    SELECT sc.id FROM class_schedule sc
+                    WHERE sc.room = :roomId
+                    AND ((
+                         :startAt >=  sc.start_at
+                      AND :startAt <=  sc.end_at
+                    )
+                    OR (
+                         :endAt >=  sc.start_at
+                      AND :endAt <= sc.end_at
+                    ))
+            """, nativeQuery = true)
+    List<Long> existsScheduleByRoomIdAndStartAtAndEndAt(Date startAt, Date endAt, Long roomId);
+
+    @Query(value = """
+                SELECT sc.id
+                FROM class_schedule sc
+                WHERE sc.class = :classId
+                AND ((
+                     :startAt >= TIMESTAMPADD(HOUR, -2, sc.start_at)
+                  AND :startAt <= TIMESTAMPADD(HOUR, 2, sc.end_at)
+                )
+                OR (
+                     :endAt >= TIMESTAMPADD(HOUR, -2, sc.start_at)
+                  AND :endAt <= TIMESTAMPADD(HOUR, 2, sc.end_at)
+                ))
+            """, nativeQuery = true)
+    List<Long> existsScheduleByClassIdAndStartAtAndEndAt(@NotNull Date startAt, @NotNull Date endAt, Long classId);
 }

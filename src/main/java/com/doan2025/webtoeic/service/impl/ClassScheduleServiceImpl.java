@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,10 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
         User user = userRepository.findByEmail(jwtUtil.getEmailFromToken(httpServletRequest))
                 .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.USER));
 
-        if (Objects.equals(user.getRole(), ERole.TEACHER) && classMemberRepository.existsMemberInClass(scheduleId, user.getId())
+        ClassSchedule schedule = classScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.SCHEDULE));
+        if ((Objects.equals(user.getRole(), ERole.TEACHER)
+                && classMemberRepository.existsMemberInClass(schedule.getClazz().getId(), user.getId()))
                 || Objects.equals(user.getRole(), ERole.CONSULTANT)
                 || Objects.equals(user.getRole(), ERole.MANAGER)) {
             return attendanceRepository.detailStatisticAttendance(scheduleId, pageable);
@@ -93,10 +97,15 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
         if (Objects.isNull(dto.getStatus()) || dto.getStatus().isEmpty()) {
             dto.setStatus(null);
         }
+        Pageable customPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                100000,
+                pageable.getSort()
+        );
         if (Objects.equals(user.getRole(), ERole.MANAGER) || Objects.equals(user.getRole(), ERole.CONSULTANT)) {
-            result = classScheduleRepository.filterSchedule(dto, null, pageable);
+            result = classScheduleRepository.filterSchedule(dto, null, customPageable);
         } else if (Objects.equals(user.getRole(), ERole.TEACHER) || Objects.equals(user.getRole(), ERole.STUDENT)) {
-            result = classScheduleRepository.filterSchedule(dto, classMemberRepository.findClassOfMember(user.getEmail()), pageable);
+            result = classScheduleRepository.filterSchedule(dto, classMemberRepository.findClassOfMember(user.getEmail()), customPageable);
         } else {
             throw new WebToeicException(ResponseCode.NOT_PERMISSION, ResponseObject.USER);
         }
@@ -111,13 +120,18 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
         for (ClassScheduleRequest item : classScheduleRequest) {
             Class clazz = classRepository.findById(item.getClassId())
                     .orElseThrow(() -> new WebToeicException(ResponseCode.NOT_EXISTED, ResponseObject.CLASS));
-            boolean isUsed = classScheduleRepository
+            List<Long> isUsed = classScheduleRepository
                     .existsScheduleByRoomIdAndStartAtAndEndAt(item.getStartAt(), item.getEndAt(), item.getRoomId());
-            if (isUsed) {
+            if (!isUsed.isEmpty()) {
                 throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.ROOM);
             }
             if (Objects.isNull(item.getRoomId())) {
                 throw new WebToeicException(ResponseCode.IS_NULL, ResponseObject.ROOM);
+            }
+            List<Long> isHasSchedule = classScheduleRepository
+                    .existsScheduleByClassIdAndStartAtAndEndAt(item.getStartAt(), item.getEndAt(), item.getClassId());
+            if (!isHasSchedule.isEmpty()) {
+                throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.SCHEDULE);
             }
             ClassSchedule classSchedule = ClassSchedule.builder()
                     .title(item.getTitle())
@@ -158,12 +172,12 @@ public class ClassScheduleServiceImpl implements ClassScheduleService {
         if (!Objects.equals(classScheduleRequest.getRoomId(), schedule.getRoom().getId())
                 || !Objects.equals(classScheduleRequest.getStartAt(), schedule.getStartAt())
                 || !Objects.equals(classScheduleRequest.getEndAt(), schedule.getEndAt())) {
-            boolean isUsed = classScheduleRepository
+            List<Long> isUsed = classScheduleRepository
                     .existsScheduleByRoomIdAndStartAtAndEndAt(
                             classScheduleRequest.getStartAt(),
                             classScheduleRequest.getEndAt(),
                             classScheduleRequest.getRoomId());
-            if (isUsed) {
+            if (!isUsed.isEmpty()) {
                 throw new WebToeicException(ResponseCode.NOT_AVAILABLE, ResponseObject.ROOM);
             }
         }

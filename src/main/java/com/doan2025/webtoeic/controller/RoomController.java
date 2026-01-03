@@ -21,19 +21,19 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping("/filter")
-    @PreAuthorize("hasRole('CONSULTANT')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> filterAll(HttpServletRequest request, @RequestBody SearchRoomDto dto) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.ROOM, roomService.getAllRooms(dto));
     }
 
     @PostMapping("/update")
-    @PreAuthorize("hasRole('CONSULTANT')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> update(HttpServletRequest request, @RequestBody RoomRequest roomRequest) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.ROOM, roomService.updateRoom(roomRequest));
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('CONSULTANT')")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('MANAGER') or  hasRole('CONSULTANT')")
     public ApiResponse<?> create(HttpServletRequest request, @RequestBody RoomRequest roomRequest) {
         return ApiResponse.of(ResponseCode.GET_SUCCESS, ResponseObject.ROOM, roomService.createRoom(roomRequest));
     }
